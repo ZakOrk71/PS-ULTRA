@@ -29,6 +29,8 @@
       margin-top: -9px;
       border: 2px solid #00ff88;
     }
+    input[type="text"] { -webkit-appearance: none; appearance: none; }
+    input[type="text"]::placeholder { color: #444; }
     button { font-family: inherit; }
     #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 22px; }
     .spinner { width: 44px; height: 44px; border: 3px solid #14141e; border-top-color: #00ff88; border-radius: 50%; animation: spin 0.7s linear infinite; }
@@ -2012,31 +2014,32 @@ function MealSlot({ heure, slotDef, totalKcal, totalProt, totalGluc }) {
   }), filtered.length > 3 && /* @__PURE__ */ React.createElement("button", { onClick: () => setShowAll(!showAll), style: { background: "none", border: `1px dashed ${cat.color}55`, color: cat.color, fontSize: 11, fontWeight: 700, cursor: "pointer", padding: "9px 0", width: "100%", borderRadius: 7, marginTop: 4 } }, showAll ? "\u25B2 R\xE9duire" : `\u25BC Voir ${filtered.length - 3} autre${filtered.length - 3 > 1 ? "s" : ""} option${filtered.length - 3 > 1 ? "s" : ""}`)));
 }
 function App() {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u;
   const [tab, setTab] = useState("Nutrition");
-  const [poids, setPoids] = useState((_a = SAVED.poids) != null ? _a : 82);
-  const [taille, setTaille] = useState((_b = SAVED.taille) != null ? _b : 178);
-  const [age, setAge] = useState((_c = SAVED.age) != null ? _c : 26);
-  const [sexe, setSexe] = useState((_d = SAVED.sexe) != null ? _d : "homme");
-  const [annees, setAnnees] = useState((_e = SAVED.annees) != null ? _e : 3);
-  const [objectif, setObjectif] = useState((_f = SAVED.objectif) != null ? _f : "force_masse");
-  const [activite, setActivite] = useState((_g = SAVED.activite) != null ? _g : "modere");
-  const [shiftType, setShiftType] = useState((_h = SAVED.shiftType) != null ? _h : "nuit");
-  const [startH, setStartH] = useState((_i = SAVED.startH) != null ? _i : 18);
-  const [startM, setStartM] = useState((_j = SAVED.startM) != null ? _j : 52);
-  const [endH, setEndH] = useState((_k = SAVED.endH) != null ? _k : 7);
-  const [sleep, setSleep] = useState((_l = SAVED.sleep) != null ? _l : 8);
-  const [trajet, setTrajet] = useState((_m = SAVED.trajet) != null ? _m : 40);
-  const [coucherReposH, setCoucherReposH] = useState((_n = SAVED.coucherReposH) != null ? _n : 2);
-  const [reveilNormalH, setReveilNormalH] = useState((_o = SAVED.reveilNormalH) != null ? _o : 10);
-  const [sessionsNuit, setSessionsNuit] = useState((_p = SAVED.sessionsNuit) != null ? _p : [
+  const [userName, setUserName] = useState((_a = SAVED.userName) != null ? _a : "");
+  const [poids, setPoids] = useState((_b = SAVED.poids) != null ? _b : 82);
+  const [taille, setTaille] = useState((_c = SAVED.taille) != null ? _c : 178);
+  const [age, setAge] = useState((_d = SAVED.age) != null ? _d : 26);
+  const [sexe, setSexe] = useState((_e = SAVED.sexe) != null ? _e : "homme");
+  const [annees, setAnnees] = useState((_f = SAVED.annees) != null ? _f : 3);
+  const [objectif, setObjectif] = useState((_g = SAVED.objectif) != null ? _g : "force_masse");
+  const [activite, setActivite] = useState((_h = SAVED.activite) != null ? _h : "modere");
+  const [shiftType, setShiftType] = useState((_i = SAVED.shiftType) != null ? _i : "nuit");
+  const [startH, setStartH] = useState((_j = SAVED.startH) != null ? _j : 18);
+  const [startM, setStartM] = useState((_k = SAVED.startM) != null ? _k : 52);
+  const [endH, setEndH] = useState((_l = SAVED.endH) != null ? _l : 7);
+  const [sleep, setSleep] = useState((_m = SAVED.sleep) != null ? _m : 8);
+  const [trajet, setTrajet] = useState((_n = SAVED.trajet) != null ? _n : 40);
+  const [coucherReposH, setCoucherReposH] = useState((_o = SAVED.coucherReposH) != null ? _o : 2);
+  const [reveilNormalH, setReveilNormalH] = useState((_p = SAVED.reveilNormalH) != null ? _p : 10);
+  const [sessionsNuit, setSessionsNuit] = useState((_q = SAVED.sessionsNuit) != null ? _q : [
     { seanceType: "A", heure: 16 },
     { seanceType: "B", heure: 16 },
     { seanceType: "C", heure: 10 }
   ]);
-  const [semaineActive, setSemaineActive] = useState((_q = SAVED.semaineActive) != null ? _q : "grande");
-  const [seancesParSemaine, setSeancesParSemaine] = useState((_r = SAVED.seancesParSemaine) != null ? _r : 3);
-  const [planningJour, setPlanningJour] = useState((_s = SAVED.planningJour) != null ? _s : {
+  const [semaineActive, setSemaineActive] = useState((_r = SAVED.semaineActive) != null ? _r : "grande");
+  const [seancesParSemaine, setSeancesParSemaine] = useState((_s = SAVED.seancesParSemaine) != null ? _s : 3);
+  const [planningJour, setPlanningJour] = useState((_t = SAVED.planningJour) != null ? _t : {
     grande: {
       lun: null,
       mar: null,
@@ -2056,7 +2059,7 @@ function App() {
       dim: null
     }
   });
-  const [equip, setEquip] = useState((_t = SAVED.equip) != null ? _t : {
+  const [equip, setEquip] = useState((_u = SAVED.equip) != null ? _u : {
     anneaux: false,
     gilet: false,
     giletPoids: 10,
@@ -2072,6 +2075,7 @@ function App() {
   });
   useEffect(() => {
     saveData({
+      userName,
       poids,
       taille,
       age,
@@ -2099,6 +2103,7 @@ function App() {
       return () => clearTimeout(t);
     }
   }, [
+    userName,
     poids,
     taille,
     age,
@@ -2121,6 +2126,7 @@ function App() {
     equip
   ]);
   const profileJSON = JSON.stringify({
+    userName,
     poids,
     taille,
     age,
@@ -2145,6 +2151,7 @@ function App() {
   const handleImport = () => {
     try {
       const d = JSON.parse(importText);
+      if (d.userName !== void 0) setUserName(d.userName);
       if (d.poids !== void 0) setPoids(d.poids);
       if (d.taille !== void 0) setTaille(d.taille);
       if (d.age !== void 0) setAge(d.age);
@@ -2287,7 +2294,7 @@ function App() {
     display: "flex",
     alignItems: "center",
     gap: 5
-  } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13 } }, c.l), /* @__PURE__ */ React.createElement("span", null, c.f))))), /* @__PURE__ */ React.createElement("h1", { style: { fontSize: 32, fontWeight: 800, margin: "0 0 4px", letterSpacing: -1.2, lineHeight: 1.05, color: "#fff" } }, "Bonjour, Lenny."), /* @__PURE__ */ React.createElement("p", { style: { margin: "0 0 18px", fontSize: 14, color: "#666", fontWeight: 500 } }, shiftType === "nuit" ? "Cycle nuit \xB7 3 nuits + 3 repos" : "Cycle jour \xB7 grande/petite semaine"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 } }, [
+  } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13 } }, c.l), /* @__PURE__ */ React.createElement("span", null, c.f))))), userName ? /* @__PURE__ */ React.createElement("h1", { style: { fontSize: 32, fontWeight: 800, margin: "0 0 4px", letterSpacing: -1.2, lineHeight: 1.05, color: "#fff" } }, "Bonjour, ", userName, ".") : /* @__PURE__ */ React.createElement("h1", { onClick: () => setTab("Profil"), style: { fontSize: 24, fontWeight: 800, margin: "0 0 4px", letterSpacing: -0.8, lineHeight: 1.1, color: "#666", cursor: "pointer" } }, "\u{1F44B} Tape ici pour mettre ton pr\xE9nom"), /* @__PURE__ */ React.createElement("p", { style: { margin: "0 0 18px", fontSize: 14, color: "#666", fontWeight: 500 } }, shiftType === "nuit" ? "Cycle nuit \xB7 3 nuits + 3 repos" : "Cycle jour \xB7 grande/petite semaine"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 } }, [
     { v: calc.cal, u: "kcal", l: "Objectif", c: "#00ff88" },
     { v: calc.prot + "g", u: "prot", l: "Prot\xE9ines", c: "#a78bfa" },
     { v: poids, u: "kg", l: "Poids", c: "#fff" },
@@ -2511,7 +2518,29 @@ function App() {
       flexShrink: 0,
       touchAction: "manipulation"
     } }, "\u2139\uFE0F")), activeKey === "leste" && ex.leste !== "\u2014" && !hasAnyEquip && /* @__PURE__ */ React.createElement("div", { style: { background: "#2a1410", border: "1px solid #7f1d1d", borderRadius: 6, padding: "7px 10px", fontSize: 10, color: "#fca5a5", marginBottom: 6 } }, "\u26A0\uFE0F ", /* @__PURE__ */ React.createElement("strong", null, "Pas d'\xE9quipement lest\xE9 coch\xE9."), " Va dans Profil \u2192 Mon \xE9quipement."), isInfoOpen && ex.desc && /* @__PURE__ */ React.createElement("div", { style: { background: s.color + "15", border: `1px solid ${s.color}55`, borderRadius: 8, padding: "11px 13px", marginBottom: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: s.color, textTransform: "uppercase", marginBottom: 6, fontWeight: 700 } }, "\u{1F4D6} Description & technique"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#ddd", lineHeight: 1.6 } }, ex.desc)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, marginBottom: 6, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("span", { style: { background: "#1e1e2e", color: "#a78bfa", borderRadius: 4, padding: "3px 7px", fontSize: 10, fontWeight: 700 } }, ex.s), /* @__PURE__ */ React.createElement("span", { style: { background: s.color + "15", color: s.color, borderRadius: 4, padding: "3px 7px", fontSize: 10 } }, ex.obj), /* @__PURE__ */ React.createElement("span", { style: { background: "#0a1a2e", color: "#60a5fa", borderRadius: 4, padding: "3px 7px", fontSize: 10, fontWeight: 700 } }, "\u23F1 Repos ", ex.rest)), ex.easy && /* @__PURE__ */ React.createElement("div", { style: { background: "#0f1a0a", border: "1px solid #1a3a1a", borderRadius: 5, padding: "6px 9px", fontSize: 10, color: "#888", marginBottom: 4 } }, /* @__PURE__ */ React.createElement("span", { style: { color: "#4ade80", fontWeight: 700 } }, "\u{1F91D} Plus facile : "), ex.easy), altModes.map((am) => /* @__PURE__ */ React.createElement("div", { key: am.key, style: { background: "#06060c", borderRadius: 4, padding: "5px 8px", fontSize: 10, color: "#666", display: "flex", gap: 5, marginBottom: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { color: am.color, fontWeight: 700, flexShrink: 0 } }, am.label.split(" ")[0], " :"), /* @__PURE__ */ React.createElement("span", null, ex[am.key]))))));
-  }), /* @__PURE__ */ React.createElement("div", { style: { background: s.color + "15", border: `1px solid ${s.color}33`, borderRadius: 7, padding: "9px 11px", marginTop: 11, fontSize: 11, color: "#ccc" } }, /* @__PURE__ */ React.createElement("span", { style: { color: s.color, fontWeight: 700 } }, "Fin de s\xE9ance \xB7 "), s.fin))))), tab === "Profil" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u{1F464} Corps"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 16, padding: "18px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 14 } }, [{ k: "homme", l: "\u2642 Homme", c: "#3b82f6" }, { k: "femme", l: "\u2640 Femme", c: "#ec4899" }].map((s) => /* @__PURE__ */ React.createElement("button", { key: s.k, onClick: () => setSexe(s.k), style: {
+  }), /* @__PURE__ */ React.createElement("div", { style: { background: s.color + "15", border: `1px solid ${s.color}33`, borderRadius: 7, padding: "9px 11px", marginTop: 11, fontSize: 11, color: "#ccc" } }, /* @__PURE__ */ React.createElement("span", { style: { color: s.color, fontWeight: 700 } }, "Fin de s\xE9ance \xB7 "), s.fin))))), tab === "Profil" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u2728 Ton pr\xE9nom"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1.5px solid ${userName ? "#00ff8844" : "#14141e"}`, borderRadius: 16, padding: "18px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "text",
+      value: userName,
+      onChange: (e) => setUserName(e.target.value),
+      placeholder: "Ton pr\xE9nom...",
+      maxLength: 20,
+      style: {
+        width: "100%",
+        background: "transparent",
+        border: "none",
+        outline: "none",
+        color: "#fff",
+        fontSize: 22,
+        fontWeight: 700,
+        letterSpacing: -0.3,
+        fontFamily: "inherit",
+        boxSizing: "border-box",
+        padding: 0
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#555", marginTop: 6, lineHeight: 1.5 } }, userName ? `S'affichera comme "Bonjour, ${userName}." dans le header` : "Appara\xEEtra dans le header de l'app")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u{1F464} Corps"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 16, padding: "18px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 14 } }, [{ k: "homme", l: "\u2642 Homme", c: "#3b82f6" }, { k: "femme", l: "\u2640 Femme", c: "#ec4899" }].map((s) => /* @__PURE__ */ React.createElement("button", { key: s.k, onClick: () => setSexe(s.k), style: {
     flex: 1,
     background: sexe === s.k ? s.c + "22" : "#16161f",
     border: `1.5px solid ${sexe === s.k ? s.c : "#222"}`,
