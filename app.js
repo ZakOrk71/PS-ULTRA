@@ -1,0 +1,1379 @@
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+const { useState, useMemo, useEffect } = React;
+const STORAGE_KEY = "ps_ultra_progz_lenny_v11";
+const loadSaved = () => {
+  try {
+    if (typeof window === "undefined" || !window.localStorage) return {};
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+};
+const saveData = (data) => {
+  try {
+    if (typeof window === "undefined" || !window.localStorage) return;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+  }
+};
+const SAVED = loadSaved();
+const STORAGE_OK = (() => {
+  try {
+    if (typeof window === "undefined" || !window.localStorage) return false;
+    const k = "__test_" + Date.now();
+    window.localStorage.setItem(k, "1");
+    const v = window.localStorage.getItem(k);
+    window.localStorage.removeItem(k);
+    return v === "1";
+  } catch (e) {
+    return false;
+  }
+})();
+const toMin = (h, m = 0) => h * 60 + m;
+const fromMin = (t) => {
+  const x = (t % 1440 + 1440) % 1440;
+  return { h: Math.floor(x / 60), m: x % 60 };
+};
+const addMin = (h, m, d) => fromMin(toMin(h, m) + d);
+const fmt = ({ h, m }) => `${h}h${m > 0 ? String(m).padStart(2, "0") : "00"}`;
+const fmtHM = (h, m = 0) => fmt({ h, m });
+const round5 = (n) => Math.max(5, Math.round(n / 5) * 5);
+function useCalc({ poids, taille, age, sexe, annees, objectif, activite }) {
+  return useMemo(() => {
+    const bmr = Math.round(10 * poids + 6.25 * taille - 5 * age + (sexe === "homme" ? 5 : -161));
+    const actF = activite === "leger" ? 1.45 : activite === "modere" ? 1.65 : activite === "intense" ? 1.85 : 2;
+    const tdee = Math.round(bmr * actF);
+    const bonus = objectif === "masse" ? 350 : objectif === "force_masse" ? 200 : objectif === "seche" ? -300 : 0;
+    const cal = tdee + bonus;
+    const protCoeff = annees < 1 ? 1.8 : annees < 3 ? 2 : annees < 6 ? 2.2 : 2.4;
+    const prot = Math.round(poids * protCoeff);
+    const lip = Math.round(poids * (objectif === "seche" ? 0.8 : 1));
+    const gluc = Math.round(Math.max((cal - prot * 4 - lip * 9) / 4, 100));
+    const niveauIdx = annees < 1 ? 0 : annees < 3 ? 1 : annees < 6 ? 2 : 3;
+    return { bmr, tdee, cal, prot, protCoeff, lip, gluc, niveauIdx };
+  }, [poids, taille, age, sexe, annees, objectif, activite]);
+}
+function buildDayPlan({ shiftType, dayType, schedule, sessionH }) {
+  const { startH, startM, endH, sleep, trajet, coucherReposH, reveilNormalH } = schedule;
+  const reveilTravail = addMin(endH, 0, sleep * 60);
+  if (dayType === "travail") {
+    if (shiftType === "nuit") {
+      return [
+        { time: fmt(reveilTravail), slot: "PD", pct: 0.22, label: "R\xE9veil \u2014 Petit-d\xE9j" },
+        { time: fmt(addMin(startH, startM, -trajet - 60)), slot: "PRINC", pct: 0.35, label: "Pr\xE9-travail \u2B50", main: true },
+        { time: fmt(addMin(startH, startM, 5 * 60)), slot: "COLL", pct: 0.22, label: "Pause / Gamelle" },
+        { time: fmt(addMin(startH, startM, 8 * 60)), slot: "COLL", pct: 0.08, label: "Snack si besoin" },
+        { time: fmt(addMin(endH, 0, 30)), slot: "PD", pct: 0.13, label: "Pr\xE9-dodo" }
+      ];
+    }
+    return [
+      { time: fmt(addMin(startH, startM, -60)), slot: "PD", pct: 0.18, label: "R\xE9veil \u2014 Petit-d\xE9j" },
+      { time: fmt(addMin(startH, startM, -trajet)), slot: "PD", pct: 0.07, label: "Snack d\xE9part" },
+      { time: fmt(addMin(startH, startM, 5 * 60 + 30)), slot: "PRINC", pct: 0.3, label: "D\xE9jeuner \u2B50", main: true },
+      { time: fmt(addMin(startH, startM, 9 * 60)), slot: "COLL", pct: 0.1, label: "Collation apr\xE8s-midi" },
+      { time: fmt(addMin(endH, 0, 30)), slot: "PRINC", pct: 0.27, label: "D\xEEner \u2B50", main: true },
+      { time: fmt(addMin(endH, 0, 3 * 60)), slot: "SOIR", pct: 0.08, label: "Avant coucher" }
+    ];
+  }
+  if (dayType === "repos_seance") {
+    const wake2 = shiftType === "nuit" ? fmt(reveilTravail) : fmtHM(reveilNormalH);
+    return [
+      { time: wake2, slot: "PD", pct: 0.18, label: "R\xE9veil" },
+      { time: fmt(addMin(sessionH, 0, -90)), slot: "PRE", pct: 0.1, label: "Pr\xE9-s\xE9ance" },
+      { time: fmtHM(sessionH), slot: "PRE", pct: 0, label: "\u{1F4AA} S\xC9ANCE", training: true },
+      { time: fmt(addMin(sessionH, 0, 90)), slot: "POST", pct: 0.3, label: "Post-s\xE9ance \u2B50", main: true },
+      { time: fmt(addMin(sessionH, 0, 5 * 60)), slot: "COLL", pct: 0.1, label: "Collation" },
+      { time: fmt(addMin(sessionH, 0, 8 * 60)), slot: "PRINC", pct: 0.25, label: "D\xEEner" },
+      { time: fmtHM(coucherReposH), slot: "SOIR", pct: 0.07, label: "Avant coucher" }
+    ];
+  }
+  const wake = reveilNormalH;
+  let dayLen = (coucherReposH - wake + 24) % 24;
+  if (dayLen < 8) dayLen = 14;
+  return [
+    { time: fmtHM(wake), slot: "PD", pct: 0.22, label: "Petit-d\xE9jeuner" },
+    { time: fmt(addMin(wake, 0, Math.round(dayLen * 60 * 0.2))), slot: "COLL", pct: 0.1, label: "Collation matin" },
+    { time: fmt(addMin(wake, 0, Math.round(dayLen * 60 * 0.4))), slot: "PRINC", pct: 0.3, label: "D\xE9jeuner \u2B50", main: true },
+    { time: fmt(addMin(wake, 0, Math.round(dayLen * 60 * 0.6))), slot: "COLL", pct: 0.08, label: "Collation apr\xE8s-midi" },
+    { time: fmt(addMin(wake, 0, Math.round(dayLen * 60 * 0.85))), slot: "PRINC", pct: 0.25, label: "D\xEEner" },
+    { time: fmtHM(coucherReposH), slot: "SOIR", pct: 0.05, label: "Avant coucher" }
+  ];
+}
+const NIVEAUX = [
+  {
+    label: "D\xE9butant",
+    color: "#4ade80",
+    annees: "0\u20131 an",
+    s: { series: "3\u20134", reps: "8\u201312", repos: "90s\u20132min" },
+    skills: ["Tractions 10", "Dips 15", "Pompes 30", "L-sit 10s", "Handstand mur"],
+    conseil: "Ma\xEEtrise les fondamentaux. 15 tractions strictes = seuil du muscle-up."
+  },
+  {
+    label: "Interm\xE9diaire",
+    color: "#60a5fa",
+    annees: "1\u20133 ans",
+    s: { series: "4", reps: "6\u201310", repos: "2min" },
+    skills: ["Muscle-up", "L-sit 20s", "Handstand 10s", "Pseudo planche", "Front lever tuck"],
+    conseil: "Progression rapide. Skills en d\xE9but de s\xE9ance."
+  },
+  {
+    label: "Avanc\xE9",
+    color: "#a78bfa",
+    annees: "3\u20136 ans",
+    s: { series: "4\u20135", reps: "3\u20138", repos: "2\u20133min" },
+    skills: ["Muscle-up \xD710", "Front lever 5s", "Human flag", "HSPU strict", "Handstand 30s"],
+    conseil: "Le leste devient obligatoire pour progresser."
+  },
+  {
+    label: "Elite",
+    color: "#f59e0b",
+    annees: "6+ ans",
+    s: { series: "5\u20136", reps: "1\u20135", repos: "3\u20135min" },
+    skills: ["OAP", "Planche 5s", "Front lever 15s", "Flag 10s", "MU +20kg"],
+    conseil: "Volume = leste. Programmation tr\xE8s pr\xE9cise."
+  }
+];
+const CAT = {
+  PD: { id: "PD", label: "Petit-d\xE9jeuner", color: "#f59e0b", icon: "\u{1F305}" },
+  COLL: { id: "COLL", label: "Collation", color: "#a78bfa", icon: "\u{1F968}" },
+  PRINC: { id: "PRINC", label: "Repas principal", color: "#4ade80", icon: "\u{1F37D}\uFE0F" },
+  PRE: { id: "PRE", label: "Pr\xE9-s\xE9ance", color: "#60a5fa", icon: "\u{1F964}" },
+  POST: { id: "POST", label: "Post-s\xE9ance", color: "#e63946", icon: "\u26A1" },
+  SOIR: { id: "SOIR", label: "Avant coucher", color: "#6366f1", icon: "\u{1F4A4}" }
+};
+const CAT_LIST = [CAT.PD, CAT.COLL, CAT.PRINC, CAT.PRE, CAT.POST, CAT.SOIR];
+const JOURS_SEMAINE = [
+  { key: "lun", label: "Lundi", short: "L" },
+  { key: "mar", label: "Mardi", short: "M" },
+  { key: "mer", label: "Mercredi", short: "M" },
+  { key: "jeu", label: "Jeudi", short: "J" },
+  { key: "ven", label: "Vendredi", short: "V" },
+  { key: "sam", label: "Samedi", short: "S" },
+  { key: "dim", label: "Dimanche", short: "D" }
+];
+const TRAVAIL_GRANDE = ["lun", "mar", "ven", "sam", "dim"];
+const TRAVAIL_PETITE = ["mer", "jeu"];
+function Slider({ label, value, min, max, step = 1, unit, onChange, color = "#00ff88" }) {
+  return /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: "#888", fontWeight: 600 } }, label), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "baseline", gap: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: -0.5 } }, value), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#555", fontWeight: 600 } }, unit))), /* @__PURE__ */ React.createElement("input", { type: "range", min, max, step, value, onChange: (e) => onChange(Number(e.target.value)), style: { width: "100%", accentColor: color, cursor: "pointer", height: 32 } }));
+}
+function HourPicker({ label, hour, minute, onHour, onMinute, color = "#00ff88" }) {
+  const Btn = ({ children, onClick }) => /* @__PURE__ */ React.createElement("button", { onClick, style: { background: "#06060c", border: "1px solid #1c1c28", color, width: 42, height: 34, cursor: "pointer", fontSize: 14, fontWeight: 800, borderRadius: 8, touchAction: "manipulation", transition: "all 0.15s" } }, children);
+  return /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center" } }, label && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#666", marginBottom: 8, letterSpacing: 0.5, fontWeight: 600 } }, label), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 5, justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 4 } }, /* @__PURE__ */ React.createElement(Btn, { onClick: () => onHour((hour + 1) % 24) }, "\u25B2"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1px solid ${color}44`, padding: "7px 11px", borderRadius: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { color: "#fff", fontWeight: 800, fontSize: 20 } }, String(hour).padStart(2, "0"))), /* @__PURE__ */ React.createElement(Btn, { onClick: () => onHour((hour - 1 + 24) % 24) }, "\u25BC")), /* @__PURE__ */ React.createElement("span", { style: { color, fontWeight: 800, fontSize: 20, opacity: 0.5 } }, "h"), onMinute !== void 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 4 } }, /* @__PURE__ */ React.createElement(Btn, { onClick: () => onMinute((Math.round(minute / 15) * 15 + 15) % 60) }, "\u25B2"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1px solid ${color}44`, padding: "7px 11px", borderRadius: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { color: "#fff", fontWeight: 800, fontSize: 20 } }, String(minute).padStart(2, "0"))), /* @__PURE__ */ React.createElement(Btn, { onClick: () => onMinute((Math.round(minute / 15) * 15 - 15 + 60) % 60) }, "\u25BC"))));
+}
+function MacroBar({ label, value, max, color }) {
+  return /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#aaa" } }, label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, fontWeight: 800, color } }, value, "g")), /* @__PURE__ */ React.createElement("div", { style: { height: 7, background: "#1a1a24", borderRadius: 4, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: `${Math.min(value / max * 100, 100)}%`, background: color, borderRadius: 4, transition: "width 0.4s" } })));
+}
+function scaleIng(q, scale) {
+  const m = q.match(/^(\d+)(g|ml)/);
+  if (m) return q.replace(/^\d+(g|ml)/, `${round5(Number(m[1]) * scale)}${m[2]}`);
+  return q;
+}
+function MealOption({ r, scale = 1, color }) {
+  const [open, setOpen] = useState(false);
+  const kcal = Math.round(r.kcal * scale);
+  const p = Math.round(r.p * scale);
+  const g = Math.round(r.g * scale);
+  return /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", borderRadius: 10, marginBottom: 7, overflow: "hidden", border: open ? `1.5px solid ${color}66` : "1px solid transparent" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpen(!open), style: { width: "100%", background: "none", border: "none", padding: "12px 13px", cursor: "pointer", textAlign: "left", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "flex-start", gap: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { color: "#fff", fontWeight: 700, fontSize: 14, marginBottom: 5 } }, r.nom), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 5 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#888", background: "#1a1a24", padding: "3px 7px", borderRadius: 4 } }, r.temps), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#f59e0b", fontWeight: 700, background: "#1a1208", padding: "3px 7px", borderRadius: 4 } }, kcal, " kcal"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#4ade80", fontWeight: 700, background: "#0a1a0f", padding: "3px 7px", borderRadius: 4 } }, p, "g P"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#60a5fa", fontWeight: 700, background: "#0a0f1f", padding: "3px 7px", borderRadius: 4 } }, g, "g G")), !open && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", lineHeight: 1.5, wordBreak: "break-word" } }, r.ing.slice(0, 3).map((x) => `${x.a} ${scaleIng(x.q, scale)}`).join(" \xB7 "), r.ing.length > 3 ? "..." : "")), /* @__PURE__ */ React.createElement("span", { style: { color: open ? color : "#555", fontSize: 14, flexShrink: 0, fontWeight: 700 } }, open ? "\u25B2" : "\u25BC"))), open && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 13px 13px", borderTop: "1px solid #1a1a24" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", margin: "11px 0 7px" } }, "\u{1F4E6} Ingr\xE9dients (scal\xE9s \xE0 ton profil)"), r.ing.map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: i < r.ing.length - 1 ? "1px solid #1a1a24" : "none" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#ccc" } }, x.a), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#fff", fontWeight: 700 } }, scaleIng(x.q, scale)))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color, textTransform: "uppercase", margin: "13px 0 8px" } }, "\u{1F525} Pr\xE9paration \xE9tape par \xE9tape"), r.prep.map((step, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", gap: 9, padding: "7px 0", alignItems: "flex-start" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 22, height: 22, borderRadius: "50%", background: color + "22", color, fontSize: 10, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 } }, i + 1), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: "#ddd", lineHeight: 1.6 } }, step))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a1a0a", border: "1px solid #1a3a1a", borderRadius: 8, padding: "10px 12px", marginTop: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#4ade80", textTransform: "uppercase", marginBottom: 4 } }, "\u{1F4A1} Astuce du chef"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: "#ccc", lineHeight: 1.6 } }, r.tips))));
+}
+function MealSlot({ heure, slotDef, totalKcal, totalProt, totalGluc, RECETTES }) {
+  const [showAll, setShowAll] = useState(false);
+  const cat = CAT[slotDef.slot];
+  const isMain = slotDef.main;
+  const isTraining = slotDef.training;
+  const slotKcal = Math.round(totalKcal * slotDef.pct);
+  const slotProt = Math.round(totalProt * slotDef.pct);
+  const slotGluc = Math.round(totalGluc * slotDef.pct);
+  if (isTraining) {
+    return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 11, marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 46, textAlign: "right", paddingTop: 13, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#e63946", fontWeight: 800 } }, heure)), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", width: 2, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 18, left: 0, width: 2, height: "100%", background: "#1a1a24" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 18, left: -5, width: 12, height: 12, borderRadius: "50%", background: "#e63946", border: "2px solid #0a0a0f" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, background: "linear-gradient(135deg,#2a0e10,#1a0a0c)", border: "1px solid #e6394655", borderRadius: 11, padding: "13px 15px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, color: "#e63946", fontWeight: 800 } }, "\u{1F4AA} S\xC9ANCE D'ENTRA\xCENEMENT"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#888", marginTop: 4 } }, "Voir l'onglet S\xE9ances pour le d\xE9tail")));
+  }
+  const filtered = RECETTES.filter((r) => r.slots.includes(slotDef.slot));
+  const display = showAll ? filtered : filtered.slice(0, 3);
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 11, marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 46, textAlign: "right", paddingTop: 13, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: isMain ? "#4ade80" : "#666", fontWeight: 800 } }, heure)), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", width: 2, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 18, left: 0, width: 2, height: "calc(100% + 11px)", background: "#1a1a24" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 18, left: -5, width: 12, height: 12, borderRadius: "50%", background: isMain ? "#4ade80" : cat.color, border: "2px solid #0a0a0f" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, background: isMain ? "#0a1a0a" : "#111118", border: isMain ? "1px solid #4ade8044" : "1px solid #1a1a24", borderRadius: 11, padding: "13px 14px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10, gap: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 7 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14 } }, cat.icon), /* @__PURE__ */ React.createElement("span", { style: { color: isMain ? "#4ade80" : "#fff", fontWeight: 800, fontSize: 13 } }, slotDef.label)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: cat.color, fontWeight: 700, marginTop: 3, letterSpacing: 1, textTransform: "uppercase" } }, cat.label)), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "right", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 16, fontWeight: 800, color: "#f59e0b" } }, slotKcal, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#666", marginLeft: 1 } }, "kcal")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#4ade80", fontWeight: 700 } }, slotProt, "g P \xB7 ", slotGluc, "g G"))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 8 } }, "\u{1F447} Choisis 1 option \xB7 tape pour la pr\xE9pa"), display.map((r) => {
+    const sc = slotKcal / r.kcal;
+    return /* @__PURE__ */ React.createElement(MealOption, { key: r.id, r, scale: sc, color: cat.color });
+  }), filtered.length > 3 && /* @__PURE__ */ React.createElement("button", { onClick: () => setShowAll(!showAll), style: { background: "none", border: `1px dashed ${cat.color}55`, color: cat.color, fontSize: 11, fontWeight: 700, cursor: "pointer", padding: "9px 0", width: "100%", borderRadius: 7, marginTop: 4 } }, showAll ? "\u25B2 R\xE9duire" : `\u25BC Voir ${filtered.length - 3} autre${filtered.length - 3 > 1 ? "s" : ""} option${filtered.length - 3 > 1 ? "s" : ""}`)));
+}
+function App() {
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v;
+  const [tab, setTab] = useState("Nutrition");
+  const [dataReady, setDataReady] = useState(false);
+  const [dataError, setDataError] = useState(null);
+  const [ALIMENTS, setALIMENTS] = useState([]);
+  const [ALI_CATS, setALI_CATS] = useState([]);
+  const [SEANCES, setSEANCES] = useState([]);
+  const [RECETTES, setRECETTES] = useState([]);
+  const [COURSES, setCOURSES] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const bust = "?v=" + Date.now();
+        const [ali, sea, rec, cou] = await Promise.all([
+          fetch("data/aliments.json" + bust).then((r) => {
+            if (!r.ok) throw new Error("aliments.json introuvable");
+            return r.json();
+          }),
+          fetch("data/seances.json" + bust).then((r) => {
+            if (!r.ok) throw new Error("seances.json introuvable");
+            return r.json();
+          }),
+          fetch("data/recettes.json" + bust).then((r) => {
+            if (!r.ok) throw new Error("recettes.json introuvable");
+            return r.json();
+          }),
+          fetch("data/courses.json" + bust).then((r) => {
+            if (!r.ok) throw new Error("courses.json introuvable");
+            return r.json();
+          })
+        ]);
+        if (cancelled) return;
+        setALIMENTS(ali.aliments || []);
+        setALI_CATS(ali.cats || []);
+        setSEANCES(sea || []);
+        setRECETTES(rec || []);
+        setCOURSES(cou || []);
+        setDataReady(true);
+      } catch (e) {
+        if (!cancelled) setDataError(e.message || "Erreur de chargement des donn\xE9es");
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const [userName, setUserName] = useState((_a = SAVED.userName) != null ? _a : "");
+  const [poids, setPoids] = useState((_b = SAVED.poids) != null ? _b : 82);
+  const [taille, setTaille] = useState((_c = SAVED.taille) != null ? _c : 178);
+  const [age, setAge] = useState((_d = SAVED.age) != null ? _d : 26);
+  const [sexe, setSexe] = useState((_e = SAVED.sexe) != null ? _e : "homme");
+  const [annees, setAnnees] = useState((_f = SAVED.annees) != null ? _f : 3);
+  const [objectif, setObjectif] = useState((_g = SAVED.objectif) != null ? _g : "force_masse");
+  const [activite, setActivite] = useState((_h = SAVED.activite) != null ? _h : "modere");
+  const [shiftType, setShiftType] = useState((_i = SAVED.shiftType) != null ? _i : "nuit");
+  const [startH, setStartH] = useState((_j = SAVED.startH) != null ? _j : 18);
+  const [startM, setStartM] = useState((_k = SAVED.startM) != null ? _k : 52);
+  const [endH, setEndH] = useState((_l = SAVED.endH) != null ? _l : 7);
+  const [sleep, setSleep] = useState((_m = SAVED.sleep) != null ? _m : 8);
+  const [trajet, setTrajet] = useState((_n = SAVED.trajet) != null ? _n : 40);
+  const [coucherReposH, setCoucherReposH] = useState((_o = SAVED.coucherReposH) != null ? _o : 2);
+  const [reveilNormalH, setReveilNormalH] = useState((_p = SAVED.reveilNormalH) != null ? _p : 10);
+  const [sessionsNuit, setSessionsNuit] = useState((_q = SAVED.sessionsNuit) != null ? _q : [
+    { seanceType: "A", heure: 16 },
+    { seanceType: "B", heure: 16 },
+    { seanceType: "C", heure: 10 }
+  ]);
+  const [semaineActive, setSemaineActive] = useState((_r = SAVED.semaineActive) != null ? _r : "grande");
+  const [seancesParSemaine, setSeancesParSemaine] = useState((_s = SAVED.seancesParSemaine) != null ? _s : 3);
+  const [planningJour, setPlanningJour] = useState((_t = SAVED.planningJour) != null ? _t : {
+    grande: {
+      lun: null,
+      mar: null,
+      mer: { seanceType: "A", heure: 10 },
+      jeu: { seanceType: "B", heure: 10 },
+      ven: null,
+      sam: null,
+      dim: null
+    },
+    petite: {
+      lun: { seanceType: "A", heure: 10 },
+      mar: null,
+      mer: null,
+      jeu: null,
+      ven: { seanceType: "B", heure: 10 },
+      sam: { seanceType: "C", heure: 10 },
+      dim: null
+    }
+  });
+  const [equip, setEquip] = useState((_u = SAVED.equip) != null ? _u : {
+    anneaux: false,
+    gilet: false,
+    giletPoids: 10,
+    kb8: false,
+    kb12: false,
+    kb16: false,
+    kb24: false,
+    barre: true,
+    elastiques: false,
+    parallettes: false,
+    halteres: false,
+    halteresPoids: 10
+  });
+  useEffect(() => {
+    saveData({
+      userName,
+      poids,
+      taille,
+      age,
+      sexe,
+      annees,
+      objectif,
+      activite,
+      shiftType,
+      startH,
+      startM,
+      endH,
+      sleep,
+      trajet,
+      coucherReposH,
+      reveilNormalH,
+      sessionsNuit,
+      semaineActive,
+      seancesParSemaine,
+      planningJour,
+      equip
+    });
+    if (STORAGE_OK) {
+      setSavedFlash(true);
+      const t = setTimeout(() => setSavedFlash(false), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [
+    userName,
+    poids,
+    taille,
+    age,
+    sexe,
+    annees,
+    objectif,
+    activite,
+    shiftType,
+    startH,
+    startM,
+    endH,
+    sleep,
+    trajet,
+    coucherReposH,
+    reveilNormalH,
+    sessionsNuit,
+    semaineActive,
+    seancesParSemaine,
+    planningJour,
+    equip
+  ]);
+  const profileJSON = JSON.stringify({
+    userName,
+    poids,
+    taille,
+    age,
+    sexe,
+    annees,
+    objectif,
+    activite,
+    shiftType,
+    startH,
+    startM,
+    endH,
+    sleep,
+    trajet,
+    coucherReposH,
+    reveilNormalH,
+    sessionsNuit,
+    semaineActive,
+    seancesParSemaine,
+    planningJour,
+    equip
+  }, null, 2);
+  const handleImport = () => {
+    try {
+      const d = JSON.parse(importText);
+      if (d.userName !== void 0) setUserName(d.userName);
+      if (d.poids !== void 0) setPoids(d.poids);
+      if (d.taille !== void 0) setTaille(d.taille);
+      if (d.age !== void 0) setAge(d.age);
+      if (d.sexe !== void 0) setSexe(d.sexe);
+      if (d.annees !== void 0) setAnnees(d.annees);
+      if (d.objectif !== void 0) setObjectif(d.objectif);
+      if (d.activite !== void 0) setActivite(d.activite);
+      if (d.shiftType !== void 0) setShiftType(d.shiftType);
+      if (d.startH !== void 0) setStartH(d.startH);
+      if (d.startM !== void 0) setStartM(d.startM);
+      if (d.endH !== void 0) setEndH(d.endH);
+      if (d.sleep !== void 0) setSleep(d.sleep);
+      if (d.trajet !== void 0) setTrajet(d.trajet);
+      if (d.coucherReposH !== void 0) setCoucherReposH(d.coucherReposH);
+      if (d.reveilNormalH !== void 0) setReveilNormalH(d.reveilNormalH);
+      if (d.sessionsNuit) setSessionsNuit(d.sessionsNuit);
+      if (d.semaineActive) setSemaineActive(d.semaineActive);
+      if (d.seancesParSemaine !== void 0) setSeancesParSemaine(d.seancesParSemaine);
+      if (d.planningJour) setPlanningJour(d.planningJour);
+      if (d.equip) setEquip(d.equip);
+      setImportMsg("\u2713 Profil import\xE9 avec succ\xE8s !");
+      setImportText("");
+      setTimeout(() => setImportMsg(""), 3e3);
+    } catch (e) {
+      setImportMsg("\u2717 JSON invalide. V\xE9rifie le texte coll\xE9.");
+      setTimeout(() => setImportMsg(""), 3e3);
+    }
+  };
+  const copyToClipboard = () => {
+    try {
+      if (navigator && navigator.clipboard) {
+        navigator.clipboard.writeText(profileJSON);
+        setImportMsg("\u2713 Copi\xE9 dans le presse-papier !");
+        setTimeout(() => setImportMsg(""), 2e3);
+      }
+    } catch (e) {
+    }
+  };
+  const [nutSubTab, setNutSubTab] = useState("plan");
+  const [nutDay, setNutDay] = useState("travail");
+  const [planSessionH, setPlanSessionH] = useState(16);
+  const [recetteFilter, setRecetteFilter] = useState("all");
+  const [openDay, setOpenDay] = useState(null);
+  const [openJourDay, setOpenJourDay] = useState(null);
+  const [modeIdx, setModeIdx] = useState(1);
+  const [openSeance, setOpenSeance] = useState(null);
+  const [openExoInfo, setOpenExoInfo] = useState(null);
+  const [openCourseItem, setOpenCourseItem] = useState(null);
+  const [seanceFilter, setSeanceFilter] = useState("all");
+  const [showBackup, setShowBackup] = useState(false);
+  const [importText, setImportText] = useState("");
+  const [importMsg, setImportMsg] = useState("");
+  const [savedFlash, setSavedFlash] = useState(false);
+  const todayStr = (/* @__PURE__ */ new Date()).toLocaleDateString("fr-FR");
+  const [meals, setMeals] = useState(() => {
+    if (SAVED.mealsDate === todayStr && Array.isArray(SAVED.meals)) return SAVED.meals;
+    return [];
+  });
+  const [mealsDate, setMealsDate] = useState(todayStr);
+  const [showAddMeal, setShowAddMeal] = useState(false);
+  const [aliMode, setAliMode] = useState("lib");
+  const [mealSearch, setMealSearch] = useState("");
+  const [mealCat, setMealCat] = useState("all");
+  const [selectedAli, setSelectedAli] = useState(null);
+  const [mealQty, setMealQty] = useState(100);
+  const [customForm, setCustomForm] = useState({ nom: "", qty: 100, kcal: 0, prot: 0, glu: 0, lip: 0 });
+  useEffect(() => {
+    try {
+      if (typeof window === "undefined" || !window.localStorage) return;
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const data = raw ? JSON.parse(raw) : {};
+      data.meals = meals;
+      data.mealsDate = mealsDate;
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+    }
+  }, [meals, mealsDate]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newDay = (/* @__PURE__ */ new Date()).toLocaleDateString("fr-FR");
+      if (newDay !== mealsDate) {
+        setMeals([]);
+        setMealsDate(newDay);
+      }
+    }, 6e4);
+    return () => clearInterval(interval);
+  }, [mealsDate]);
+  const totals = useMemo(() => {
+    return meals.reduce((acc, m) => ({
+      kcal: acc.kcal + (m.kcal || 0),
+      prot: acc.prot + (m.prot || 0),
+      glu: acc.glu + (m.glu || 0),
+      lip: acc.lip + (m.lip || 0)
+    }), { kcal: 0, prot: 0, glu: 0, lip: 0 });
+  }, [meals]);
+  const normalizeSearch = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/œ/g, "oe").replace(/æ/g, "ae").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+  const filteredAlim = useMemo(() => {
+    let list = ALIMENTS;
+    if (mealCat !== "all") list = list.filter((a) => a.c === mealCat);
+    if (mealSearch.trim()) {
+      const q = normalizeSearch(mealSearch);
+      const terms = q.split(" ").filter(Boolean);
+      list = list.filter((a) => {
+        const name = normalizeSearch(a.n);
+        return terms.every((t) => name.includes(t));
+      });
+    }
+    return list;
+  }, [mealCat, mealSearch, ALIMENTS]);
+  const addMealFromAli = (ali, qty) => {
+    const factor = qty / 100;
+    const meal = {
+      id: Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+      nom: ali.n,
+      qty,
+      kcal: Math.round(ali.k * factor),
+      prot: Math.round(ali.p * factor * 10) / 10,
+      glu: Math.round(ali.g * factor * 10) / 10,
+      lip: Math.round(ali.l * factor * 10) / 10,
+      time: (/* @__PURE__ */ new Date()).toTimeString().slice(0, 5)
+    };
+    setMeals([...meals, meal]);
+    setShowAddMeal(false);
+    setSelectedAli(null);
+    setMealQty(100);
+    setMealSearch("");
+  };
+  const addCustomMeal = () => {
+    if (!customForm.nom.trim()) return;
+    const meal = {
+      id: Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+      nom: customForm.nom.trim(),
+      qty: customForm.qty,
+      kcal: Number(customForm.kcal) || 0,
+      prot: Number(customForm.prot) || 0,
+      glu: Number(customForm.glu) || 0,
+      lip: Number(customForm.lip) || 0,
+      time: (/* @__PURE__ */ new Date()).toTimeString().slice(0, 5),
+      isCustom: true
+    };
+    setMeals([...meals, meal]);
+    setShowAddMeal(false);
+    setCustomForm({ nom: "", qty: 100, kcal: 0, prot: 0, glu: 0, lip: 0 });
+  };
+  const removeMeal = (id) => setMeals(meals.filter((m) => m.id !== id));
+  const resetDay = () => {
+    if (typeof window !== "undefined" && window.confirm("Effacer tous les aliments du jour ?")) setMeals([]);
+  };
+  const seanceCat = (id) => {
+    if (id === "A" || id === "A2") return "push";
+    if (id === "B" || id === "B2") return "pull";
+    if (id === "C" || id === "C2") return "legs";
+    if (id === "D") return "full";
+    if (id === "E") return "skills";
+    if (id === "F") return "core";
+    if (id === "G") return "cardio";
+    if (id === "H") return "mob";
+    return "all";
+  };
+  const filteredSeances = seanceFilter === "all" ? SEANCES : SEANCES.filter((s) => seanceCat(s.id) === seanceFilter);
+  const schedule = { startH, startM, endH, sleep, trajet, coucherReposH, reveilNormalH };
+  const applyCycle = (c) => {
+    setShiftType(c);
+    if (c === "nuit") {
+      setStartH(18);
+      setStartM(52);
+      setEndH(7);
+      setSleep(8);
+      setCoucherReposH(2);
+      setReveilNormalH(10);
+    } else {
+      setStartH(6);
+      setStartM(52);
+      setEndH(19);
+      setSleep(8);
+      setCoucherReposH(23);
+      setReveilNormalH(7);
+    }
+  };
+  const updateSessionNuit = (i, key, val) => setSessionsNuit((prev) => prev.map((s, idx) => idx === i ? __spreadProps(__spreadValues({}, s), { [key]: val }) : s));
+  const updateJourDay = (jour, sess) => setPlanningJour((prev) => __spreadProps(__spreadValues({}, prev), {
+    [semaineActive]: __spreadProps(__spreadValues({}, prev[semaineActive]), { [jour]: sess })
+  }));
+  const calc = useCalc({ poids, taille, age, sexe, annees, objectif, activite });
+  const niv = NIVEAUX[calc.niveauIdx];
+  const modes = [
+    { key: "outdoor", label: "\u{1F333} Outdoor", color: "#4ade80" },
+    { key: "maison", label: "\u{1F938} Maison", color: "#a78bfa" },
+    { key: "leste", label: "\u2696\uFE0F Lest\xE9", color: "#f59e0b" },
+    { key: "salle", label: "\u{1F3CB}\uFE0F Salle", color: "#3b82f6" }
+  ];
+  const tabs = [
+    { key: "Nutrition", icon: "\u{1F37D}\uFE0F" },
+    { key: "Planning", icon: "\u{1F4C5}" },
+    { key: "S\xE9ances", icon: "\u{1F4AA}" },
+    { key: "Calcul", icon: "\u{1F9EE}" },
+    { key: "Profil", icon: "\u2699\uFE0F" },
+    { key: "Courses", icon: "\u{1F6D2}" }
+  ];
+  const getSeance = (t) => SEANCES.find((s) => s.id === t);
+  const getLesteText = (ex) => {
+    if (ex.leste === "\u2014") return ex.leste;
+    const items = [];
+    if (equip.gilet) items.push(`gilet ${equip.giletPoids}kg`);
+    if (equip.kb24) items.push("kettlebell 24kg");
+    else if (equip.kb16) items.push("kettlebell 16kg");
+    else if (equip.kb12) items.push("kettlebell 12kg");
+    else if (equip.kb8) items.push("kettlebell 8kg");
+    if (equip.halteres) items.push(`halt\xE8re ${equip.halteresPoids}kg`);
+    if (items.length === 0) return ex.leste;
+    return `${ex.leste.replace(/lesté.*?(\)|$)/i, "").trim()} avec ${items[0]}`;
+  };
+  const hasAnyEquip = equip.gilet || equip.kb8 || equip.kb12 || equip.kb16 || equip.kb24 || equip.halteres;
+  const filteredRecettes = recetteFilter === "all" ? RECETTES : RECETTES.filter((r) => r.slots.includes(recetteFilter));
+  const dayPlan = buildDayPlan({ shiftType, dayType: nutDay, schedule, sessionH: planSessionH });
+  const travailDays = semaineActive === "grande" ? TRAVAIL_GRANDE : TRAVAIL_PETITE;
+  const isWorkDay = (j) => travailDays.includes(j);
+  const sessCountWeek = JOURS_SEMAINE.filter((j) => planningJour[semaineActive][j.key]).length;
+  if (dataError) {
+    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "#000", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, padding: 30, textAlign: "center", fontFamily: "-apple-system, system-ui, sans-serif" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 40 } }, "\u26A0\uFE0F"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 16, fontWeight: 800, color: "#ef4444" } }, "Erreur de chargement"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: "#888", lineHeight: 1.6, maxWidth: 320 } }, dataError), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#555", lineHeight: 1.6, maxWidth: 320, marginTop: 8 } }, "V\xE9rifie que le dossier ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#aaa" } }, "data/"), " avec les 4 fichiers JSON est bien pr\xE9sent \xE0 c\xF4t\xE9 du index.html."), /* @__PURE__ */ React.createElement("button", { onClick: () => {
+      if (typeof window !== "undefined") window.location.reload();
+    }, style: { marginTop: 12, background: "#00ff88", border: "none", borderRadius: 12, padding: "12px 24px", fontSize: 13, fontWeight: 800, color: "#000", cursor: "pointer" } }, "R\xE9essayer"));
+  }
+  if (!dataReady) {
+    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "#000", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 20, fontFamily: "-apple-system, system-ui, sans-serif" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 44, height: 44, border: "3px solid #14141e", borderTopColor: "#00ff88", borderRadius: "50%", animation: "spin 0.7s linear infinite" } }), /* @__PURE__ */ React.createElement("div", { style: { color: "#00ff88", fontWeight: 800, letterSpacing: 4, fontSize: 11 } }, "PS ULTRA"));
+  }
+  return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif", paddingBottom: "calc(95px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "#000", padding: "26px 18px 20px", position: "sticky", top: 0, zIndex: 10, paddingTop: "calc(26px + env(safe-area-inset-top))" } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 680, margin: "0 auto" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("div", { style: {
+    width: 8,
+    height: 8,
+    borderRadius: "50%",
+    background: savedFlash ? "#00ff88" : "#333",
+    transition: "background 0.3s",
+    boxShadow: savedFlash ? "0 0 10px #00ff88" : "none"
+  } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, letterSpacing: 2.5, color: "#666", textTransform: "uppercase", fontWeight: 700 } }, "PS Ultra \xB7 Progz")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, background: "#050508", border: "1px solid #14141e", borderRadius: 24, padding: 3 } }, [{ k: "nuit", l: "\u{1F319}", f: "Nuit" }, { k: "jour", l: "\u2600\uFE0F", f: "Jour" }].map((c) => /* @__PURE__ */ React.createElement("button", { key: c.k, onClick: () => applyCycle(c.k), style: {
+    background: shiftType === c.k ? "#fff" : "transparent",
+    border: "none",
+    borderRadius: 20,
+    padding: "7px 14px",
+    cursor: "pointer",
+    fontSize: 12,
+    color: shiftType === c.k ? "#000" : "#666",
+    fontWeight: 700,
+    transition: "all 0.25s",
+    display: "flex",
+    alignItems: "center",
+    gap: 5
+  } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13 } }, c.l), /* @__PURE__ */ React.createElement("span", null, c.f))))), userName ? /* @__PURE__ */ React.createElement("h1", { style: { fontSize: 32, fontWeight: 800, margin: "0 0 4px", letterSpacing: -1.2, lineHeight: 1.05, color: "#fff" } }, "Bonjour, ", userName, ".") : /* @__PURE__ */ React.createElement("h1", { onClick: () => setTab("Profil"), style: { fontSize: 24, fontWeight: 800, margin: "0 0 4px", letterSpacing: -0.8, lineHeight: 1.1, color: "#666", cursor: "pointer" } }, "\u{1F44B} Tape ici pour mettre ton pr\xE9nom"), /* @__PURE__ */ React.createElement("p", { style: { margin: "0 0 18px", fontSize: 14, color: "#666", fontWeight: 500 } }, shiftType === "nuit" ? "Cycle nuit \xB7 3 nuits + 3 repos" : "Cycle jour \xB7 grande/petite semaine"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 } }, [
+    { v: calc.cal, u: "kcal", l: "Objectif", c: "#00ff88" },
+    { v: calc.prot + "g", u: "prot", l: "Prot\xE9ines", c: "#a78bfa" },
+    { v: poids, u: "kg", l: "Poids", c: "#fff" },
+    { v: niv.label.slice(0, 4), u: "", l: "Niveau", c: niv.color }
+  ].map((s, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: {
+    background: "#050508",
+    border: "1px solid #161620",
+    borderRadius: 14,
+    padding: "11px 8px",
+    textAlign: "center"
+  } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 18, fontWeight: 800, color: s.c, letterSpacing: -0.4, lineHeight: 1 } }, s.v), s.u && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#444", fontWeight: 700, marginTop: 2 } }, s.u), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", marginTop: 5, fontWeight: 600 } }, s.l)))))), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 680, margin: "0 auto", padding: "24px 18px 24px" } }, tab === "Nutrition" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", background: "#0a0a12", borderRadius: 11, padding: 4, marginBottom: 14, gap: 3 } }, [{ k: "plan", l: "\u{1F4CB} Plan du jour" }, { k: "recettes", l: "\u{1F4D6} Toutes les recettes" }].map((s) => /* @__PURE__ */ React.createElement("button", { key: s.k, onClick: () => setNutSubTab(s.k), style: {
+    flex: 1,
+    background: nutSubTab === s.k ? "#a78bfa22" : "transparent",
+    border: "none",
+    borderRadius: 8,
+    padding: "11px 0",
+    cursor: "pointer",
+    fontSize: 12,
+    color: nutSubTab === s.k ? "#a78bfa" : "#666",
+    fontWeight: 700
+  } }, s.l))), nutSubTab === "plan" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#0f2a1e,#0a1a10)", border: "1px solid #1a4a2a", borderRadius: 14, padding: "16px", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#4ade80", textTransform: "uppercase", marginBottom: 9 } }, "\u{1F3AF} Objectifs du jour"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 } }, [
+    { l: "Calories", v: calc.cal, u: "kcal", c: "#f59e0b" },
+    { l: "Prot\xE9ines", v: calc.prot, u: "g", c: "#4ade80" },
+    { l: "Glucides", v: calc.gluc, u: "g", c: "#60a5fa" },
+    { l: "Lipides", v: calc.lip, u: "g", c: "#f472b6" }
+  ].map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 17, fontWeight: 800, color: x.c } }, x.v, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#555", marginLeft: 1 } }, x.u)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#666" } }, x.l))))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 8 } }, "Type de jour"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, marginBottom: 14 } }, [
+    { k: "travail", l: shiftType === "nuit" ? "\u{1F319} Travail" : "\u2600\uFE0F Travail", c: "#60a5fa" },
+    { k: "repos_seance", l: "\u{1F4AA} S\xE9ance", c: "#e63946" },
+    { k: "repos", l: "\u{1F60C} Repos", c: "#4ade80" }
+  ].map((d) => /* @__PURE__ */ React.createElement("button", { key: d.k, onClick: () => setNutDay(d.k), style: {
+    background: nutDay === d.k ? d.c + "22" : "#111118",
+    border: `1.5px solid ${nutDay === d.k ? d.c : "#222"}`,
+    borderRadius: 9,
+    padding: "11px 4px",
+    cursor: "pointer",
+    fontSize: 11,
+    color: nutDay === d.k ? d.c : "#888",
+    fontWeight: 700
+  } }, d.l))), nutDay === "repos_seance" && /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #e6394644", borderRadius: 14, padding: "15px 17px", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#e63946", fontWeight: 700 } }, "\u{1F3CB}\uFE0F Heure de s\xE9ance"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", marginTop: 2 } }, "Tous les repas s'adaptent")), /* @__PURE__ */ React.createElement(HourPicker, { hour: planSessionH, onHour: setPlanSessionH, color: "#e63946" })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 10 } }, "\u{1F4C5} Ta journ\xE9e nutrition"), dayPlan.map((s, i) => /* @__PURE__ */ React.createElement(MealSlot, { key: i, heure: s.time, slotDef: s, totalKcal: calc.cal, totalProt: calc.prot, totalGluc: calc.gluc, RECETTES })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0f1a2e", border: "1px solid #1e3a5f", borderRadius: 14, padding: "15px 17px", marginTop: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#60a5fa", fontWeight: 700, marginBottom: 5 } }, "\u{1F4A1} Comment \xE7a marche"), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888", lineHeight: 1.7 } }, "Tape sur une option pour voir la ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#fff" } }, "pr\xE9paration \xE9tape par \xE9tape"), " (8-15 \xE9tapes d\xE9taill\xE9es). Les grammages sont scal\xE9s \xE0 ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#ccc" } }, "ton poids (", poids, "kg)"), " et tes besoins."))), nutSubTab === "recettes" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, overflowX: "auto", marginBottom: 14, paddingBottom: 4 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setRecetteFilter("all"), style: {
+    flexShrink: 0,
+    background: recetteFilter === "all" ? "#a78bfa22" : "#111118",
+    border: `1.5px solid ${recetteFilter === "all" ? "#a78bfa" : "#222"}`,
+    borderRadius: 18,
+    padding: "9px 15px",
+    cursor: "pointer",
+    fontSize: 11,
+    color: recetteFilter === "all" ? "#a78bfa" : "#666",
+    fontWeight: 700
+  } }, "Toutes (", RECETTES.length, ")"), CAT_LIST.map((c) => {
+    const count = RECETTES.filter((r) => r.slots.includes(c.id)).length;
+    return /* @__PURE__ */ React.createElement("button", { key: c.id, onClick: () => setRecetteFilter(c.id), style: {
+      flexShrink: 0,
+      background: recetteFilter === c.id ? c.color + "22" : "#111118",
+      border: `1.5px solid ${recetteFilter === c.id ? c.color : "#222"}`,
+      borderRadius: 18,
+      padding: "9px 15px",
+      cursor: "pointer",
+      fontSize: 11,
+      color: recetteFilter === c.id ? c.color : "#666",
+      fontWeight: 700,
+      whiteSpace: "nowrap"
+    } }, c.icon, " ", c.label, " (", count, ")");
+  })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #1e3a5f", borderRadius: 10, padding: "10px 12px", marginBottom: 11 } }, /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888" } }, "\u{1F4E6} ", filteredRecettes.length, " recette", filteredRecettes.length > 1 ? "s" : "", " \xB7 Tape sur une recette pour voir la ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#fff" } }, "pr\xE9paration d\xE9taill\xE9e"), ".")), filteredRecettes.map((r) => /* @__PURE__ */ React.createElement(MealOption, { key: r.id, r, scale: 1, color: CAT[r.slots[0]].color })))), tab === "Planning" && /* @__PURE__ */ React.createElement("div", null, shiftType === "nuit" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#0f1a2e,#0a0f1e)", border: "1px solid #1e3a5f", borderRadius: 14, padding: "14px 16px", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#60a5fa", textTransform: "uppercase", marginBottom: 3 } }, "\u{1F4C5} Cycle 3 nuits + 3 repos"), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888" } }, "Tape un jour. Pour les repos : choisis la s\xE9ance (5 disponibles) et l'heure.")), [1, 2, 3, 4, 5, 6].map((n) => {
+    var _a2, _b2;
+    const isOpen = openDay === n;
+    const isWork = n <= 3;
+    const restIdx = n - 4;
+    const sess = !isWork ? sessionsNuit[restIdx] : null;
+    const sc = sess ? getSeance(sess.seanceType) : null;
+    const cardC = isWork ? "#1e3a5f" : (_a2 = sc == null ? void 0 : sc.color) != null ? _a2 : "#7f1d1d";
+    const txtC = isWork ? "#60a5fa" : (_b2 = sc == null ? void 0 : sc.color) != null ? _b2 : "#e63946";
+    return /* @__PURE__ */ React.createElement("div", { key: n, style: { marginBottom: 7 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpenDay(isOpen ? null : n), style: {
+      width: "100%",
+      background: "#0a0a12",
+      border: `1.5px solid ${isOpen ? txtC + "88" : "#1e1e2a"}`,
+      borderRadius: 11,
+      padding: "13px",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      gap: 11,
+      textAlign: "left"
+    } }, /* @__PURE__ */ React.createElement("div", { style: { width: 38, height: 38, borderRadius: 8, background: cardC + "33", border: `1px solid ${cardC}55`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 7, color: txtC, fontWeight: 800 } }, "J"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, color: "#fff", fontWeight: 800, lineHeight: 1 } }, n)), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: txtC, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase" } }, isWork ? n === 2 ? "NUIT + RUN 1H" : "NUIT" : "REPOS"), /* @__PURE__ */ React.createElement("div", { style: { color: "#fff", fontWeight: 700, fontSize: 13 } }, isWork ? `Nuit ${n}` : `Repos ${restIdx + 1}`), !isWork && sc && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, marginTop: 3, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: sc.color, background: sc.color + "22", padding: "2px 6px", borderRadius: 3, fontWeight: 700 } }, sc.emoji, " ", sess.seanceType), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#888" } }, "\xE0 ", fmtHM(sess.heure)))), /* @__PURE__ */ React.createElement("span", { style: { color: "#444", fontSize: 13 } }, isOpen ? "\u25B2" : "\u25BC")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", border: `1px solid ${txtC}33`, borderRadius: "0 0 11px 11px", padding: "13px", marginTop: -3 } }, !isWork && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "Type de s\xE9ance (5 disponibles)"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 5, marginBottom: 11 } }, SEANCES.map((s2) => {
+      const active = sess.seanceType === s2.id;
+      return /* @__PURE__ */ React.createElement("button", { key: s2.id, onClick: () => updateSessionNuit(restIdx, "seanceType", s2.id), style: {
+        background: active ? s2.color + "22" : "#16161f",
+        border: `1.5px solid ${active ? s2.color : "#222"}`,
+        borderRadius: 7,
+        padding: "9px 2px",
+        cursor: "pointer",
+        textAlign: "center"
+      } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15 } }, s2.emoji), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: active ? s2.color : "#555", fontWeight: 700, marginTop: 2 } }, s2.id));
+    })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center", marginBottom: 11 } }, /* @__PURE__ */ React.createElement(HourPicker, { label: "Heure de s\xE9ance", hour: sess.heure, onHour: (h) => updateSessionNuit(restIdx, "heure", h), color: sc.color })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a1a0a", border: "1px solid #1a3a1a", borderRadius: 7, padding: "9px 11px", fontSize: 10, color: "#888", lineHeight: 1.6 } }, /* @__PURE__ */ React.createElement("span", { style: { color: "#4ade80", fontWeight: 700 } }, "\u{1F4A1} "), "Pr\xE9-s\xE9ance ", fmt(addMin(sess.heure, 0, -90)), " \xB7 Post-s\xE9ance ", fmt(addMin(sess.heure, 0, 90)))), isWork && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#888", lineHeight: 1.7 } }, "Service ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#ccc" } }, fmtHM(startH, startM), " \u2192 ", fmtHM(endH)), ". Voir \u{1F37D}\uFE0F Nutrition (Travail) pour le d\xE9tail des repas.")));
+  })), shiftType === "jour" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#1a3a0a,#0a1a0a)", border: "1px solid #1a4a1a", borderRadius: 11, padding: "12px 13px", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#4ade80", textTransform: "uppercase", marginBottom: 5 } }, "\u2600\uFE0F Police de jour \xB7 cycle 2 semaines"), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888", lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("strong", { style: { color: "#ccc" } }, "Grande semaine :"), " travail Lun, Mar, Ven, Sam, Dim (2 repos)", /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("strong", { style: { color: "#ccc" } }, "Petite semaine :"), " travail Mer, Jeu (5 repos)")), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #a78bfa44", borderRadius: 11, padding: "13px", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#a78bfa", fontWeight: 700, marginBottom: 8 } }, "\u{1F3AF} Combien de s\xE9ances par semaine ?"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 5 } }, [2, 3, 4, 5].map((n) => /* @__PURE__ */ React.createElement("button", { key: n, onClick: () => setSeancesParSemaine(n), style: {
+    background: seancesParSemaine === n ? "#a78bfa22" : "#16161f",
+    border: `1.5px solid ${seancesParSemaine === n ? "#a78bfa" : "#222"}`,
+    borderRadius: 8,
+    padding: "11px 0",
+    cursor: "pointer",
+    fontSize: 14,
+    color: seancesParSemaine === n ? "#a78bfa" : "#555",
+    fontWeight: 800
+  } }, n))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", marginTop: 7, lineHeight: 1.5 } }, seancesParSemaine === 2 && "\u{1F4A1} Grande semaine : Mer + Jeu (les 2 repos). Petite semaine : 2 jours libres choisis.", seancesParSemaine === 3 && "\u{1F4A1} Grande semaine : Mer + Jeu + 1 soir apr\xE8s service. Petite semaine : 3 jours faciles.", seancesParSemaine === 4 && "\u{1F4A1} Demande de la planification \u2014 petite semaine compense la grande.", seancesParSemaine === 5 && "\u{1F4A1} Tr\xE8s exigeant. Possible uniquement en petite semaine principalement.")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 14 } }, [{ k: "grande", l: "\u{1F4C6} Grande", sub: "5j travail" }, { k: "petite", l: "\u{1F4C6} Petite", sub: "2j travail" }].map((s) => /* @__PURE__ */ React.createElement("button", { key: s.k, onClick: () => setSemaineActive(s.k), style: {
+    flex: 1,
+    background: semaineActive === s.k ? "#4ade8022" : "#111118",
+    border: `1.5px solid ${semaineActive === s.k ? "#4ade80" : "#222"}`,
+    borderRadius: 9,
+    padding: "11px 6px",
+    cursor: "pointer",
+    textAlign: "center"
+  } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: semaineActive === s.k ? "#4ade80" : "#666", fontWeight: 700 } }, s.l), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#444", marginTop: 2 } }, s.sub)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "14px 16px", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "space-between" } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#aaa", fontWeight: 700 } }, "S\xE9ances plac\xE9es"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#666", marginTop: 2 } }, "Objectif : ", seancesParSemaine, "/sem")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 24, fontWeight: 800, color: sessCountWeek >= seancesParSemaine ? "#4ade80" : "#a78bfa" } }, sessCountWeek, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, color: "#444" } }, "/", seancesParSemaine))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 10 } }, "Jours de la semaine"), JOURS_SEMAINE.map((j) => {
+    var _a2, _b2;
+    const isWork = isWorkDay(j.key);
+    const isOpen = openJourDay === j.key;
+    const sess = planningJour[semaineActive][j.key];
+    const sc = sess ? getSeance(sess.seanceType) : null;
+    const cardC = isWork ? "#1a3a0a" : (_a2 = sc == null ? void 0 : sc.color) != null ? _a2 : "#1a1a24";
+    const txtC = isWork ? "#4ade80" : (_b2 = sc == null ? void 0 : sc.color) != null ? _b2 : "#666";
+    return /* @__PURE__ */ React.createElement("div", { key: j.key, style: { marginBottom: 7 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpenJourDay(isOpen ? null : j.key), style: {
+      width: "100%",
+      background: "#0a0a12",
+      border: `1.5px solid ${isOpen ? txtC + "88" : "#1e1e2a"}`,
+      borderRadius: 11,
+      padding: "13px",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      gap: 11,
+      textAlign: "left"
+    } }, /* @__PURE__ */ React.createElement("div", { style: { width: 38, height: 38, borderRadius: 8, background: cardC + "33", border: `1px solid ${cardC}55`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 16, fontWeight: 800, color: txtC } }, j.short), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: txtC, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase" } }, isWork ? "SERVICE" : sess ? "S\xC9ANCE" : "REPOS LIBRE"), /* @__PURE__ */ React.createElement("div", { style: { color: "#fff", fontWeight: 700, fontSize: 14 } }, j.label), sess && sc && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, marginTop: 3, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: sc.color, background: sc.color + "22", padding: "2px 6px", borderRadius: 3, fontWeight: 700 } }, sc.emoji, " ", sess.seanceType), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#888" } }, fmtHM(sess.heure))), isWork && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#888", marginTop: 3 } }, fmtHM(startH, startM), " \u2192 ", fmtHM(endH))), /* @__PURE__ */ React.createElement("span", { style: { color: "#444", fontSize: 13 } }, isOpen ? "\u25B2" : "\u25BC")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", border: `1px solid ${txtC}33`, borderRadius: "0 0 11px 11px", padding: "13px", marginTop: -3 } }, isWork && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#888", lineHeight: 1.7 } }, "Service ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#ccc" } }, fmtHM(startH, startM), " \u2192 ", fmtHM(endH)), ". Repas en \u{1F37D}\uFE0F Nutrition (Travail)."), !isWork && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 11 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => updateJourDay(j.key, null), style: {
+      flex: 1,
+      background: !sess ? "#1a1a24" : "#16161f",
+      border: `1.5px solid ${!sess ? "#666" : "#222"}`,
+      borderRadius: 7,
+      padding: "10px",
+      cursor: "pointer",
+      fontSize: 12,
+      color: !sess ? "#aaa" : "#555",
+      fontWeight: 700
+    } }, "\u{1F60C} Repos"), /* @__PURE__ */ React.createElement("button", { onClick: () => updateJourDay(j.key, sess || { seanceType: "A", heure: 10 }), style: {
+      flex: 1,
+      background: sess ? "#a78bfa22" : "#16161f",
+      border: `1.5px solid ${sess ? "#a78bfa" : "#222"}`,
+      borderRadius: 7,
+      padding: "10px",
+      cursor: "pointer",
+      fontSize: 12,
+      color: sess ? "#a78bfa" : "#555",
+      fontWeight: 700
+    } }, "\u{1F4AA} S\xE9ance")), sess && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 8 } }, "Type de s\xE9ance"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 5, marginBottom: 11 } }, SEANCES.map((s2) => {
+      const active = sess.seanceType === s2.id;
+      return /* @__PURE__ */ React.createElement("button", { key: s2.id, onClick: () => updateJourDay(j.key, __spreadProps(__spreadValues({}, sess), { seanceType: s2.id })), style: {
+        background: active ? s2.color + "22" : "#16161f",
+        border: `1.5px solid ${active ? s2.color : "#222"}`,
+        borderRadius: 7,
+        padding: "9px 2px",
+        cursor: "pointer",
+        textAlign: "center"
+      } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15 } }, s2.emoji), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: active ? s2.color : "#555", fontWeight: 700, marginTop: 2 } }, s2.id));
+    })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement(HourPicker, { label: "Heure de s\xE9ance", hour: sess.heure, onHour: (h) => updateJourDay(j.key, __spreadProps(__spreadValues({}, sess), { heure: h })), color: sc.color }))))));
+  }))), tab === "S\xE9ances" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { background: `linear-gradient(135deg, ${niv.color}18, ${niv.color}08)`, border: `1px solid ${niv.color}33`, borderRadius: 14, padding: "16px 18px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 9, height: 9, borderRadius: "50%", background: niv.color, flexShrink: 0, boxShadow: `0 0 8px ${niv.color}` } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: niv.color, fontWeight: 800, letterSpacing: 0.3 } }, "Niveau ", niv.label)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#888", lineHeight: 1.5 } }, niv.s.series, " s\xE9ries \xD7 ", niv.s.reps, " reps \xB7 repos par d\xE9faut ", niv.s.repos)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "Environnement"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, marginBottom: 22 } }, modes.map((m, i) => /* @__PURE__ */ React.createElement("button", { key: m.key, onClick: () => setModeIdx(i), style: {
+    background: modeIdx === i ? m.color + "1a" : "#0d0d14",
+    border: `1.5px solid ${modeIdx === i ? m.color : "#1a1a24"}`,
+    borderRadius: 11,
+    padding: "12px 2px",
+    cursor: "pointer",
+    textAlign: "center",
+    transition: "all 0.2s"
+  } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 16, marginBottom: 2 } }, m.label.split(" ")[0]), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9.5, color: modeIdx === i ? m.color : "#666", fontWeight: 700, marginTop: 1 } }, m.label.substring(m.label.indexOf(" ") + 1))))), modeIdx === 2 && /* @__PURE__ */ React.createElement("div", { style: {
+    background: hasAnyEquip ? "#0a1a0a" : "#2a1410",
+    border: hasAnyEquip ? "1px solid #1a3a1a" : "1px solid #7f1d1d",
+    borderRadius: 10,
+    padding: "11px 14px",
+    marginBottom: 18
+  } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: hasAnyEquip ? "#4ade80" : "#fca5a5", fontWeight: 700, marginBottom: hasAnyEquip ? 4 : 0 } }, hasAnyEquip ? "\u{1F9BA} \xC9quipement d\xE9tect\xE9" : "\u26A0\uFE0F Aucun \xE9quipement coch\xE9"), hasAnyEquip && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#888", lineHeight: 1.5 } }, [
+    equip.gilet && `Gilet ${equip.giletPoids}kg`,
+    equip.kb24 && "KB 24kg",
+    equip.kb16 && "KB 16kg",
+    equip.kb12 && "KB 12kg",
+    equip.kb8 && "KB 8kg",
+    equip.halteres && `Halt\xE8res ${equip.halteresPoids}kg`
+  ].filter(Boolean).join(" \xB7 ")), !hasAnyEquip && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#888", marginTop: 5, lineHeight: 1.5 } }, "Va dans ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#ccc" } }, "Profil \u2192 \u{1F6E0}\uFE0F Mon \xE9quipement"), " pour cocher ton matos.")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "Cat\xE9gorie"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", marginBottom: 20, paddingBottom: 4 } }, [
+    { k: "all", l: "Toutes", c: "#a78bfa" },
+    { k: "push", l: "\u{1F4AA} Push", c: "#e63946" },
+    { k: "pull", l: "\u{1F51D} Pull", c: "#2a9d8f" },
+    { k: "legs", l: "\u{1F9B5} Jambes", c: "#f4a261" },
+    { k: "full", l: "\u26A1 Full", c: "#a78bfa" },
+    { k: "skills", l: "\u{1F3AF} Skills", c: "#22d3ee" },
+    { k: "core", l: "\u{1F3AF} Core", c: "#ec4899" },
+    { k: "cardio", l: "\u{1F525} Cardio", c: "#ef4444" },
+    { k: "mob", l: "\u{1F9D8} Mobilit\xE9", c: "#8b5cf6" }
+  ].map((c) => /* @__PURE__ */ React.createElement("button", { key: c.k, onClick: () => setSeanceFilter(c.k), style: {
+    flexShrink: 0,
+    background: seanceFilter === c.k ? c.c + "22" : "#0d0d14",
+    border: `1.5px solid ${seanceFilter === c.k ? c.c : "#1a1a24"}`,
+    borderRadius: 20,
+    padding: "9px 16px",
+    cursor: "pointer",
+    fontSize: 11,
+    color: seanceFilter === c.k ? c.c : "#666",
+    fontWeight: 700,
+    whiteSpace: "nowrap"
+  } }, c.l))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 } }, "\u{1F4DA} Biblioth\xE8que \xB7 ", filteredSeances.length, " s\xE9ance", filteredSeances.length > 1 ? "s" : ""), filteredSeances.map((s) => /* @__PURE__ */ React.createElement("div", { key: s.id, style: { background: "#06060c", border: `1px solid ${openSeance === s.id ? s.color + "66" : "#1a1a24"}`, borderRadius: 14, marginBottom: 12, overflow: "hidden", transition: "border 0.2s" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpenSeance(openSeance === s.id ? null : s.id), style: { width: "100%", background: "none", border: "none", padding: "16px 18px", cursor: "pointer", display: "flex", alignItems: "center", gap: 14, textAlign: "left" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 50, height: 50, background: `linear-gradient(135deg, ${s.color}33, ${s.color}11)`, border: `1px solid ${s.color}44`, borderRadius: 11, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 } }, s.emoji), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: s.color, fontWeight: 800, letterSpacing: 2, textTransform: "uppercase", marginBottom: 1 } }, "S\xE9ance ", s.id), /* @__PURE__ */ React.createElement("div", { style: { color: "#fff", fontWeight: 700, fontSize: 15, marginBottom: 3 } }, s.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#777", marginBottom: 3, lineHeight: 1.4 } }, s.subtitle), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#444" } }, "\u23F1 ", s.duree)), /* @__PURE__ */ React.createElement("span", { style: { color: "#444", fontSize: 14 } }, openSeance === s.id ? "\u25B2" : "\u25BC")), openSeance === s.id && /* @__PURE__ */ React.createElement("div", { style: { padding: "4px 18px 18px" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "#000", borderRadius: 9, padding: "11px 13px", fontSize: 12, color: "#aaa", marginBottom: 14, lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("span", { style: { color: "#a78bfa", fontWeight: 700, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase" } }, "\xC9chauff. \xB7 "), s.echauff), s.exos.map((ex, i) => {
+    const activeKey = modes[modeIdx].key;
+    const altModes = modes.filter((_, mi) => mi !== modeIdx);
+    const exoKey = `${s.id}-${i}`;
+    const isInfoOpen = openExoInfo === exoKey;
+    return /* @__PURE__ */ React.createElement("div", { key: i, style: { padding: "12px 0", borderBottom: i < s.exos.length - 1 ? "1px solid #1a1a24" : "none" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 24, height: 24, borderRadius: 5, background: s.color + "22", color: s.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, flexShrink: 0, marginTop: 2 } }, i + 1), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 5 } }, /* @__PURE__ */ React.createElement("div", { style: { color: "#fff", fontWeight: 700, fontSize: 13, flex: 1 } }, activeKey === "leste" ? getLesteText(ex) : ex[activeKey]), ex.desc && /* @__PURE__ */ React.createElement("button", { onClick: () => setOpenExoInfo(isInfoOpen ? null : exoKey), style: {
+      background: isInfoOpen ? s.color + "33" : "#1a1a24",
+      border: `1.5px solid ${isInfoOpen ? s.color : "#333"}`,
+      borderRadius: "50%",
+      width: 28,
+      height: 28,
+      cursor: "pointer",
+      fontSize: 13,
+      color: isInfoOpen ? s.color : "#888",
+      fontWeight: 800,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0,
+      touchAction: "manipulation"
+    } }, "\u2139\uFE0F")), activeKey === "leste" && ex.leste !== "\u2014" && !hasAnyEquip && /* @__PURE__ */ React.createElement("div", { style: { background: "#2a1410", border: "1px solid #7f1d1d", borderRadius: 6, padding: "7px 10px", fontSize: 10, color: "#fca5a5", marginBottom: 6 } }, "\u26A0\uFE0F ", /* @__PURE__ */ React.createElement("strong", null, "Pas d'\xE9quipement lest\xE9 coch\xE9."), " Va dans Profil \u2192 Mon \xE9quipement."), isInfoOpen && ex.desc && /* @__PURE__ */ React.createElement("div", { style: { background: s.color + "15", border: `1px solid ${s.color}55`, borderRadius: 8, padding: "11px 13px", marginBottom: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: s.color, textTransform: "uppercase", marginBottom: 6, fontWeight: 700 } }, "\u{1F4D6} Description & technique"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#ddd", lineHeight: 1.6 } }, ex.desc)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, marginBottom: 6, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("span", { style: { background: "#1e1e2e", color: "#a78bfa", borderRadius: 4, padding: "3px 7px", fontSize: 10, fontWeight: 700 } }, ex.s), /* @__PURE__ */ React.createElement("span", { style: { background: s.color + "15", color: s.color, borderRadius: 4, padding: "3px 7px", fontSize: 10 } }, ex.obj), /* @__PURE__ */ React.createElement("span", { style: { background: "#0a1a2e", color: "#60a5fa", borderRadius: 4, padding: "3px 7px", fontSize: 10, fontWeight: 700 } }, "\u23F1 Repos ", ex.rest)), ex.easy && /* @__PURE__ */ React.createElement("div", { style: { background: "#0f1a0a", border: "1px solid #1a3a1a", borderRadius: 5, padding: "6px 9px", fontSize: 10, color: "#888", marginBottom: 4 } }, /* @__PURE__ */ React.createElement("span", { style: { color: "#4ade80", fontWeight: 700 } }, "\u{1F91D} Plus facile : "), ex.easy), altModes.map((am) => /* @__PURE__ */ React.createElement("div", { key: am.key, style: { background: "#06060c", borderRadius: 4, padding: "5px 8px", fontSize: 10, color: "#666", display: "flex", gap: 5, marginBottom: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { color: am.color, fontWeight: 700, flexShrink: 0 } }, am.label.split(" ")[0], " :"), /* @__PURE__ */ React.createElement("span", null, ex[am.key]))))));
+  }), /* @__PURE__ */ React.createElement("div", { style: { background: s.color + "15", border: `1px solid ${s.color}33`, borderRadius: 7, padding: "9px 11px", marginTop: 11, fontSize: 11, color: "#ccc" } }, /* @__PURE__ */ React.createElement("span", { style: { color: s.color, fontWeight: 700 } }, "Fin de s\xE9ance \xB7 "), s.fin))))), tab === "Profil" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u2728 Ton pr\xE9nom"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1.5px solid ${userName ? "#00ff8844" : "#14141e"}`, borderRadius: 16, padding: "18px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "text",
+      value: userName,
+      onChange: (e) => setUserName(e.target.value),
+      placeholder: "Ton pr\xE9nom...",
+      maxLength: 20,
+      style: {
+        width: "100%",
+        background: "transparent",
+        border: "none",
+        outline: "none",
+        color: "#fff",
+        fontSize: 22,
+        fontWeight: 700,
+        letterSpacing: -0.3,
+        fontFamily: "inherit",
+        boxSizing: "border-box",
+        padding: 0
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#555", marginTop: 6, lineHeight: 1.5 } }, userName ? `S'affichera comme "Bonjour, ${userName}." dans le header` : "Appara\xEEtra dans le header de l'app")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u{1F464} Corps"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 16, padding: "18px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 14 } }, [{ k: "homme", l: "\u2642 Homme", c: "#3b82f6" }, { k: "femme", l: "\u2640 Femme", c: "#ec4899" }].map((s) => /* @__PURE__ */ React.createElement("button", { key: s.k, onClick: () => setSexe(s.k), style: {
+    flex: 1,
+    background: sexe === s.k ? s.c + "22" : "#16161f",
+    border: `1.5px solid ${sexe === s.k ? s.c : "#222"}`,
+    borderRadius: 7,
+    padding: "12px 0",
+    cursor: "pointer",
+    fontSize: 13,
+    color: sexe === s.k ? s.c : "#555",
+    fontWeight: 700
+  } }, s.l))), /* @__PURE__ */ React.createElement(Slider, { label: "Poids", value: poids, min: 40, max: 140, unit: "kg", onChange: setPoids, color: "#e63946" }), /* @__PURE__ */ React.createElement(Slider, { label: "Taille", value: taille, min: 145, max: 210, unit: "cm", onChange: setTaille, color: "#3b82f6" }), /* @__PURE__ */ React.createElement(Slider, { label: "\xC2ge", value: age, min: 15, max: 65, unit: "ans", onChange: setAge, color: "#4ade80" }), /* @__PURE__ */ React.createElement(Slider, { label: "Ann\xE9es de sport", value: annees, min: 0, max: 20, unit: "ans", onChange: setAnnees, color: niv.color })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u{1F3AF} Objectif"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 16, padding: "18px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 11 } }, [
+    { k: "seche", l: "S\xE8che", i: "\u{1F525}", d: "-300 kcal", c: "#ef4444" },
+    { k: "force", l: "Maintenance", i: "\u{1F4AA}", d: "= TDEE", c: "#a78bfa" },
+    { k: "force_masse", l: "Force + Masse", i: "\u26A1", d: "+200 kcal", c: "#60a5fa" },
+    { k: "masse", l: "Prise de masse", i: "\u{1F4C8}", d: "+350 kcal", c: "#4ade80" }
+  ].map((o) => /* @__PURE__ */ React.createElement("button", { key: o.k, onClick: () => setObjectif(o.k), style: {
+    background: objectif === o.k ? o.c + "22" : "#16161f",
+    border: `1.5px solid ${objectif === o.k ? o.c : "#222"}`,
+    borderRadius: 8,
+    padding: "11px 6px",
+    cursor: "pointer",
+    textAlign: "center"
+  } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 17, marginBottom: 3 } }, o.i), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: objectif === o.k ? o.c : "#888", fontWeight: 700 } }, o.l), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#444", marginTop: 2 } }, o.d)))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#aaa", marginBottom: 8 } }, "Activit\xE9 (hors sport)"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 4 } }, [{ k: "leger", l: "L\xE9ger" }, { k: "modere", l: "Mod\xE9r\xE9" }, { k: "intense", l: "Actif" }, { k: "tres_intense", l: "Tr\xE8s actif" }].map((a) => /* @__PURE__ */ React.createElement("button", { key: a.k, onClick: () => setActivite(a.k), style: {
+    background: activite === a.k ? "#a78bfa22" : "#16161f",
+    border: `1.5px solid ${activite === a.k ? "#a78bfa" : "#222"}`,
+    borderRadius: 6,
+    padding: "9px 0",
+    cursor: "pointer",
+    fontSize: 11,
+    color: activite === a.k ? "#a78bfa" : "#666",
+    fontWeight: 700
+  } }, a.l)))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u{1F4BE} Sauvegarde du profil"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 16, padding: "18px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement("div", { style: {
+    display: "flex",
+    alignItems: "center",
+    gap: 9,
+    padding: "10px 13px",
+    background: STORAGE_OK ? "#0a1a0a" : "#2a1410",
+    border: STORAGE_OK ? "1px solid #1a3a1a" : "1px solid #7f1d1d",
+    borderRadius: 9,
+    marginBottom: 13
+  } }, /* @__PURE__ */ React.createElement("div", { style: { width: 8, height: 8, borderRadius: "50%", background: STORAGE_OK ? "#4ade80" : "#ef4444", flexShrink: 0, boxShadow: STORAGE_OK ? "0 0 8px #4ade80" : "0 0 8px #ef4444" } }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: STORAGE_OK ? "#4ade80" : "#fca5a5", fontWeight: 700 } }, STORAGE_OK ? "Auto-sauvegarde active" : "Stockage indisponible"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#777", marginTop: 3, lineHeight: 1.5 } }, STORAGE_OK ? "Profil enregistr\xE9 \xE0 chaque modif." : "Safari Priv\xE9 ou stockage bloqu\xE9 \u2014 utilise Export/Import."))), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowBackup(!showBackup), style: {
+    width: "100%",
+    background: showBackup ? "#a78bfa22" : "#16161f",
+    border: `1.5px solid ${showBackup ? "#a78bfa" : "#222"}`,
+    borderRadius: 9,
+    padding: "12px",
+    cursor: "pointer",
+    fontSize: 12,
+    color: showBackup ? "#a78bfa" : "#888",
+    fontWeight: 700
+  } }, showBackup ? "\u25B2 Fermer" : "\u{1F4E4} Export / \u{1F4E5} Import manuel"), showBackup && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#666", textTransform: "uppercase", marginBottom: 7, fontWeight: 600 } }, "\u{1F4E4} Exporter ton profil"), /* @__PURE__ */ React.createElement("textarea", { readOnly: true, value: profileJSON, style: {
+    width: "100%",
+    height: 120,
+    background: "#000",
+    border: "1px solid #14141e",
+    borderRadius: 8,
+    padding: "9px",
+    color: "#888",
+    fontSize: 10,
+    fontFamily: "monospace",
+    resize: "vertical",
+    boxSizing: "border-box"
+  } }), /* @__PURE__ */ React.createElement("button", { onClick: copyToClipboard, style: {
+    width: "100%",
+    background: "#a78bfa22",
+    border: "1.5px solid #a78bfa",
+    borderRadius: 8,
+    padding: "10px",
+    cursor: "pointer",
+    marginTop: 7,
+    fontSize: 11,
+    color: "#a78bfa",
+    fontWeight: 700
+  } }, "\u{1F4CB} Copier dans presse-papier"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#666", textTransform: "uppercase", marginTop: 16, marginBottom: 7, fontWeight: 600 } }, "\u{1F4E5} Importer un profil"), /* @__PURE__ */ React.createElement(
+    "textarea",
+    {
+      placeholder: "Colle ici le JSON que tu as export\xE9 avant",
+      value: importText,
+      onChange: (e) => setImportText(e.target.value),
+      style: {
+        width: "100%",
+        height: 100,
+        background: "#000",
+        border: "1px solid #14141e",
+        borderRadius: 8,
+        padding: "9px",
+        color: "#fff",
+        fontSize: 11,
+        fontFamily: "monospace",
+        resize: "vertical",
+        boxSizing: "border-box"
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("button", { onClick: handleImport, disabled: !importText.trim(), style: {
+    width: "100%",
+    background: importText.trim() ? "#4ade8022" : "#0d0d14",
+    border: `1.5px solid ${importText.trim() ? "#4ade80" : "#222"}`,
+    borderRadius: 8,
+    padding: "10px",
+    cursor: importText.trim() ? "pointer" : "not-allowed",
+    marginTop: 7,
+    fontSize: 11,
+    color: importText.trim() ? "#4ade80" : "#444",
+    fontWeight: 700
+  } }, "\u2713 Appliquer le profil import\xE9"), importMsg && /* @__PURE__ */ React.createElement("div", { style: {
+    marginTop: 9,
+    padding: "9px 11px",
+    borderRadius: 7,
+    background: importMsg.startsWith("\u2713") ? "#0a1a0a" : "#2a1410",
+    border: importMsg.startsWith("\u2713") ? "1px solid #1a3a1a" : "1px solid #7f1d1d",
+    fontSize: 11,
+    color: importMsg.startsWith("\u2713") ? "#4ade80" : "#fca5a5"
+  } }, importMsg), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", marginTop: 11, lineHeight: 1.6 } }, "\u{1F4A1} ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#aaa" } }, "Astuce :"), " envoie-toi le texte export\xE9 par email/Notes/iMessage pour avoir un backup m\xEAme si iOS efface le stockage Safari."))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u{1F6E0}\uFE0F Mon \xE9quipement"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 16, padding: "18px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#888", marginBottom: 11, lineHeight: 1.5 } }, "Coche ce que tu poss\xE8des \u2014 les s\xE9ances s'adaptent."), [
+    { k: "anneaux", l: "\u{1F504} Anneaux de gym", c: "#a78bfa" },
+    { k: "barre", l: "\u2796 Barre de traction", c: "#60a5fa" },
+    { k: "parallettes", l: "\u{1F7E6} Parallettes / barres parall\xE8les", c: "#4ade80" },
+    { k: "elastiques", l: "\u3030\uFE0F \xC9lastiques de r\xE9sistance", c: "#f59e0b" }
+  ].map((item) => /* @__PURE__ */ React.createElement("div", { key: item.k, onClick: () => setEquip(__spreadProps(__spreadValues({}, equip), { [item.k]: !equip[item.k] })), style: {
+    display: "flex",
+    alignItems: "center",
+    gap: 11,
+    padding: "10px 0",
+    borderBottom: "1px solid #14141e",
+    cursor: "pointer"
+  } }, /* @__PURE__ */ React.createElement("div", { style: {
+    width: 22,
+    height: 22,
+    borderRadius: 5,
+    background: equip[item.k] ? item.c : "transparent",
+    border: `2px solid ${equip[item.k] ? item.c : "#333"}`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: 800
+  } }, equip[item.k] ? "\u2713" : ""), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: equip[item.k] ? "#fff" : "#888", fontWeight: equip[item.k] ? 700 : 400 } }, item.l))), /* @__PURE__ */ React.createElement("div", { style: { padding: "11px 0", borderBottom: "1px solid #14141e" } }, /* @__PURE__ */ React.createElement("div", { onClick: () => setEquip(__spreadProps(__spreadValues({}, equip), { gilet: !equip.gilet })), style: { display: "flex", alignItems: "center", gap: 11, cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { style: {
+    width: 22,
+    height: 22,
+    borderRadius: 5,
+    background: equip.gilet ? "#ef4444" : "transparent",
+    border: `2px solid ${equip.gilet ? "#ef4444" : "#333"}`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: 800
+  } }, equip.gilet ? "\u2713" : ""), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: equip.gilet ? "#fff" : "#888", fontWeight: equip.gilet ? 700 : 400 } }, "\u{1F9BA} Gilet lest\xE9")), equip.gilet && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 9, paddingLeft: 33 } }, /* @__PURE__ */ React.createElement(Slider, { label: "Poids du gilet", value: equip.giletPoids, min: 5, max: 30, step: 1, unit: "kg", onChange: (v) => setEquip(__spreadProps(__spreadValues({}, equip), { giletPoids: v })), color: "#ef4444" }))), /* @__PURE__ */ React.createElement("div", { style: { padding: "11px 0", borderBottom: "1px solid #14141e" } }, /* @__PURE__ */ React.createElement("div", { onClick: () => setEquip(__spreadProps(__spreadValues({}, equip), { halteres: !equip.halteres })), style: { display: "flex", alignItems: "center", gap: 11, cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { style: {
+    width: 22,
+    height: 22,
+    borderRadius: 5,
+    background: equip.halteres ? "#22d3ee" : "transparent",
+    border: `2px solid ${equip.halteres ? "#22d3ee" : "#333"}`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: 800
+  } }, equip.halteres ? "\u2713" : ""), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: equip.halteres ? "#fff" : "#888", fontWeight: equip.halteres ? 700 : 400 } }, "\u{1F4AA} Halt\xE8res")), equip.halteres && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 9, paddingLeft: 33 } }, /* @__PURE__ */ React.createElement(Slider, { label: "Poids max disponible", value: equip.halteresPoids, min: 5, max: 50, step: 1, unit: "kg", onChange: (v) => setEquip(__spreadProps(__spreadValues({}, equip), { halteresPoids: v })), color: "#22d3ee" }))), /* @__PURE__ */ React.createElement("div", { style: { padding: "11px 0" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: "#fff", fontWeight: 700, marginBottom: 8 } }, "\u{1F3CB}\uFE0F Kettlebells (coche les poids)"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6 } }, [
+    { k: "kb8", l: "8 kg" },
+    { k: "kb12", l: "12 kg" },
+    { k: "kb16", l: "16 kg" },
+    { k: "kb24", l: "24 kg" }
+  ].map((kb) => /* @__PURE__ */ React.createElement("button", { key: kb.k, onClick: () => setEquip(__spreadProps(__spreadValues({}, equip), { [kb.k]: !equip[kb.k] })), style: {
+    background: equip[kb.k] ? "#f59e0b22" : "#16161f",
+    border: `1.5px solid ${equip[kb.k] ? "#f59e0b" : "#222"}`,
+    borderRadius: 7,
+    padding: "10px 0",
+    cursor: "pointer",
+    fontSize: 12,
+    color: equip[kb.k] ? "#f59e0b" : "#555",
+    fontWeight: 700
+  } }, kb.l))))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u{1F550} Horaires"), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 16, padding: "18px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#aaa", marginBottom: 12 } }, "Service"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-around", gap: 10, marginBottom: 14 } }, /* @__PURE__ */ React.createElement(HourPicker, { label: "D\xE9but", hour: startH, minute: startM, onHour: setStartH, onMinute: setStartM, color: "#60a5fa" }), /* @__PURE__ */ React.createElement("div", { style: { width: 1, background: "#1a1a24" } }), /* @__PURE__ */ React.createElement(HourPicker, { label: "Fin", hour: endH, onHour: setEndH, color: "#60a5fa" })), /* @__PURE__ */ React.createElement(Slider, { label: "Sommeil", value: sleep, min: 6, max: 11, unit: "h", onChange: setSleep, color: sleep >= 8 ? "#4ade80" : sleep >= 7 ? "#f59e0b" : "#ef4444" }), /* @__PURE__ */ React.createElement(Slider, { label: "Trajet", value: trajet, min: 5, max: 90, unit: "min", onChange: setTrajet, color: "#888" }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#aaa", marginBottom: 12, marginTop: 6 } }, "Jours de repos"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-around", gap: 10 } }, /* @__PURE__ */ React.createElement(HourPicker, { label: "Coucher", hour: coucherReposH, onHour: setCoucherReposH, color: "#6366f1" }), /* @__PURE__ */ React.createElement("div", { style: { width: 1, background: "#1a1a24" } }), /* @__PURE__ */ React.createElement(HourPicker, { label: "R\xE9veil normal", hour: reveilNormalH, onHour: setReveilNormalH, color: "#f59e0b" }))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 9 } }, "\u{1F4CA} R\xE9sultats"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 11 } }, [
+    { l: "Calories", v: calc.cal, u: "kcal/j", c: "#f59e0b", s: `BMR ${calc.bmr}` },
+    { l: "Prot\xE9ines", v: calc.prot + "g", u: "/j", c: "#4ade80", s: `${calc.protCoeff}g/kg` },
+    { l: "Glucides", v: calc.gluc + "g", u: "/j", c: "#60a5fa", s: "Reste" },
+    { l: "Lipides", v: calc.lip + "g", u: "/j", c: "#f472b6", s: objectif === "seche" ? "0.8g/kg" : "1g/kg" }
+  ].map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", borderRadius: 10, padding: "12px", border: `1px solid ${x.c}33` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 } }, x.l), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, color: x.c } }, x.v, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#444", marginLeft: 2 } }, x.u)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", marginTop: 3 } }, x.s)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 14, padding: "16px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement(MacroBar, { label: `Prot\xE9ines (${Math.round(calc.prot * 4 / calc.cal * 100)}%)`, value: calc.prot, max: 250, color: "#4ade80" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Glucides (${Math.round(calc.gluc * 4 / calc.cal * 100)}%)`, value: calc.gluc, max: 500, color: "#60a5fa" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Lipides (${Math.round(calc.lip * 9 / calc.cal * 100)}%)`, value: calc.lip, max: 150, color: "#f472b6" })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1px solid ${niv.color}44`, borderRadius: 14, padding: "16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 9, alignItems: "center", marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { background: niv.color + "22", border: `1px solid ${niv.color}44`, borderRadius: 7, padding: "7px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, color: niv.color, fontWeight: 800 } }, niv.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555" } }, niv.annees)), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#aaa", lineHeight: 1.5 } }, niv.conseil)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 4 } }, niv.skills.map((sk, i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { background: niv.color + "15", color: niv.color, border: `1px solid ${niv.color}33`, borderRadius: 5, padding: "3px 8px", fontSize: 10 } }, sk))))), tab === "Calcul" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "\u{1F4CA} Aujourd'hui \xB7 ", mealsDate), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8, marginBottom: 18 } }, [
+    { lab: "Calories", v: totals.kcal, obj: calc.cal, c: "#00ff88", u: "kcal" },
+    { lab: "Prot\xE9ines", v: Math.round(totals.prot), obj: calc.prot, c: "#a78bfa", u: "g" },
+    { lab: "Glucides", v: Math.round(totals.glu), obj: calc.gluc, c: "#60a5fa", u: "g" },
+    { lab: "Lipides", v: Math.round(totals.lip), obj: calc.lip, c: "#f59e0b", u: "g" }
+  ].map((s, i) => {
+    const pct = s.obj > 0 ? Math.min(100, Math.round(s.v / s.obj * 100)) : 0;
+    const remain = s.obj - s.v;
+    const over = remain < 0;
+    return /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "14px 14px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#666", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 } }, s.lab), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 4, marginBottom: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: -0.5, lineHeight: 1 } }, s.v), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#444", fontWeight: 600 } }, "/ ", s.obj, " ", s.u)), /* @__PURE__ */ React.createElement("div", { style: { height: 5, background: "#14141e", borderRadius: 3, overflow: "hidden", marginBottom: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: pct + "%", background: over ? "#ef4444" : s.c, borderRadius: 3, transition: "width 0.3s" } })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: over ? "#ef4444" : pct >= 90 ? "#4ade80" : "#666", fontWeight: 700 } }, over ? `+${Math.abs(remain)} d\xE9pass\xE9` : `${remain} ${s.u} restant`));
+  })), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowAddMeal(!showAddMeal), style: {
+    width: "100%",
+    background: showAddMeal ? "#1a1a24" : "#00ff88",
+    border: "none",
+    borderRadius: 14,
+    padding: "15px",
+    fontSize: 14,
+    fontWeight: 800,
+    color: showAddMeal ? "#fff" : "#000",
+    cursor: "pointer",
+    marginBottom: 18,
+    letterSpacing: 0.3,
+    transition: "all 0.2s"
+  } }, showAddMeal ? "\u2715 Fermer" : "+ Ajouter un aliment"), showAddMeal && /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1.5px solid #1a1a24", borderRadius: 16, padding: "16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, background: "#06060c", border: "1px solid #14141e", borderRadius: 24, padding: 3, marginBottom: 14 } }, [{ k: "lib", l: "\u{1F4DA} Biblioth\xE8que" }, { k: "custom", l: "\u270F\uFE0F Manuel" }].map((m) => /* @__PURE__ */ React.createElement("button", { key: m.k, onClick: () => {
+    setAliMode(m.k);
+    setSelectedAli(null);
+  }, style: {
+    flex: 1,
+    background: aliMode === m.k ? "#fff" : "transparent",
+    border: "none",
+    borderRadius: 20,
+    padding: "9px",
+    cursor: "pointer",
+    fontSize: 11,
+    color: aliMode === m.k ? "#000" : "#666",
+    fontWeight: 700,
+    transition: "all 0.2s"
+  } }, m.l))), aliMode === "lib" && /* @__PURE__ */ React.createElement(React.Fragment, null, selectedAli ? /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14, padding: "12px", background: "#06060c", border: "1px solid #14141e", borderRadius: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 22 } }, (_v = ALI_CATS.find((c) => c.k === selectedAli.c)) == null ? void 0 : _v.e), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: "#fff" } }, selectedAli.n), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", marginTop: 2 } }, selectedAli.k, " kcal \xB7 ", selectedAli.p, "g P \xB7 ", selectedAli.g, "g G \xB7 ", selectedAli.l, "g L (pour 100g)")), /* @__PURE__ */ React.createElement("button", { onClick: () => setSelectedAli(null), style: { background: "#1a1a24", border: "none", color: "#888", width: 28, height: 28, borderRadius: 14, cursor: "pointer", fontSize: 13 } }, "\u2715")), /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "#888", fontWeight: 600 } }, "Quantit\xE9"), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "baseline", gap: 3 } }, /* @__PURE__ */ React.createElement("input", { type: "number", value: mealQty, onChange: (e) => setMealQty(Math.max(1, Number(e.target.value) || 1)), style: {
+    background: "transparent",
+    border: "none",
+    outline: "none",
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: 800,
+    width: 70,
+    textAlign: "right",
+    fontFamily: "inherit"
+  } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#555", fontWeight: 600 } }, "g"))), /* @__PURE__ */ React.createElement("input", { type: "range", min: 10, max: 500, step: 5, value: mealQty, onChange: (e) => setMealQty(Number(e.target.value)), style: { width: "100%", accentColor: "#00ff88", cursor: "pointer", height: 32 } }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, marginTop: 8 } }, [50, 100, 150, 200].map((q) => /* @__PURE__ */ React.createElement("button", { key: q, onClick: () => setMealQty(q), style: {
+    flex: 1,
+    background: mealQty === q ? "#00ff8822" : "#06060c",
+    border: `1px solid ${mealQty === q ? "#00ff88" : "#14141e"}`,
+    borderRadius: 8,
+    padding: "7px 0",
+    cursor: "pointer",
+    fontSize: 11,
+    color: mealQty === q ? "#00ff88" : "#666",
+    fontWeight: 700
+  } }, q, "g")))), /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", border: "1px solid #14141e", borderRadius: 11, padding: "11px 13px", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#555", textTransform: "uppercase", fontWeight: 700, marginBottom: 7 } }, "Apport pour ", mealQty, "g"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 12 } }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#00ff88" } }, Math.round(selectedAli.k * mealQty / 100)), " ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "kcal")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#a78bfa" } }, Math.round(selectedAli.p * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "P")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#60a5fa" } }, Math.round(selectedAli.g * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "G")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#f59e0b" } }, Math.round(selectedAli.l * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "L")))), /* @__PURE__ */ React.createElement("button", { onClick: () => addMealFromAli(selectedAli, mealQty), style: {
+    width: "100%",
+    background: "#00ff88",
+    border: "none",
+    borderRadius: 12,
+    padding: "14px",
+    fontSize: 13,
+    fontWeight: 800,
+    color: "#000",
+    cursor: "pointer",
+    letterSpacing: 0.3
+  } }, "\u2713 Ajouter \xE0 mon jour")) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "text",
+      placeholder: "\u{1F50D} Rechercher un aliment...",
+      value: mealSearch,
+      onChange: (e) => setMealSearch(e.target.value),
+      style: {
+        width: "100%",
+        background: "#06060c",
+        border: "1px solid #14141e",
+        borderRadius: 10,
+        padding: "11px 13px",
+        color: "#fff",
+        fontSize: 13,
+        fontFamily: "inherit",
+        outline: "none",
+        boxSizing: "border-box",
+        marginBottom: 11
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, overflowX: "auto", marginBottom: 13, paddingBottom: 3 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setMealCat("all"), style: {
+    flexShrink: 0,
+    background: mealCat === "all" ? "#00ff8822" : "#06060c",
+    border: `1px solid ${mealCat === "all" ? "#00ff88" : "#14141e"}`,
+    borderRadius: 18,
+    padding: "7px 13px",
+    cursor: "pointer",
+    fontSize: 11,
+    color: mealCat === "all" ? "#00ff88" : "#666",
+    fontWeight: 700,
+    whiteSpace: "nowrap"
+  } }, "Tout"), ALI_CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.k, onClick: () => setMealCat(c.k), style: {
+    flexShrink: 0,
+    background: mealCat === c.k ? "#00ff8822" : "#06060c",
+    border: `1px solid ${mealCat === c.k ? "#00ff88" : "#14141e"}`,
+    borderRadius: 18,
+    padding: "7px 12px",
+    cursor: "pointer",
+    fontSize: 11,
+    color: mealCat === c.k ? "#00ff88" : "#666",
+    fontWeight: 700,
+    whiteSpace: "nowrap",
+    display: "flex",
+    alignItems: "center",
+    gap: 4
+  } }, c.e, " ", c.l))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", fontWeight: 600, marginBottom: 6 } }, filteredAlim.length, " r\xE9sultat", filteredAlim.length > 1 ? "s" : ""), /* @__PURE__ */ React.createElement("div", { style: { maxHeight: 380, overflowY: "auto", margin: "0 -16px", padding: "0 16px" } }, filteredAlim.map((a, ai) => {
+    var _a2;
+    return /* @__PURE__ */ React.createElement("button", { key: a.id, onClick: () => setSelectedAli(a), style: {
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      gap: 11,
+      padding: "11px 0",
+      borderBottom: ai < filteredAlim.length - 1 ? "1px solid #14141e" : "none",
+      background: "transparent",
+      border: "none",
+      cursor: "pointer",
+      textAlign: "left"
+    } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 18, flexShrink: 0, width: 24, textAlign: "center" } }, (_a2 = ALI_CATS.find((c) => c.k === a.c)) == null ? void 0 : _a2.e), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#fff", fontWeight: 600 } }, a.n), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#555", marginTop: 2 } }, a.k, " kcal \xB7 ", a.p, "g P \xB7 ", a.g, "g G \xB7 ", a.l, "g L")), /* @__PURE__ */ React.createElement("span", { style: { color: "#444", fontSize: 14 } }, "\u203A"));
+  }), filteredAlim.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { padding: "30px 0", textAlign: "center", color: "#555", fontSize: 12 } }, "Aucun aliment trouv\xE9.", /* @__PURE__ */ React.createElement("br", null), "Bascule sur ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#888" } }, "\u270F\uFE0F Manuel"), " pour le cr\xE9er.")))), aliMode === "custom" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#888", lineHeight: 1.5, marginBottom: 13 } }, "Saisis les valeurs ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#aaa" } }, "pour la quantit\xE9 que tu as mang\xE9e"), " (lis l'\xE9tiquette du produit)."), /* @__PURE__ */ React.createElement("label", { style: { fontSize: 10, letterSpacing: 1.5, color: "#666", textTransform: "uppercase", fontWeight: 600, display: "block", marginBottom: 5 } }, "Nom de l'aliment"), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "text",
+      placeholder: "ex: Lasagnes maman",
+      value: customForm.nom,
+      onChange: (e) => setCustomForm(__spreadProps(__spreadValues({}, customForm), { nom: e.target.value })),
+      style: {
+        width: "100%",
+        background: "#06060c",
+        border: "1px solid #14141e",
+        borderRadius: 10,
+        padding: "11px 13px",
+        color: "#fff",
+        fontSize: 13,
+        fontFamily: "inherit",
+        outline: "none",
+        boxSizing: "border-box",
+        marginBottom: 13
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("label", { style: { fontSize: 10, letterSpacing: 1.5, color: "#666", textTransform: "uppercase", fontWeight: 600, display: "block", marginBottom: 5 } }, "Quantit\xE9 (g)"), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "number",
+      value: customForm.qty,
+      onChange: (e) => setCustomForm(__spreadProps(__spreadValues({}, customForm), { qty: Number(e.target.value) || 0 })),
+      style: {
+        width: "100%",
+        background: "#06060c",
+        border: "1px solid #14141e",
+        borderRadius: 10,
+        padding: "11px 13px",
+        color: "#fff",
+        fontSize: 13,
+        fontFamily: "inherit",
+        outline: "none",
+        boxSizing: "border-box",
+        marginBottom: 13
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 } }, [
+    { k: "kcal", l: "Calories", u: "kcal", c: "#00ff88" },
+    { k: "prot", l: "Prot\xE9ines", u: "g", c: "#a78bfa" },
+    { k: "glu", l: "Glucides", u: "g", c: "#60a5fa" },
+    { k: "lip", l: "Lipides", u: "g", c: "#f59e0b" }
+  ].map((f) => /* @__PURE__ */ React.createElement("div", { key: f.k }, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 10, letterSpacing: 1.5, color: f.c, textTransform: "uppercase", fontWeight: 700, display: "block", marginBottom: 5 } }, f.l), /* @__PURE__ */ React.createElement("div", { style: { position: "relative" } }, /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "number",
+      step: "0.1",
+      value: customForm[f.k],
+      onChange: (e) => setCustomForm(__spreadProps(__spreadValues({}, customForm), { [f.k]: Number(e.target.value) || 0 })),
+      style: {
+        width: "100%",
+        background: "#06060c",
+        border: `1px solid ${f.c}33`,
+        borderRadius: 10,
+        padding: "11px 38px 11px 13px",
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: 700,
+        fontFamily: "inherit",
+        outline: "none",
+        boxSizing: "border-box"
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("span", { style: { position: "absolute", right: 13, top: "50%", transform: "translateY(-50%)", fontSize: 10, color: "#555", fontWeight: 600 } }, f.u))))), /* @__PURE__ */ React.createElement("button", { onClick: addCustomMeal, disabled: !customForm.nom.trim(), style: {
+    width: "100%",
+    background: customForm.nom.trim() ? "#00ff88" : "#1a1a24",
+    border: "none",
+    borderRadius: 12,
+    padding: "14px",
+    fontSize: 13,
+    fontWeight: 800,
+    color: customForm.nom.trim() ? "#000" : "#444",
+    cursor: customForm.nom.trim() ? "pointer" : "not-allowed",
+    letterSpacing: 0.3
+  } }, "\u2713 Ajouter \xE0 mon jour"))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "\u{1F37D}\uFE0F Mes aliments \xB7 ", meals.length), meals.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1.5px dashed #1a1a24", borderRadius: 14, padding: "34px 18px", textAlign: "center", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 32, marginBottom: 8, opacity: 0.4 } }, "\u{1F37D}\uFE0F"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#555", lineHeight: 1.6 } }, "Aucun aliment ajout\xE9 aujourd'hui.", /* @__PURE__ */ React.createElement("br", null), "Tape ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#aaa" } }, "+ Ajouter"), " pour commencer.")) : /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, overflow: "hidden", marginBottom: 14 } }, meals.map((m, mi) => /* @__PURE__ */ React.createElement("div", { key: m.id, style: {
+    padding: "12px 14px",
+    borderBottom: mi < meals.length - 1 ? "1px solid #14141e" : "none",
+    display: "flex",
+    alignItems: "center",
+    gap: 11
+  } }, /* @__PURE__ */ React.createElement("div", { style: { minWidth: 36, textAlign: "left" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#444", fontWeight: 700, letterSpacing: 0.5 } }, m.time)), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#fff", fontWeight: 700, marginBottom: 2 } }, m.nom, " ", m.isCustom && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#f59e0b", marginLeft: 4 } }, "(manuel)")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666" } }, m.qty, "g \xB7 ", m.kcal, " kcal \xB7 ", m.prot, "g P \xB7 ", m.glu, "g G \xB7 ", m.lip, "g L")), /* @__PURE__ */ React.createElement("button", { onClick: () => removeMeal(m.id), style: {
+    background: "#1a1a24",
+    border: "none",
+    color: "#888",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    cursor: "pointer",
+    fontSize: 12,
+    flexShrink: 0
+  } }, "\u2715")))), meals.length > 0 && /* @__PURE__ */ React.createElement("button", { onClick: resetDay, style: {
+    width: "100%",
+    background: "transparent",
+    border: "1px solid #2a1410",
+    color: "#ef4444",
+    borderRadius: 12,
+    padding: "11px",
+    cursor: "pointer",
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: 0.5
+  } }, "\u{1F5D1} Reset du jour"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#444", marginTop: 13, lineHeight: 1.6, textAlign: "center" } }, "\u{1F4A1} Les donn\xE9es se remettent \xE0 z\xE9ro automatiquement \xE0 chaque nouveau jour.")), tab === "Courses" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #1e3a5f", borderRadius: 14, padding: "14px 16px", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888" } }, "2 semaines \xB7 ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#a78bfa" } }, poids, "kg \xB7 ", calc.prot, "g prot/j \xB7 ", calc.cal, " kcal"))), COURSES.map((c, ri) => /* @__PURE__ */ React.createElement("div", { key: ri, style: { background: "#0a0a12", borderRadius: 11, overflow: "hidden", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "11px 14px", background: "#14141e", borderBottom: "1px solid #1e1e2a", fontSize: 12, fontWeight: 800, color: "#fff" } }, c.r), c.items.map((item, ii) => {
+    const itemKey = `${ri}-${ii}`;
+    const isOpen = openCourseItem === itemKey;
+    return /* @__PURE__ */ React.createElement("div", { key: ii, style: { borderBottom: ii < c.items.length - 1 ? "1px solid #1a1a24" : "none" } }, /* @__PURE__ */ React.createElement("div", { onClick: () => setOpenCourseItem(isOpen ? null : itemKey), style: { padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 18, height: 18, border: "1.5px solid #2a2a3a", borderRadius: 4, flexShrink: 0 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "#ccc", flex: 1 } }, item.n), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: isOpen ? "#a78bfa" : "#444", fontWeight: 700 } }, isOpen ? "\u25B2" : "\u2139\uFE0F")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", padding: "11px 14px 13px", borderTop: "1px solid #1a1a24" } }, item.macro && item.macro !== "-" && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 4 } }, "Macros pour 100g"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#fff", fontWeight: 700 } }, item.macro)), /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#4ade80", textTransform: "uppercase", marginBottom: 4, fontWeight: 700 } }, "\u{1F331} Nutriments cl\xE9s"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#ccc", lineHeight: 1.5 } }, item.nutri)), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a1a0a", border: "1px solid #1a3a1a", borderRadius: 7, padding: "9px 11px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#a78bfa", textTransform: "uppercase", marginBottom: 4, fontWeight: 700 } }, "\u{1F4A1} Pourquoi cet aliment"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#ddd", lineHeight: 1.5 } }, item.why))));
+  }))))), /* @__PURE__ */ React.createElement("div", { style: {
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    background: "rgba(0,0,0,0.85)",
+    backdropFilter: "blur(24px)",
+    WebkitBackdropFilter: "blur(24px)",
+    borderTop: "1px solid #14141e",
+    paddingBottom: "env(safe-area-inset-bottom)"
+  } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 680, margin: "0 auto", display: "flex", justifyContent: "space-around", padding: "8px 4px 6px" } }, tabs.map((t) => {
+    const active = tab === t.key;
+    return /* @__PURE__ */ React.createElement("button", { key: t.key, onClick: () => {
+      setTab(t.key);
+      if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+    }, style: {
+      background: "none",
+      border: "none",
+      cursor: "pointer",
+      position: "relative",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 3,
+      padding: "8px 4px 10px",
+      minWidth: 56,
+      color: active ? "#00ff88" : "#555",
+      transition: "all 0.2s",
+      touchAction: "manipulation",
+      WebkitTapHighlightColor: "transparent"
+    } }, /* @__PURE__ */ React.createElement("span", { style: {
+      fontSize: 22,
+      filter: active ? "none" : "grayscale(1) opacity(0.5)",
+      transition: "filter 0.2s"
+    } }, t.icon), /* @__PURE__ */ React.createElement("span", { style: {
+      fontSize: 9.5,
+      letterSpacing: 0.3,
+      fontWeight: active ? 700 : 600,
+      color: active ? "#00ff88" : "#555"
+    } }, t.key), active && /* @__PURE__ */ React.createElement("div", { style: {
+      position: "absolute",
+      bottom: 2,
+      width: 24,
+      height: 3,
+      borderRadius: 2,
+      background: "#00ff88",
+      boxShadow: "0 0 10px #00ff88"
+    } }));
+  }))));
+}
+
+// ─── Montage de l'app ───
+(function () {
+  function mount() {
+    if (typeof React === "undefined" || typeof ReactDOM === "undefined") {
+      var err = document.getElementById("error");
+      if (err) { err.style.display = "block"; err.textContent = "React non chargé. Vérifie ta connexion internet."; }
+      return;
+    }
+    try {
+      ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+    } catch (e) {
+      var err2 = document.getElementById("error");
+      if (err2) { err2.style.display = "block"; err2.textContent = "ERR JS: " + e.message + "\n\n" + (e.stack || ""); }
+    }
+  }
+  mount();
+})();
