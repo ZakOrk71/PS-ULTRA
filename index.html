@@ -49,17 +49,26 @@
   <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js" crossorigin></script>
 
-  <!-- Le code de l'app (externe) -->
-  <script src="app.js"></script>
+  <!-- Le code de l'app (externe) avec cache-buster -->
+  <script>
+    (function () {
+      var s = document.createElement("script");
+      s.src = "app.js?v=" + Date.now();   // force toujours la dernière version
+      document.body.appendChild(s);
+    })();
+  </script>
 
-  <!-- Service Worker pour le mode hors-ligne -->
+  <!-- Désinstalle l'ancien service worker s'il existe (nettoyage du cache foireux) -->
   <script>
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker.register("sw.js").catch(function (e) {
-          console.log("SW non enregistré:", e);
-        });
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (r) { r.unregister(); });
       });
+      if (window.caches && caches.keys) {
+        caches.keys().then(function (keys) {
+          keys.forEach(function (k) { caches.delete(k); });
+        });
+      }
     }
   </script>
 </body>
