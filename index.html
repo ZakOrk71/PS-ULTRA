@@ -19,21 +19,18 @@
       min-height: 100vh; min-height: 100dvh;
     }
     input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; }
-    input[type="range"]::-webkit-slider-runnable-track {
-      height: 6px; background: #1a1a24; border-radius: 3px;
-    }
+    input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: #1a1a24; border-radius: 3px; }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; appearance: none; width: 24px; height: 24px;
       border-radius: 50%; background: #fff; cursor: pointer;
       box-shadow: 0 2px 10px rgba(0,255,136,0.6);
-      margin-top: -9px;
-      border: 2px solid #00ff88;
+      margin-top: -9px; border: 2px solid #00ff88;
     }
-    input[type="text"] { -webkit-appearance: none; appearance: none; }
-    input[type="text"]::placeholder { color: #444; }
+    input[type="text"], input[type="number"] { -webkit-appearance: none; appearance: none; }
+    input::placeholder { color: #444; }
+    input[type="number"] { -moz-appearance: textfield; }
+    input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     button { font-family: inherit; }
-    #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 22px; }
-    .spinner { width: 44px; height: 44px; border: 3px solid #14141e; border-top-color: #00ff88; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes fadeOut { 0% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
     #error { display: none; padding: 30px; color: #fca5a5; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
@@ -41,8 +38,8 @@
 </head>
 <body>
   <div id="root">
-    <div id="loading">
-      <div class="spinner"></div>
+    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:20">
+      <div style="width:44px;height:44px;border:3px solid #14141e;border-top-color:#00ff88;border-radius:50%;animation:spin 0.7s linear infinite"></div>
       <div style="color:#00ff88;font-weight:800;letter-spacing:4px;font-size:11px">PS ULTRA</div>
     </div>
   </div>
@@ -213,861 +210,6 @@ const NIVEAUX = [
     conseil: "Volume = leste. Programmation tr\xE8s pr\xE9cise."
   }
 ];
-const SEANCES = [
-  {
-    id: "A",
-    label: "PUSH",
-    subtitle: "Pecs \xB7 Triceps \xB7 \xC9paules",
-    emoji: "\u{1F4AA}",
-    color: "#e63946",
-    duree: "60-75 min",
-    echauff: "10 min mobilit\xE9 \xE9paules \xB7 3\xD75 dips l\xE9gers",
-    fin: "Planche hold 4\xD7max \u2014 objectif 20\u219230s",
-    exos: [
-      {
-        nom: "HSPU",
-        s: "5\xD73-5",
-        rest: "3 min",
-        obj: "Force pure",
-        outdoor: "HSPU strict contre un mur de parc",
-        maison: "HSPU strict au mur \u2014 tempo 3s descente",
-        leste: "HSPU lest\xE9 avec gilet",
-        easy: "Pike push-up 90\xB0 (pieds sur\xE9lev\xE9s) si HSPU trop dur",
-        salle: "D\xE9velopp\xE9 militaire barre 5\xD73-5 lourd",
-        desc: "Le Handstand Push-Up (pompe en \xE9quilibre sur les mains) cible \xE9paules + triceps + trap\xE8zes. En \xE9quilibre contre le mur, descends la t\xEAte lentement entre les mains (coudes \xE0 45\xB0 du corps, pas \xE9cart\xE9s), pousse pour remonter. Erreurs : cambrer le dos, coudes \xE9cart\xE9s."
-      },
-      {
-        nom: "Dips",
-        s: "4\xD76-8",
-        rest: "2-3 min",
-        obj: "Poitrine / Triceps",
-        outdoor: "Dips sur barres parall\xE8les de parc",
-        maison: "Dips entre 2 chaises \u2014 tempo 3s descente",
-        leste: "Dips lest\xE9s sur anneaux/barres",
-        easy: "Dips au banc (pieds au sol) si dips classiques trop durs",
-        salle: "Dips machine assist\xE9e OU dips lest\xE9s station",
-        desc: "Mouvement compound poitrine basse + triceps + delto\xEFdes ant\xE9rieurs. L\xE9g\xE8re inclinaison avant = + pecs, vertical = + triceps. Descends jusqu'\xE0 \xE9paules sous coudes, jamais plus bas (risque blessure). Pousse explosivement."
-      },
-      {
-        nom: "Pike push-up",
-        s: "3\xD78-10",
-        rest: "90 s",
-        obj: "Volume \xE9paules",
-        outdoor: "Pike push-up 90\xB0 au sol",
-        maison: "Pike push-up 90\xB0 \u2014 pause 2s en bas",
-        leste: "D\xE9ficit HSPU lest\xE9",
-        easy: "Pompes mains sous \xE9paules, coudes le long du corps",
-        salle: "D\xE9velopp\xE9 \xE9paules machine ou halt\xE8res",
-        desc: "Voir entr\xE9e principale Pike push-up."
-      },
-      {
-        nom: "Archer push-up",
-        s: "3\xD710-12",
-        rest: "90 s",
-        obj: "Pecs / Stabilisation",
-        outdoor: "Archer push-up sur le sol",
-        maison: "Archer push-up \u2014 bras vraiment tendu",
-        leste: "Ring push-up avec pronatation finale",
-        easy: "Pompes asym\xE9triques (poids l\xE9g\xE8rement d\xE9port\xE9)",
-        salle: "D\xE9velopp\xE9 inclin\xE9 halt\xE8re unilat\xE9ral",
-        desc: "Pompe asym\xE9trique : un bras plie, l'autre reste tendu en appui. Plus tu d\xE9portes le poids sur le bras qui travaille, plus c'est dur. Progression vers la one-arm push-up."
-      },
-      {
-        nom: "Pseudo planche push-up",
-        s: "3\xD78",
-        rest: "2 min",
-        obj: "Progression planche",
-        outdoor: "Pseudo planche au sol \u2014 penche au max",
-        maison: "Pseudo planche strict \u2014 \xE9paules au-del\xE0 des mains",
-        leste: "Pseudo planche lest\xE9",
-        easy: "Pompes diamant (mains rapproch\xE9es)",
-        salle: "Front raise halt\xE8res lourds \u2014 lent",
-        desc: "Pompe avec \xE9paules AVANT des poignets \u2014 penche-toi le plus possible. Tension intense dans \xE9paules ant\xE9rieures + avant-bras. Progression directe vers la planche."
-      }
-    ]
-  },
-  {
-    id: "B",
-    label: "PULL",
-    subtitle: "Dos \xB7 Biceps \xB7 Avant-bras",
-    emoji: "\u{1F51D}",
-    color: "#2a9d8f",
-    duree: "60-75 min",
-    echauff: "5 min scapulaires \xB7 Front lever tuck 3\xD715s",
-    fin: "Front lever hold 4\xD7max \u2014 objectif 10\u219215s",
-    exos: [
-      {
-        nom: "Muscle-up",
-        s: "5\xD73-5",
-        rest: "3 min",
-        obj: "Force pure",
-        outdoor: "Muscle-up sur barre street workout",
-        maison: "Muscle-up explosif \u2014 descente lente 3s",
-        leste: "Muscle-up lest\xE9 +5\u2192+20kg",
-        easy: "Negative muscle-up (mont\xE9e assist\xE9e, descente lente) ou explosive pull-up haut sternum",
-        salle: "Tractions explosives + dips encha\xEEn\xE9s (sur la m\xEAme rep)",
-        desc: "Skill embl\xE9matique : traction explosive + dip au-dessus de la barre. Tire fort vers le sternum, lance coudes vers l'avant pour passer au-dessus, termine en dip bras tendus. Fondamental en street workout."
-      },
-      {
-        nom: "Front lever row",
-        s: "4\xD75-8",
-        rest: "2-3 min",
-        obj: "Dos \xE9pais",
-        outdoor: "Front lever row sur barre de parc",
-        maison: "Front lever row sur barre fixe",
-        leste: "Anneaux lest\xE9",
-        easy: "Inverted row (corps \xE0 l'horizontale sous barre basse)",
-        salle: "T-bar row OU rowing barre yates lourd",
-        desc: "Tirage horizontal sous barre, corps tendu \xE0 l'horizontale. Garde le corps parfaitement gain\xE9 (planche). Tire le sternum vers la barre. Cible dos \xE9pais + biceps + core. Tr\xE8s efficace."
-      },
-      {
-        nom: "Traction prise large",
-        s: "4\xD76-8",
-        rest: "2 min",
-        obj: "Masse dorsale",
-        outdoor: "Traction large \u2014 4s descente",
-        maison: "Traction large \u2014 4s descente",
-        leste: "Traction lest\xE9e prise large",
-        easy: "Australian pull-up (corps inclin\xE9, pieds au sol) ou traction assist\xE9e \xE9lastique",
-        salle: "Tirage poulie large lourd 4\xD76-8",
-        desc: "Tirage vertical, mains au-del\xE0 des \xE9paules. Cible sp\xE9cifiquement le grand dorsal pour la LARGEUR du dos. Descends bras compl\xE8tement tendus, monte jusqu'\xE0 menton au-dessus de la barre. Tempo lent = bcp + dur."
-      },
-      {
-        nom: "Archer pull-up",
-        s: "3\xD76/c\xF4t\xE9",
-        rest: "2 min",
-        obj: "Force unilat\xE9rale",
-        outdoor: "Archer pull-up barre de parc",
-        maison: "Archer pull-up \u2014 bras tendu vraiment tendu",
-        leste: "Archer pull-up lest\xE9",
-        easy: "Tractions classiques pronation, focus contraction unilat\xE9rale",
-        salle: "Tirage poulie unilat\xE9ral lourd",
-        desc: "Traction asym\xE9trique : un bras tire, l'autre reste tendu. Plus tu vas vers le bras de travail, plus c'est dur. Progression vers la one-arm pull-up (OAP) \u2014 le saint graal de la traction."
-      },
-      {
-        nom: "YTW / Face pull",
-        s: "3\xD715",
-        rest: "60 s",
-        obj: "Sant\xE9 \xE9paules",
-        outdoor: "YTW au sol allong\xE9 face contre terre",
-        maison: "YTW au sol allong\xE9",
-        leste: "Face pull aux anneaux ou \xE9lastique",
-        easy: "YTW debout avec petites bouteilles d'eau dans les mains",
-        salle: "Face pull poulie haute 3\xD715",
-        desc: "Trio au sol allong\xE9 face contre terre. Y = bras en Y (trap\xE8zes inf.), T = bras en T (rhombo\xEFdes), W = coudes pli\xE9s rapproch\xE9s (rotateurs externes). Sant\xE9 \xE9paules + posture."
-      }
-    ]
-  },
-  {
-    id: "C",
-    label: "LEGS & CORE",
-    subtitle: "Quads \xB7 Ischios \xB7 Mollets \xB7 Core",
-    emoji: "\u{1F9B5}",
-    color: "#f4a261",
-    duree: "60-75 min",
-    echauff: "5 min mobilit\xE9 hanches \xB7 10 squats l\xE9gers",
-    fin: "Handstand free balance 3\xD7max",
-    exos: [
-      {
-        nom: "Pistol squat",
-        s: "5\xD75/c\xF4t\xE9",
-        rest: "3 min",
-        obj: "Force jambes",
-        outdoor: "Pistol squat \u2014 descente 3s",
-        maison: "Pistol squat tempo 3s, pause 2s en bas",
-        leste: "Pistol squat lest\xE9 (gilet ou sac)",
-        easy: "Pistol squat assist\xE9 (s'aider en tenant un chambranle de porte)",
-        salle: "Squat bulgare smith machine lest\xE9 lourd",
-        desc: "Squat \xE0 une jambe, l'autre tendue devant. Demande \xE9quilibre + force + mobilit\xE9 cheville. Descends lentement (3s) fesse vers talon. La jambe avant reste TENDUE tout le temps. Tr\xE8s complet."
-      },
-      {
-        nom: "Nordic curl",
-        s: "4\xD75-8",
-        rest: "2-3 min",
-        obj: "Ischio-jambiers",
-        outdoor: "Nordic curl pied sous banc de parc",
-        maison: "Nordic curl pied sous meuble lourd",
-        leste: "Nordic curl avec gilet",
-        easy: "Glute-ham bridge (hanches en pont, talons au sol) ou Nordic avec band d'assistance",
-        salle: "Leg curl machine lourd \u2014 tempo 3s",
-        desc: "Mouvement excentrique pour ischio-jambiers. \xC0 genoux, pieds bloqu\xE9s, descends le tronc tout droit vers le sol en freinant avec les ischios. EXTR\xCAMEMENT dur \u2014 quelques reps suffisent."
-      },
-      {
-        nom: "Shrimp squat",
-        s: "3\xD78-10",
-        rest: "2 min",
-        obj: "Volume quad",
-        outdoor: "Shrimp squat sur marche pour d\xE9ficit",
-        maison: "Shrimp squat d\xE9ficit si possible",
-        leste: "Shrimp squat lest\xE9",
-        easy: "Fente bulgare (pied arri\xE8re sur\xE9lev\xE9 sur chaise)",
-        salle: "Fente arri\xE8re halt\xE8res lourds 3\xD78",
-        desc: "Squat \xE0 une jambe, jambe arri\xE8re pli\xE9e tenue par la main du m\xEAme c\xF4t\xE9. Plus dur que pistol (position plus exigeante). Descends jusqu'\xE0 ce que le genou arri\xE8re effleure le sol."
-      },
-      {
-        nom: "Calf raise unilat\xE9ral",
-        s: "4\xD715",
-        rest: "60 s",
-        obj: "Mollets",
-        outdoor: "Calf raise sur une bordure de parc",
-        maison: "Calf raise unilat\xE9ral sur marche",
-        leste: "Calf raise lest\xE9",
-        easy: "Calf raise bilat\xE9ral (2 pieds en m\xEAme temps)",
-        salle: "Calf raise machine debout 1 jambe",
-        desc: "\xC9l\xE9vation sur la pointe d'un pied. Amplitude max : talon bien bas, mont\xE9e explosive, contraction max en haut. 4\xD715 strictes c'est dur pour des mollets de calisthenicien."
-      },
-      {
-        nom: "Dragon flag",
-        s: "4\xD75-8",
-        rest: "2 min",
-        obj: "Force core",
-        outdoor: "Dragon flag sur banc de parc",
-        maison: "Dragon flag sur table solide",
-        leste: "Dragon flag",
-        easy: "Reverse crunch (jambes fl\xE9chies remont\xE9es vers la poitrine)",
-        salle: "Crunch d\xE9clin\xE9 lest\xE9 + relev\xE9 jambes",
-        desc: "Allong\xE9 sur banc/table solide, agrippe-toi au-dessus de la t\xEAte. L\xE8ve jambes + bassin en gardant le corps DROIT comme une planche. Descends lentement contr\xF4l\xE9. Tueur d'abdos sign\xE9 Bruce Lee."
-      },
-      {
-        nom: "L-sit \u2192 V-sit",
-        s: "3\xD720s",
-        rest: "90 s",
-        obj: "Compression",
-        outdoor: "L-sit sur barres parall\xE8les",
-        maison: "L-sit entre 2 chaises",
-        leste: "L-sit \u2192 V-sit progression",
-        easy: "Tuck L-sit (jambes pli\xE9es contre la poitrine)",
-        salle: "Captain's chair leg raise tendu",
-        desc: "Maintien sur les bras, jambes tendues vers l'avant parall\xE8les au sol (L) puis verticales (V). Force des bras + compression core + flexibilit\xE9 ischios. Tuck (genoux pli\xE9s) = facile, full = pro."
-      }
-    ]
-  },
-  {
-    id: "D",
-    label: "FULL BODY",
-    subtitle: "S\xE9ance courte 45min \u2014 tout le corps",
-    emoji: "\u26A1",
-    color: "#a78bfa",
-    duree: "40-50 min",
-    echauff: "5 min mobilit\xE9 g\xE9n\xE9rale + cardio l\xE9ger",
-    fin: "Hollow body hold 3\xD7max",
-    exos: [
-      {
-        nom: "Tractions",
-        s: "4\xD76-10",
-        rest: "2 min",
-        obj: "Tirage compound",
-        outdoor: "Tractions sur barre",
-        maison: "Tractions \xE0 la barre de porte",
-        leste: "Tractions lest\xE9es",
-        easy: "Australian pull-up (corps inclin\xE9)",
-        salle: "Tirage poulie large OU tractions barre",
-        desc: "Mouvement compound DOS de r\xE9f\xE9rence. Menton au-dessus de la barre, descente bras compl\xE8tement tendus. Sollicite grand dorsal, biceps, avant-bras, core. La base de tout."
-      },
-      {
-        nom: "Dips ou pompes",
-        s: "4\xD78-12",
-        rest: "2 min",
-        obj: "Pouss\xE9e compound",
-        outdoor: "Dips sur parall\xE8les",
-        maison: "Dips entre 2 chaises ou pompes classiques",
-        leste: "Dips lest\xE9s",
-        easy: "Pompes genoux ou pompes mains sur\xE9lev\xE9es",
-        salle: "D\xE9velopp\xE9 couch\xE9 barre + dips assist\xE9s",
-        desc: "Pouss\xE9e compound. Dips = poitrine + triceps. Pompes = poitrine + abdos + cardio. Forme stricte : descente compl\xE8te, mont\xE9e explosive."
-      },
-      {
-        nom: "Pistol / Squat",
-        s: "4\xD78/c\xF4t\xE9",
-        rest: "2 min",
-        obj: "Jambes",
-        outdoor: "Pistol squat ou squat saut\xE9",
-        maison: "Pistol squat tempo",
-        leste: "Pistol lest\xE9",
-        easy: "Squat classique 2 jambes (15-20 reps)",
-        salle: "Squat barre OU leg press lourd",
-        desc: "Travail jambes. Pistol = 1 pied + \xE9quilibre + force. Squat classique = 2 pieds + cardio + volume. Choisis selon ton niveau du jour."
-      },
-      {
-        nom: "Pike push-up",
-        s: "3\xD78",
-        rest: "90 s",
-        obj: "\xC9paules",
-        outdoor: "Pike push-up au sol",
-        maison: "Pike push-up \u2014 pieds sur\xE9lev\xE9s",
-        leste: "Pike push-up lest\xE9",
-        easy: "Pompes classiques",
-        salle: "D\xE9velopp\xE9 \xE9paules machine ou halt\xE8res",
-        desc: "Voir entr\xE9e principale Pike push-up."
-      },
-      {
-        nom: "Hanging leg raise",
-        s: "3\xD710",
-        rest: "90 s",
-        obj: "Core",
-        outdoor: "Hanging leg raise sur barre",
-        maison: "Hanging leg raise \xE0 la barre de porte",
-        leste: "Hanging leg raise lest\xE9",
-        easy: "Knee raise (genoux remont\xE9s) ou crunch au sol",
-        salle: "Captain's chair leg raise",
-        desc: "Suspendu \xE0 une barre, l\xE8ve les jambes tendues jusqu'\xE0 l'horizontale (ou plus). Contr\xF4le la descente. Abdos inf\xE9rieurs + compression. Plus dur qu'il en a l'air."
-      }
-    ]
-  },
-  {
-    id: "E",
-    label: "SKILLS",
-    subtitle: "Travail technique pur (frais)",
-    emoji: "\u{1F3AF}",
-    color: "#22d3ee",
-    duree: "50-60 min",
-    echauff: "15 min activation poignets \xB7 \xE9paules \xB7 core",
-    fin: "Stretch passif 10 min",
-    exos: [
-      {
-        nom: "Handstand work",
-        s: "10 min total",
-        rest: "45 s entre tentatives",
-        obj: "\xC9quilibre",
-        outdoor: "Handstand free balance",
-        maison: "Handstand mur puis tentatives free",
-        leste: "\u2014",
-        easy: "Handstand mur (face ou dos au mur) 3\xD720s",
-        salle: "Handstand contre mur (ou step pour appui)",
-        desc: "Travail technique de l'\xE9quilibre sur les mains. Position parfaite : \xE9paules au-dessus mains, hanches au-dessus \xE9paules, pieds tout en haut. Mur d'abord, free balance ensuite. Patience."
-      },
-      {
-        nom: "Front lever tuck \u2192 adv",
-        s: "5\xD78-15s",
-        rest: "2 min",
-        obj: "Isom\xE9trie pull",
-        outdoor: "Front lever progression sur barre",
-        maison: "Front lever sur barre fixe",
-        leste: "\u2014",
-        easy: "Tuck hold (jambes pli\xE9es) puis progression vers advanced tuck",
-        salle: "\u2014",
-        desc: "Suspendu \xE0 une barre, corps horizontal face vers le haut. Progression : tuck (genoux pli\xE9s) \u2192 advanced tuck \u2192 straddle \u2192 full lever. Mois de pratique pour passer chaque palier."
-      },
-      {
-        nom: "Planche lean \u2192 tuck",
-        s: "5\xD78-15s",
-        rest: "2 min",
-        obj: "Isom\xE9trie push",
-        outdoor: "Planche progressions au sol",
-        maison: "Planche lean \u2014 \xE9paules en avant",
-        leste: "\u2014",
-        easy: "Plank classique avec l\xE9ger lean (\xE9paules au-del\xE0 des poignets)",
-        salle: "\u2014",
-        desc: "Tension iso vers la planche. Au sol, paumes au sol, penche les \xE9paules de plus en plus loin EN AVANT des poignets. Tension brutale dans les \xE9paules. Progression vers la planche compl\xE8te."
-      },
-      {
-        nom: "Human flag",
-        s: "5\xD73-6s/c\xF4t\xE9",
-        rest: "2 min",
-        obj: "Iso lat\xE9ral",
-        outdoor: "Flag sur barre verticale ou poteau",
-        maison: "Flag entre 2 surfaces solides",
-        leste: "\u2014",
-        easy: "Side plank avec jambes lev\xE9es en \xE9ventail",
-        salle: "\u2014",
-        desc: "Drapeau horizontal sur barre verticale (voir Human flag/drapeau)."
-      },
-      {
-        nom: "Muscle-up technique",
-        s: "4\xD72-3",
-        rest: "3 min",
-        obj: "Travail skill",
-        outdoor: "MU sur barre",
-        maison: "MU bas ou negative muscle-up",
-        leste: "\u2014",
-        easy: "High pull-up explosif (cherche \xE0 monter sternum \xE0 la barre)",
-        salle: "Tractions explosives barre fixe + dips",
-        desc: "Travail sp\xE9cifique du timing + explosivit\xE9. Negatives (descente lente), partial movements, transitions lentes pour ma\xEEtriser le passage barre. Le d\xE9tail technique fait toute la diff\xE9rence."
-      },
-      {
-        nom: "L-sit hold",
-        s: "4\xD715-25s",
-        rest: "90 s",
-        obj: "Compression",
-        outdoor: "L-sit sur parall\xE8les",
-        maison: "L-sit entre 2 chaises",
-        leste: "\u2014",
-        easy: "Tuck L-sit (jambes pli\xE9es)",
-        salle: "Captain's chair hold",
-        desc: "Maintien iso en L sur les bras. Compression du core + force \xE9paules anti-rotation. Travailler le tuck d'abord, full L-sit ensuite. 20s = niveau interm\xE9diaire."
-      }
-    ]
-  },
-  // ─── NOUVELLES SÉANCES v10 ─────────────────────────────────────
-  {
-    id: "A2",
-    label: "PUSH VOLUME",
-    subtitle: "Pecs \xB7 Triceps \u2014 hypertrophie",
-    emoji: "\u{1F4A5}",
-    color: "#f97316",
-    duree: "55-65 min",
-    echauff: "5 min mobilit\xE9 \xE9paules + 2\xD715 pompes \xE9chauffement",
-    fin: "Stretch pecs 1 min \xD7 c\xF4t\xE9",
-    exos: [
-      {
-        nom: "Pompes lest\xE9es",
-        s: "4\xD712-15",
-        rest: "90 s",
-        obj: "Volume pecs",
-        outdoor: "Pompes mains au sol \u2014 tempo 2-1-2",
-        maison: "Pompes \u2014 tempo 2-1-2",
-        leste: "Pompes lest\xE9es (gilet ou sac)",
-        easy: "Pompes genoux",
-        salle: "D\xE9velopp\xE9 couch\xE9 barre 4\xD712-15 \u2014 volume",
-        desc: "Volume pectoral classique. Tempo 2s descente, 1s pause, 2s mont\xE9e. 60 reps total = grosse pompe musculaire."
-      },
-      {
-        nom: "Dips volume",
-        s: "4\xD710-12",
-        rest: "90 s",
-        obj: "Triceps + bas pecs",
-        outdoor: "Dips parall\xE8les \u2014 4s descente",
-        maison: "Dips chaises \u2014 pleine amplitude",
-        leste: "Dips lest\xE9s mod\xE9r\xE9s",
-        easy: "Dips banc pieds au sol",
-        salle: "Dips machine assist\xE9e 4\xD710-12 tempo lent",
-        desc: "Variante volume. Plus de reps, moins de charge. Cherche le br\xFBlement. Descends jusqu'aux \xE9paules au niveau des coudes."
-      },
-      {
-        nom: "Pike push-up volume",
-        s: "3\xD712",
-        rest: "75 s",
-        obj: "\xC9paules",
-        outdoor: "Pike push-up pieds au sol",
-        maison: "Pike push-up pieds sur\xE9lev\xE9s",
-        leste: "Pike push-up lest\xE9",
-        easy: "Pompes mains sous \xE9paules",
-        salle: "D\xE9velopp\xE9 \xE9paules machine 3\xD712 volume",
-        desc: "Volume delto\xEFdes. Hanches hautes, t\xEAte entre les mains. Cherche la sensation dans les \xE9paules ant\xE9rieures + lat\xE9rales."
-      },
-      {
-        nom: "Pompes diamant",
-        s: "3\xD710-12",
-        rest: "75 s",
-        obj: "Triceps focus",
-        outdoor: "Pompes diamant au sol",
-        maison: "Pompes diamant",
-        leste: "Pompes diamant lest\xE9es",
-        easy: "Pompes mains rapproch\xE9es (sans diamant)",
-        salle: "D\xE9velopp\xE9 serr\xE9 EZ ou barre 3\xD710-12",
-        desc: "Mains rapproch\xE9es en forme de diamant sous le sternum. Ciblage triceps maximal. Garde coudes pr\xE8s du corps."
-      },
-      {
-        nom: "Triceps dips banc",
-        s: "3\xD715",
-        rest: "60 s",
-        obj: "Iso triceps",
-        outdoor: "Dips banc \u2014 pieds tendus",
-        maison: "Dips entre 2 chaises basses",
-        leste: "Dips banc lest\xE9s sur cuisses",
-        easy: "Dips banc genoux pli\xE9s",
-        salle: "Triceps poulie corde 3\xD715 contraction",
-        desc: "Finisher triceps. Mains derri\xE8re sur banc, pieds tendus loin. Descends fesses vers le sol. Br\xFBlement garanti."
-      }
-    ]
-  },
-  {
-    id: "B2",
-    label: "PULL VOLUME",
-    subtitle: "Dos \xB7 Biceps \u2014 hypertrophie",
-    emoji: "\u{1F525}",
-    color: "#06b6d4",
-    duree: "55-65 min",
-    echauff: "Activation scapulaires 5 min + 2\xD78 tractions \xE9chauffement",
-    fin: "Stretch dos suspendu 2\xD730s",
-    exos: [
-      {
-        nom: "Tractions volume",
-        s: "5\xD78-10",
-        rest: "90 s",
-        obj: "Volume dorsal",
-        outdoor: "Tractions barre \u2014 tempo 2-1-2",
-        maison: "Tractions barre porte \u2014 tempo 2-1-2",
-        leste: "Tractions lest\xE9es mod\xE9r\xE9es",
-        easy: "Tractions assist\xE9es \xE9lastique",
-        salle: "Tirage poulie large 5\xD78-10 \u2014 sensation pompe",
-        desc: "50 tractions au total. Cherche la sensation de pompe dans le dos. Descente bras tendus compl\xE8te \xE0 chaque rep."
-      },
-      {
-        nom: "Tractions supination",
-        s: "4\xD78-10",
-        rest: "90 s",
-        obj: "Biceps + dos",
-        outdoor: "Tractions supination (chin-up)",
-        maison: "Tractions supination barre porte",
-        leste: "Tractions supination lest\xE9es",
-        easy: "Australian pull-up supination",
-        salle: "Tirage poulie supination 4\xD78-10 OU chin-ups",
-        desc: "Paumes vers toi. Recrute beaucoup plus les biceps. Excellent pour l'\xE9paisseur du dos."
-      },
-      {
-        nom: "Inverted row",
-        s: "4\xD712",
-        rest: "75 s",
-        obj: "Dos moyen",
-        outdoor: "Inverted row sous barre basse",
-        maison: "Inverted row sous table solide",
-        leste: "Inverted row lest\xE9 (gilet)",
-        easy: "Inverted row pieds au sol genoux pli\xE9s",
-        salle: "Rowing barre OU machine 4\xD712",
-        desc: "Tirage horizontal. Cible les rhombo\xEFdes et le milieu du dos \u2014 partie souvent n\xE9glig\xE9e."
-      },
-      {
-        nom: "Hammer curl iso",
-        s: "3\xD78-10",
-        rest: "75 s",
-        obj: "Biceps brachial",
-        outdoor: "Tractions hammer (serviette sur barre)",
-        maison: "Curl hammer halt\xE8res ou bouteilles",
-        leste: "Hammer curl halt\xE8res lourds",
-        easy: "Curl halt\xE8res l\xE9gers",
-        salle: "Hammer curl halt\xE8res 3\xD78-10 lourd",
-        desc: "Cible le brachial (sous le biceps) pour de plus gros bras. Si pas d'halt\xE8res : sac \xE0 dos charg\xE9."
-      },
-      {
-        nom: "Face pull / YTW",
-        s: "3\xD715",
-        rest: "60 s",
-        obj: "Sant\xE9 \xE9paules",
-        outdoor: "Face pull \xE9lastique sur barre",
-        maison: "YTW au sol allong\xE9",
-        leste: "Face pull \xE9lastique lourd",
-        easy: "YTW debout sans charge",
-        salle: "Face pull poulie haute 3\xD715 \u2014 sant\xE9 \xE9paules",
-        desc: "Indispensable pour la sant\xE9 des \xE9paules. Contre-pose des heures pass\xE9es en avant. \xC0 faire \xE0 VIE."
-      }
-    ]
-  },
-  {
-    id: "C2",
-    label: "JAMBES SALLE",
-    subtitle: "Quads \xB7 Ischios \xB7 Fessiers \u2014 machines",
-    emoji: "\u{1F3CB}\uFE0F\u200D\u2642\uFE0F",
-    color: "#84cc16",
-    duree: "60-75 min",
-    echauff: "10 min v\xE9lo + 2\xD715 squats \xE0 vide",
-    fin: "\xC9tirement quads + ischios 5 min",
-    exos: [
-      {
-        nom: "Squat barre",
-        s: "4\xD78-12",
-        rest: "2-3 min",
-        obj: "Force jambes",
-        outdoor: "Squat saut\xE9 (alternative outdoor)",
-        maison: "Goblet squat halt\xE8re",
-        leste: "Squat barre \u2014 progression chaque semaine",
-        easy: "Squat goblet poids mod\xE9r\xE9",
-        salle: "Squat barre 4\xD78-12 \u2014 augmente la charge chaque semaine",
-        desc: "Le ROI des exercices jambes. Barre sur les trap\xE8zes, descends jusqu'\xE0 parall\xE8le (cuisses), pousse en gardant le dos droit. Force + masse totale."
-      },
-      {
-        nom: "Leg press",
-        s: "4\xD710-15",
-        rest: "2 min",
-        obj: "Volume quads",
-        outdoor: "Pistol squat ou jump squat",
-        maison: "Bulgarian split squat",
-        leste: "Leg press \u2014 charge progressive",
-        easy: "Leg press charge mod\xE9r\xE9e pleine amplitude",
-        salle: "Leg press 4\xD710-15 \u2014 amplitude COMPL\xC8TE (genoux poitrine)",
-        desc: "Volume quad sans charger le dos. Pieds bas = quads, hauts = fessiers. Amplitude compl\xE8te (genoux vers la poitrine)."
-      },
-      {
-        nom: "Leg curl machine",
-        s: "3\xD712-15",
-        rest: "75 s",
-        obj: "Isolation ischios",
-        outdoor: "Nordic curl",
-        maison: "Nordic curl meuble lourd",
-        leste: "Leg curl machine \u2014 tempo lent",
-        easy: "Leg curl machine charge mod\xE9r\xE9e",
-        salle: "Leg curl machine 3\xD712-15 \u2014 tempo 3s descente",
-        desc: "Indispensable pour l'\xE9quilibre quads/ischios. Tempo 2s contraction, 3s descente. Crucial anti-blessure ischios."
-      },
-      {
-        nom: "Leg extension",
-        s: "3\xD712-15",
-        rest: "75 s",
-        obj: "Isolation quads",
-        outdoor: "Sissy squat tenir 30s",
-        maison: "Sissy squat",
-        leste: "Leg extension \u2014 contraction max en haut",
-        easy: "Leg extension charge l\xE9g\xE8re pleine amplitude",
-        salle: "Leg extension 3\xD712-15 \u2014 contraction 1s en haut",
-        desc: "Isolation quadriceps compl\xE8te. Contracte 1s en haut. Volume mais attention aux genoux fragiles (amplitude mod\xE9r\xE9e)."
-      },
-      {
-        nom: "Hip thrust",
-        s: "4\xD710-12",
-        rest: "2 min",
-        obj: "Fessiers",
-        outdoor: "Hip thrust barre de banc",
-        maison: "Hip thrust pieds sur canap\xE9 + sac charg\xE9",
-        leste: "Hip thrust barre \u2014 charge lourde",
-        easy: "Glute bridge au sol",
-        salle: "Hip thrust barre 4\xD710-12 \u2014 fessiers max",
-        desc: "Roi des fessiers. \xC9paules sur un banc, pieds au sol, barre sur les hanches. Pousse les hanches vers le plafond, contracte 2s en haut."
-      },
-      {
-        nom: "Calf raise debout",
-        s: "4\xD715-20",
-        rest: "60 s",
-        obj: "Mollets",
-        outdoor: "Calf raise sur bordure",
-        maison: "Calf raise sur marche",
-        leste: "Calf raise machine \u2014 charge progressive",
-        easy: "Calf raise sans charge",
-        salle: "Calf raise machine 4\xD715-20 \u2014 amplitude max",
-        desc: "Talons bien bas, mont\xE9e explosive, contraction max sur la pointe. 4\xD720 strict c'est dur \u2014 les mollets r\xE9sistent \xE0 la fatigue."
-      }
-    ]
-  },
-  {
-    id: "F",
-    label: "CORE FOCUS",
-    subtitle: "Abdos \xB7 Obliques \xB7 Bas du dos",
-    emoji: "\u{1F3AF}",
-    color: "#ec4899",
-    duree: "30-40 min",
-    echauff: "5 min mobilit\xE9 bassin + cat-cow",
-    fin: "Stretch lombaires 2 min",
-    exos: [
-      {
-        nom: "Hanging leg raise",
-        s: "4\xD710-12",
-        rest: "90 s",
-        obj: "Abdos inf\xE9rieurs",
-        outdoor: "Hanging leg raise sur barre",
-        maison: "Leg raise barre porte",
-        leste: "Hanging leg raise lest\xE9 chevilles",
-        easy: "Knee raise (genoux pli\xE9s)",
-        salle: "Captain's chair leg raise",
-        desc: "Cible abdos inf\xE9rieurs (souvent n\xE9glig\xE9s). Suspendu, l\xE8ve jambes tendues \xE0 l'horizontale. Pas de balancement."
-      },
-      {
-        nom: "L-sit",
-        s: "4\xD720s",
-        rest: "75 s",
-        obj: "Compression core",
-        outdoor: "L-sit sur parall\xE8les",
-        maison: "L-sit entre 2 chaises",
-        leste: "L-sit pieds lest\xE9s",
-        easy: "Tuck L-sit (genoux pli\xE9s)",
-        salle: "Captain's chair hold + jambes tendues",
-        desc: "Maintien iso. Bras tendus, jambes parall\xE8les au sol. Travaille la compression du core + endurance abdos."
-      },
-      {
-        nom: "Dragon flag",
-        s: "3\xD75-8",
-        rest: "2 min",
-        obj: "Core total",
-        outdoor: "Dragon flag banc de parc",
-        maison: "Dragon flag table solide",
-        leste: "Dragon flag",
-        easy: "Reverse crunch jambes pli\xE9es",
-        salle: "Crunch d\xE9clin\xE9 lest\xE9 + relev\xE9 jambes",
-        desc: "L'exo de Bruce Lee. Tronc rigide comme une planche, descends lentement. Aucune flexion lombaire. Tr\xE8s avanc\xE9 mais incroyable."
-      },
-      {
-        nom: "Russian twist",
-        s: "3\xD720",
-        rest: "60 s",
-        obj: "Obliques",
-        outdoor: "Russian twist au sol",
-        maison: "Russian twist avec bouteille d'eau",
-        leste: "Russian twist halt\xE8re ou KB",
-        easy: "Russian twist sans charge",
-        salle: "Russian twist disque ou m\xE9decine ball 3\xD720",
-        desc: "Assis, pieds d\xE9coll\xE9s, tournes le buste de gauche \xE0 droite avec un poids. Cible les obliques. Compte 1 = 1 c\xF4t\xE9."
-      },
-      {
-        nom: "Plank lat\xE9ral",
-        s: "3\xD730s/c\xF4t\xE9",
-        rest: "30 s",
-        obj: "Gainage lat\xE9ral",
-        outdoor: "Plank lat\xE9ral au sol",
-        maison: "Plank lat\xE9ral",
-        leste: "Plank lat\xE9ral lest\xE9 hanche",
-        easy: "Plank lat\xE9ral genou au sol",
-        salle: "Plank lat\xE9ral lest\xE9 disque sur hanche",
-        desc: "Sur un avant-bras, corps en ligne droite. Active obliques + transverse + fessier moyen. Top pour la stabilit\xE9 globale."
-      },
-      {
-        nom: "Superman hold",
-        s: "3\xD730s",
-        rest: "45 s",
-        obj: "Bas du dos",
-        outdoor: "Superman hold au sol",
-        maison: "Superman hold",
-        leste: "Superman lest\xE9 chevilles",
-        easy: "Bird-dog (altern\xE9)",
-        salle: "Hyperextension machine 3\xD730s",
-        desc: "\xC0 plat ventre, l\xE8ve bras + jambes simultan\xE9ment, tiens. Renforce les \xE9recteurs spinaux \u2014 indispensable pour la sant\xE9 du dos."
-      }
-    ]
-  },
-  {
-    id: "G",
-    label: "HIIT / CARDIO",
-    subtitle: "Cardio intense intervalles",
-    emoji: "\u{1F525}",
-    color: "#ef4444",
-    duree: "25-35 min",
-    echauff: "5 min cardio l\xE9ger + mobilit\xE9 dynamique",
-    fin: "5 min retour au calme + \xE9tirements",
-    exos: [
-      {
-        nom: "Burpees",
-        s: "5\xD730s ON / 30s OFF",
-        rest: "30 s",
-        obj: "Cardio total",
-        outdoor: "Burpees explosifs",
-        maison: "Burpees salon",
-        leste: "Burpees lest\xE9s (gilet)",
-        easy: "Burpees sans saut",
-        salle: "Burpees + box jump explosif encha\xEEn\xE9s",
-        desc: "L'exo cardio ultime. Squat \u2192 planche \u2192 pompe \u2192 squat \u2192 saut. 30s ON = autant que possible. Le c\u0153ur va exploser."
-      },
-      {
-        nom: "Mountain climbers",
-        s: "4\xD740s ON / 20s OFF",
-        rest: "20 s",
-        obj: "Cardio + core",
-        outdoor: "Mountain climbers rapides",
-        maison: "Mountain climbers",
-        leste: "Mountain climbers gilet lest\xE9",
-        easy: "Mountain climbers tempo mod\xE9r\xE9",
-        salle: "Mountain climbers \u2014 tapis",
-        desc: "Position planche, alterne genoux vers la poitrine rapidement. Cardio + core simultan\xE9. Garde les hanches basses."
-      },
-      {
-        nom: "Jump squats",
-        s: "4\xD715",
-        rest: "60 s",
-        obj: "Explosivit\xE9 jambes",
-        outdoor: "Jump squats hauts",
-        maison: "Jump squats",
-        leste: "Jump squats lest\xE9s (gilet)",
-        easy: "Squat sans saut tempo rapide",
-        salle: "Box jumps plyo 4\xD715 \u2014 r\xE9ception douce",
-        desc: "Squat puis saut vertical max. Atterrissage doux, encha\xEEne. Explosivit\xE9 + cardio + jambes en feu."
-      },
-      {
-        nom: "High knees",
-        s: "4\xD730s",
-        rest: "30 s",
-        obj: "Cardio",
-        outdoor: "High knees rapides",
-        maison: "High knees",
-        leste: "High knees lest\xE9s",
-        easy: "High knees tempo mod\xE9r\xE9",
-        salle: "Tapis course intervalle (sprint 30s)",
-        desc: "Course sur place, genoux \xE0 hauteur de hanche. 30s \xE0 fond. Boost cardio rapide."
-      },
-      {
-        nom: "Battle finisher",
-        s: "3 min EMOM",
-        rest: "-",
-        obj: "Finisher",
-        outdoor: "10 burpees + 20 jump squats \u2014 3 min max reps",
-        maison: "Idem en int\xE9rieur",
-        leste: "Avec gilet pour les plus solides",
-        easy: "5 burpees + 10 jump squats",
-        salle: "Rower 250m + 10 burpees EMOM 3 min",
-        desc: "EMOM = Every Minute On the Minute. Sur 3 min, fais les reps au d\xE9but de chaque minute, reste = repos. Si tu finis avant la min suivante, tu as du repos."
-      }
-    ]
-  },
-  {
-    id: "H",
-    label: "MOBILIT\xC9",
-    subtitle: "\xC9tirements \xB7 R\xE9cup\xE9ration active",
-    emoji: "\u{1F9D8}",
-    color: "#8b5cf6",
-    duree: "30-40 min",
-    echauff: "3 min respiration profonde",
-    fin: "5 min m\xE9ditation/relaxation",
-    exos: [
-      {
-        nom: "World's greatest stretch",
-        s: "3\xD75/c\xF4t\xE9",
-        rest: "30 s",
-        obj: "Mobilit\xE9 totale",
-        outdoor: "World's greatest stretch",
-        maison: "World's greatest stretch",
-        leste: "\u2014",
-        easy: "Version simplifi\xE9e \u2014 fente avant simple",
-        salle: "World's greatest stretch sur tapis",
-        desc: "LA mobilit\xE9 ultime. Fente avant, main au sol, l'autre vers le ciel en rotation. Mobilise hanches, dos, \xE9paules en un mouvement."
-      },
-      {
-        nom: "Pigeon pose",
-        s: "2\xD760s/c\xF4t\xE9",
-        rest: "30 s",
-        obj: "Hanches",
-        outdoor: "Pigeon pose au sol",
-        maison: "Pigeon pose",
-        leste: "\u2014",
-        easy: "Demi-pigeon (jambe arri\xE8re pli\xE9e)",
-        salle: "Pigeon pose sur tapis yoga",
-        desc: "\xC9tirement profond des hanches et des fessiers. Tiens 60s minimum pour que le muscle se rel\xE2che. Respire profond\xE9ment."
-      },
-      {
-        nom: "Cat-cow flow",
-        s: "2\xD710",
-        rest: "-",
-        obj: "Mobilit\xE9 dos",
-        outdoor: "Cat-cow flow",
-        maison: "Cat-cow flow",
-        leste: "\u2014",
-        easy: "Cat-cow lent",
-        salle: "Cat-cow sur tapis",
-        desc: "\xC0 4 pattes, alterne dos rond (cat) et dos creux (cow). Mobilise toute la colonne. Excellent en post-s\xE9ance ou r\xE9veil."
-      },
-      {
-        nom: "Couch stretch",
-        s: "2\xD760s/c\xF4t\xE9",
-        rest: "30 s",
-        obj: "Quads + psoas",
-        outdoor: "Couch stretch sur banc",
-        maison: "Couch stretch contre canap\xE9",
-        leste: "\u2014",
-        easy: "Stretch quad debout simple",
-        salle: "Couch stretch contre un banc sur\xE9lev\xE9",
-        desc: "Genou au sol, pied arri\xE8re contre un mur/canap\xE9 en hauteur. \xC9tire quads et psoas \u2014 crucial pour anyone qui est assis longtemps."
-      },
-      {
-        nom: "Thoracic opener",
-        s: "3\xD78",
-        rest: "30 s",
-        obj: "Haut du dos",
-        outdoor: "Thoracic opener avec foam roller",
-        maison: "Thoracic opener serviette roul\xE9e",
-        leste: "\u2014",
-        easy: "T-spine rotation \xE0 4 pattes",
-        salle: "Thoracic opener sur foam roller",
-        desc: "Allong\xE9 sur un rouleau plac\xE9 sous le haut du dos, bras tendus derri\xE8re la t\xEAte. Mobilise le thoracique (souvent raide). Posture am\xE9lior\xE9e."
-      },
-      {
-        nom: "\xC9tirement \xE9paules complet",
-        s: "3\xD730s par \xE9tirement",
-        rest: "-",
-        obj: "\xC9paules",
-        outdoor: "Routine \xE9tirements \xE9paules compl\xE8te",
-        maison: "Routine \xE9paules",
-        leste: "\u2014",
-        easy: "Version douce avec amplitude r\xE9duite",
-        salle: "Routine \xE9paules + mobilit\xE9 avec barre PVC",
-        desc: "4 \xE9tirements : bras crois\xE9 devant, derri\xE8re la t\xEAte, derri\xE8re le dos (mains jointes), porte (chambranle). Sauve la sant\xE9 des \xE9paules \xE0 long terme."
-      }
-    ]
-  }
-];
 const CAT = {
   PD: { id: "PD", label: "Petit-d\xE9jeuner", color: "#f59e0b", icon: "\u{1F305}" },
   COLL: { id: "COLL", label: "Collation", color: "#a78bfa", icon: "\u{1F968}" },
@@ -1088,891 +230,6 @@ const JOURS_SEMAINE = [
 ];
 const TRAVAIL_GRANDE = ["lun", "mar", "ven", "sam", "dim"];
 const TRAVAIL_PETITE = ["mer", "jeu"];
-const RECETTES = [
-  // ═══ PETITS-DÉJEUNERS ═══
-  {
-    id: 1,
-    nom: "\u{1F963} Flocons d'avoine classique",
-    slots: ["PD", "PRE"],
-    temps: "\u26A1 5 min",
-    kcal: 480,
-    p: 18,
-    g: 65,
-    l: 14,
-    ing: [
-      { a: "Flocons d'avoine", q: "80g" },
-      { a: "Lait demi-\xE9cr\xE9m\xE9", q: "250ml" },
-      { a: "Banane m\xFBre", q: "1" },
-      { a: "Beurre de cacahu\xE8te pur", q: "15g (1 grosse c\xE0s)" },
-      { a: "Pinc\xE9e de sel", q: "-" }
-    ],
-    prep: [
-      "Sortir un grand bol assez profond (pour \xE9viter les d\xE9bordements au micro-onde)",
-      "Verser 80g de flocons d'avoine dans le bol",
-      "Ajouter 250ml de lait demi-\xE9cr\xE9m\xE9 froid par-dessus",
-      "Ajouter une petite pinc\xE9e de sel \u2014 \xE7a rehausse le go\xFBt des flocons, fais-moi confiance",
-      "M\xE9langer 2-3 fois pour bien imbiber",
-      "Couvrir avec une assiette (pour \xE9viter les \xE9claboussures) et passer au micro-onde 2 min 30 \xE0 puissance max",
-      "Sortir, remuer \xE9nergiquement avec une cuill\xE8re \u2014 la texture doit \xEAtre cr\xE9meuse",
-      "Si encore trop liquide, remettre 30 secondes",
-      "Pendant la cuisson, \xE9plucher la banane et l'\xE9craser grossi\xE8rement \xE0 la fourchette",
-      "Laisser ti\xE9dir 1 minute le bol (sinon le beurre de cacahu\xE8te fond trop et \xE7a devient huileux)",
-      "Incorporer la banane \xE9cras\xE9e et 15g de beurre de cacahu\xE8te",
-      "M\xE9langer jusqu'\xE0 obtenir une texture homog\xE8ne \u2014 manger directement"
-    ],
-    tips: "Version prot\xE9in\xE9e : apr\xE8s les 1 min de repos, ajoute 1 dose de whey (30g) en remuant bien \u2014 ne JAMAIS ajouter pendant la cuisson, la whey caille et devient granuleuse."
-  },
-  {
-    id: 2,
-    nom: "\u{1F373} Omelette prot\xE9in\xE9e",
-    slots: ["PD", "PRINC"],
-    temps: "\u26A1 8 min",
-    kcal: 420,
-    p: 32,
-    g: 5,
-    l: 28,
-    ing: [
-      { a: "\u0152ufs entiers", q: "4" },
-      { a: "Jambon blanc d\xE9graiss\xE9", q: "2 tranches" },
-      { a: "Tomates cerises", q: "6" },
-      { a: "Beurre", q: "10g" },
-      { a: "Sel, poivre", q: "-" }
-    ],
-    prep: [
-      "Sortir une po\xEAle anti-adh\xE9sive (id\xE9alement 24cm)",
-      "Casser les 4 \u0153ufs dans un bol, ajouter une bonne pinc\xE9e de sel et plusieurs tours de moulin \xE0 poivre",
-      "Battre \xE9nergiquement \xE0 la fourchette 20 secondes \u2014 il faut que blancs et jaunes soient bien m\xE9lang\xE9s",
-      "Couper le jambon en lani\xE8res de 1cm, couper les tomates cerises en deux",
-      "Mettre la po\xEAle sur feu MOYEN (pas vif, sinon les \u0153ufs durcissent et deviennent caoutchouteux)",
-      "Faire fondre les 10g de beurre \u2014 attendre qu'il mousse et juste avant qu'il ne brunisse",
-      "Verser tous les \u0153ufs d'un coup, ne pas toucher pendant 30 secondes",
-      "Avec une spatule, ramener les bords vers le centre tout en inclinant la po\xEAle pour que le liquide coule sur les c\xF4t\xE9s",
-      "Quand il reste 30% de liquide en surface, \xE9taler le jambon et les tomates sur une moiti\xE9",
-      "Laisser cuire encore 30 secondes \u2014 le centre doit rester L\xC9G\xC8REMENT baveux (il finit de cuire apr\xE8s)",
-      "Avec la spatule, plier la moiti\xE9 sans garniture par-dessus celle avec",
-      "Glisser dans une assiette directement \u2014 manger chaud"
-    ],
-    tips: "Le secret = feu moyen et centre baveux. Si tu cuis trop, \xE7a devient sec. La chaleur r\xE9siduelle finit la cuisson apr\xE8s pliage."
-  },
-  {
-    id: 3,
-    nom: "\u{1F95E} Pancakes prot\xE9in\xE9s",
-    slots: ["PD", "POST"],
-    temps: "\u{1F550} 12 min",
-    kcal: 520,
-    p: 42,
-    g: 55,
-    l: 12,
-    ing: [
-      { a: "Flocons d'avoine", q: "60g" },
-      { a: "\u0152ufs", q: "2" },
-      { a: "Banane m\xFBre", q: "1" },
-      { a: "Whey vanille", q: "30g (1 dose)" },
-      { a: "Levure chimique", q: "1/2 c\xE0c" },
-      { a: "Huile (pour la po\xEAle)", q: "1 c\xE0c" }
-    ],
-    prep: [
-      "Mettre les flocons dans un blender et les mixer 20 secondes pour obtenir une farine grossi\xE8re",
-      "Ajouter les 2 \u0153ufs, la banane \xE9pluch\xE9e, la whey, et la 1/2 cuill\xE8re \xE0 caf\xE9 de levure",
-      "Mixer 30 secondes jusqu'\xE0 obtenir une p\xE2te lisse et un peu \xE9paisse",
-      "Laisser reposer 2 minutes (la levure s'active, \xE7a gonfle un peu)",
-      "Pendant ce temps, chauffer une po\xEAle anti-adh\xE9sive \xE0 FEU MOYEN avec 1 c\xE0c d'huile",
-      "Quand la po\xEAle est chaude, verser des petites louches de p\xE2te (~1/3 de tasse chacune)",
-      "Espacer les pancakes pour pouvoir les retourner \u2014 ne pas en mettre trop d'un coup",
-      "Attendre 2 minutes : quand des petites bulles apparaissent \xE0 la surface ET que les bords se d\xE9collent, c'est le moment de retourner",
-      "Retourner avec une spatule fine, laisser 1 minute 30 de l'autre c\xF4t\xE9",
-      "Empiler dans une assiette au fur et \xE0 mesure",
-      "Servir ti\xE8de avec du yaourt grec, des fruits rouges et un filet de miel"
-    ],
-    tips: "Si la p\xE2te est trop \xE9paisse, ajoute un peu de lait. Trop liquide ? Une cuill\xE8re de flocons. Ne br\xFBle pas la po\xEAle \u2014 feu moyen seulement."
-  },
-  {
-    id: 4,
-    nom: "\u{1F963} Bowl yaourt grec & fruits",
-    slots: ["PD", "COLL", "SOIR"],
-    temps: "\u26A1 3 min",
-    kcal: 340,
-    p: 25,
-    g: 38,
-    l: 8,
-    ing: [
-      { a: "Yaourt grec nature", q: "250g" },
-      { a: "Granola", q: "30g" },
-      { a: "Fruits rouges (frais ou surgel\xE9s)", q: "100g" },
-      { a: "Miel", q: "1 c\xE0c" }
-    ],
-    prep: [
-      "Sortir un joli bol (la pr\xE9sentation compte, \xE7a donne envie de manger)",
-      "Verser les 250g de yaourt grec \u2014 racler le pot, n'en laisse pas",
-      "\xC9taler le yaourt avec le dos d'une cuill\xE8re pour faire une surface plane",
-      "Si tu utilises des fruits rouges surgel\xE9s, les passer 30 secondes au micro-onde pour les d\xE9congeler l\xE9g\xE8rement",
-      "Disposer les fruits sur la moiti\xE9 du yaourt en faisant une jolie ligne",
-      "Saupoudrer les 30g de granola sur l'autre moiti\xE9",
-      "Drizzler le miel en filet en zigzag par-dessus toute la surface",
-      "Manger imm\xE9diatement \u2014 sinon le granola ramollit"
-    ],
-    tips: "Variante moins sucr\xE9e pour la s\xE8che : retire le miel et le granola, ajoute des amandes effil\xE9es (15g). Tu gagnes 80 kcal et 5g de sucre."
-  },
-  {
-    id: 5,
-    nom: "\u{1F96A} Tartines beurre de cacahu\xE8te",
-    slots: ["PD", "PRE"],
-    temps: "\u26A1 4 min",
-    kcal: 450,
-    p: 15,
-    g: 55,
-    l: 18,
-    ing: [
-      { a: "Pain complet", q: "80g (2 tranches)" },
-      { a: "Beurre de cacahu\xE8te pur", q: "30g" },
-      { a: "Banane", q: "1" },
-      { a: "Cannelle", q: "pinc\xE9e (optionnel)" }
-    ],
-    prep: [
-      "Toaster les 2 tranches de pain complet \u2014 niveau de dorure : dor\xE9 pas br\xFBl\xE9 (2-3 min au grille-pain)",
-      "Pendant ce temps, \xE9plucher la banane et la couper en rondelles fines de 5mm",
-      "Sortir les tranches du grille-pain quand elles sont chaudes",
-      "Sur chaque tranche, \xE9taler 15g de beurre de cacahu\xE8te encore ti\xE8de pour qu'il se tartine bien (15g = 1 grosse c\xE0s rase)",
-      "Le beurre de cacahu\xE8te va l\xE9g\xE8rement fondre sur le pain chaud \u2014 c'est ce qu'on cherche",
-      "Disposer les rondelles de banane sur le beurre de cacahu\xE8te, en les faisant se chevaucher",
-      "Saupoudrer d'une pinc\xE9e de cannelle (optionnel mais \xE7a transforme le truc)",
-      "Manger imm\xE9diatement, tant que c'est encore ti\xE8de"
-    ],
-    tips: "Top pr\xE9-s\xE9ance : glucides rapides (banane) + glucides lents (pain complet) + un peu de gras (beurre cacahu\xE8te) = \xE9nergie soutenue pendant 90 minutes."
-  },
-  {
-    id: 6,
-    nom: "\u{1F964} Smoothie prot\xE9in\xE9",
-    slots: ["PD", "POST", "PRE"],
-    temps: "\u26A1 3 min",
-    kcal: 380,
-    p: 38,
-    g: 48,
-    l: 6,
-    ing: [
-      { a: "Lait demi-\xE9cr\xE9m\xE9", q: "300ml" },
-      { a: "Banane", q: "1" },
-      { a: "Whey", q: "30g (1 dose)" },
-      { a: "Flocons d'avoine", q: "20g" },
-      { a: "Gla\xE7ons (optionnel)", q: "3-4" }
-    ],
-    prep: [
-      "Verser les 300ml de lait dans le blender en premier (\xE7a facilite le mixage)",
-      "Ajouter 20g de flocons d'avoine \u2014 \xE7a \xE9paissit naturellement le smoothie",
-      "Casser la banane en 3 morceaux dans le blender",
-      "Ajouter 1 dose de whey (30g) \u2014 vanille ou chocolat, \xE0 toi de voir",
-      "Ajouter 3-4 gla\xE7ons si tu aimes bien frais",
-      "Fermer le blender herm\xE9tiquement (v\xE9rifie deux fois)",
-      "Mixer 30 secondes en commen\xE7ant par vitesse moyenne, puis pousser au max les 10 derni\xE8res secondes",
-      "V\xE9rifier la texture : doit \xEAtre lisse et cr\xE9meuse, pas granuleuse",
-      "Verser dans un grand verre et boire imm\xE9diatement (le smoothie se s\xE9pare en 5-10 min)"
-    ],
-    tips: "Pour le rendre encore meilleur : ajoute 1 c\xE0s de beurre de cacahu\xE8te. \xC7a passe \xE0 460 kcal mais c'est divin."
-  },
-  {
-    id: 7,
-    nom: "\u{1F35E} Toast \u0153uf avocat",
-    slots: ["PD", "PRINC"],
-    temps: "\u{1F550} 10 min",
-    kcal: 440,
-    p: 22,
-    g: 35,
-    l: 24,
-    ing: [
-      { a: "Pain complet", q: "80g (2 tranches)" },
-      { a: "\u0152ufs", q: "2" },
-      { a: "Avocat m\xFBr", q: "1/2" },
-      { a: "Citron (jus)", q: "1/4" },
-      { a: "Sel, poivre, piment optionnel", q: "-" }
-    ],
-    prep: [
-      "Faire bouillir une casserole d'eau sal\xE9e",
-      "Quand l'eau bout, plonger d\xE9licatement les 2 \u0153ufs avec une cuill\xE8re",
-      "R\xE9gler le timer : 8 minutes pour des \u0153ufs durs, 6 min pour mollets (jaune coulant)",
-      "Pendant la cuisson : couper l'avocat en deux, retirer le noyau, et pr\xE9lever la moiti\xE9 \xE0 la cuill\xE8re",
-      "Mettre la chair d'avocat dans un petit bol",
-      "Ajouter le jus de 1/4 de citron, du sel, du poivre \u2014 le citron emp\xEAche l'oxydation (noircissement)",
-      "\xC9craser \xE0 la fourchette jusqu'\xE0 texture grossi\xE8re (pas en pur\xE9e fine, on veut sentir les morceaux)",
-      "Quand le timer sonne pour les \u0153ufs : les sortir et les plonger DIRECTEMENT dans un bol d'eau glac\xE9e 1 minute (\xE7a facilite l'\xE9calage et arr\xEAte la cuisson)",
-      "Toaster les 2 tranches de pain pendant ce temps",
-      "\xC9caler les \u0153ufs, les couper en deux ou en rondelles",
-      "Tartiner l'avocat \xE9cras\xE9 sur chaque tranche toast\xE9e",
-      "Disposer les \u0153ufs par-dessus, saler poivrer, ajouter un peu de piment si tu aimes"
-    ],
-    tips: "Pour des \u0153ufs mollets parfaits : exactement 6 minutes dans l'eau bouillante, puis bain glac\xE9 imm\xE9diatement. Le jaune sera coulant, le blanc juste cuit."
-  },
-  // ═══ REPAS PRINCIPAUX ═══
-  {
-    id: 10,
-    nom: "\u{1F35A} Riz Poulet Brocolis",
-    slots: ["PRINC", "POST"],
-    temps: "\u{1F550} 18 min",
-    kcal: 600,
-    p: 50,
-    g: 90,
-    l: 12,
-    ing: [
-      { a: "Riz basmati cru", q: "150g" },
-      { a: "Blanc de poulet", q: "180g" },
-      { a: "Brocolis surgel\xE9s", q: "100g" },
-      { a: "Ail (gousse ou poudre)", q: "1 gousse ou 1 c\xE0c" },
-      { a: "Sauce soja", q: "1 c\xE0s (marinade)" },
-      { a: "Paprika fum\xE9", q: "1 c\xE0c" },
-      { a: "Huile d'olive", q: "1 c\xE0s" },
-      { a: "Sel, poivre", q: "-" }
-    ],
-    prep: [
-      "Mettre 150g de riz dans une casserole avec 300ml d'eau sal\xE9e (toujours 2\xD7 le volume de riz)",
-      "Porter \xE0 \xE9bullition, puis baisser au minimum, couvrir, et laisser 13 minutes sans toucher",
-      "Pendant que le riz cuit : couper le poulet en lani\xE8res fines de 1cm de large (plus c'est fin, plus \xE7a cuit vite et reste tendre)",
-      "Mettre les lani\xE8res de poulet dans un bol",
-      "Ajouter : 1 c\xE0s de sauce soja, 1 c\xE0c de paprika fum\xE9, l'ail hach\xE9 ou en poudre, un peu de poivre",
-      "M\xE9langer pour bien enrober \u2014 laisser mariner pendant que le riz finit (au moins 5 min)",
-      "Sortir les brocolis du surg\xE9lateur, mettre 100g dans un bol avec 2 c\xE0s d'eau, micro-onde 4 minutes",
-      "Chauffer 1 c\xE0s d'huile d'olive dans une grande po\xEAle \xE0 FEU VIF",
-      "Quand l'huile fume l\xE9g\xE8rement, jeter le poulet d'un coup",
-      "\xC9taler les lani\xE8res en une seule couche, ne pas remuer pendant 1 minute (pour faire colorer)",
-      "Remuer, et continuer \xE0 cuire 4-5 minutes en remuant de temps en temps jusqu'\xE0 coloration dor\xE9e",
-      "\xC9goutter les brocolis et les ajouter dans la po\xEAle pour les 2 derni\xE8res minutes",
-      "V\xE9rifier la cuisson du poulet : aucune partie ros\xE9e \xE0 l'int\xE9rieur",
-      "Servir dans une assiette : riz \xE0 c\xF4t\xE9, poulet et brocolis par-dessus"
-    ],
-    tips: "Marinade 30 min si tu peux \u2014 encore meilleur. Pour version asiatique : ajoute du gingembre frais r\xE2p\xE9 et de l'huile de s\xE9same en fin de cuisson."
-  },
-  {
-    id: 11,
-    nom: "\u{1F35D} P\xE2tes Bolognaise",
-    slots: ["PRINC", "POST"],
-    temps: "\u{1F550} 22 min",
-    kcal: 680,
-    p: 50,
-    g: 95,
-    l: 18,
-    ing: [
-      { a: "P\xE2tes compl\xE8tes", q: "150g" },
-      { a: "Steak hach\xE9 5% MG", q: "180g" },
-      { a: "Sauce tomate", q: "200g" },
-      { a: "Oignon", q: "1 petit" },
-      { a: "Ail", q: "2 gousses" },
-      { a: "Herbes de Provence", q: "1 c\xE0c" },
-      { a: "Sucre", q: "1 pinc\xE9e" },
-      { a: "Huile d'olive", q: "1 c\xE0s" },
-      { a: "Sel, poivre", q: "-" }
-    ],
-    prep: [
-      "Faire bouillir une grande casserole d'eau bien sal\xE9e (12g de sel par litre)",
-      "Quand l'eau bout, plonger les 150g de p\xE2tes \u2014 r\xE9gler le timer \xE0 10 minutes (v\xE9rifier le temps sur le paquet)",
-      "Pendant que les p\xE2tes cuisent : \xE9plucher et hacher finement l'oignon",
-      "Hacher finement les 2 gousses d'ail",
-      "Chauffer 1 c\xE0s d'huile d'olive dans une grande po\xEAle \xE0 feu moyen",
-      "Ajouter l'oignon hach\xE9, faire revenir 3 minutes jusqu'\xE0 ce qu'il devienne translucide",
-      "Ajouter l'ail hach\xE9 et cuire 30 secondes (attention \xE0 ne pas le br\xFBler \u2014 \xE7a devient amer)",
-      "Augmenter \xE0 feu vif, ajouter le steak hach\xE9 en l'\xE9miettant avec une cuill\xE8re en bois",
-      "Cuire 5 minutes en remuant, jusqu'\xE0 ce que la viande soit bien dor\xE9e (pas grise)",
-      "Verser les 200g de sauce tomate, ajouter les herbes de Provence, la pinc\xE9e de sucre (coupe l'acidit\xE9), sel et poivre",
-      "Baisser \xE0 feu doux et laisser mijoter 8-10 minutes pour que les saveurs se d\xE9veloppent",
-      "\xC9goutter les p\xE2tes en conservant 1/2 verre d'eau de cuisson",
-      "Verser les p\xE2tes directement dans la sauce et m\xE9langer 1 minute, en ajoutant un peu d'eau de cuisson si trop sec",
-      "Servir dans une assiette creuse, poivre frais par-dessus"
-    ],
-    tips: "L'eau de cuisson amidonn\xE9e des p\xE2tes lie magnifiquement la sauce. La pinc\xE9e de sucre est CRUCIALE pour couper l'acidit\xE9 de la tomate."
-  },
-  {
-    id: 12,
-    nom: "\u{1F35D} P\xE2tes Thon froides (gamelle)",
-    slots: ["PRINC", "COLL"],
-    temps: "\u26A1 13 min",
-    kcal: 580,
-    p: 45,
-    g: 88,
-    l: 12,
-    ing: [
-      { a: "P\xE2tes compl\xE8tes", q: "150g" },
-      { a: "Thon au naturel", q: "160g (1 bo\xEEte)" },
-      { a: "Tomates cerises", q: "10" },
-      { a: "Huile d'olive", q: "2 c\xE0s" },
-      { a: "Ail en poudre", q: "1 c\xE0c" },
-      { a: "Origan s\xE9ch\xE9", q: "1 c\xE0c" },
-      { a: "Citron (jus)", q: "1/2" },
-      { a: "Sel, poivre", q: "-" }
-    ],
-    prep: [
-      "Faire bouillir une grande casserole d'eau sal\xE9e",
-      "Plonger les 150g de p\xE2tes, r\xE9gler le timer selon le paquet (g\xE9n\xE9ralement 10-12 min)",
-      "Pendant la cuisson : ouvrir la bo\xEEte de thon et l'\xE9goutter compl\xE8tement (presser le couvercle pour faire sortir l'eau)",
-      "Couper les tomates cerises en deux",
-      "Dans un grand saladier : mettre le thon \xE9goutt\xE9, \xE9craser l\xE9g\xE8rement \xE0 la fourchette pour le d\xE9faire",
-      "Ajouter les tomates cerises, l'ail en poudre, l'origan, sel et poivre",
-      "Presser le jus d'1/2 citron par-dessus",
-      "Verser 2 c\xE0s d'huile d'olive et m\xE9langer",
-      "Quand les p\xE2tes sont cuites, les \xE9goutter",
-      "Les passer rapidement sous l'eau FROIDE pour arr\xEAter la cuisson (uniquement pour version froide en gamelle)",
-      "Verser les p\xE2tes refroidies dans le saladier avec le thon",
-      "M\xE9langer \xE9nergiquement pour bien enrober",
-      "Go\xFBter et rectifier sel/citron si besoin",
-      "Transf\xE9rer dans une bo\xEEte herm\xE9tique \u2014 conservation 24h au frigo"
-    ],
-    tips: "GAMELLE PARFAITE de nuit. Pas besoin de r\xE9chauffer. Pour version chaude : faire revenir ail+tomates 3 min dans l'huile avant d'ajouter le thon, et ne pas rincer les p\xE2tes."
-  },
-  {
-    id: 13,
-    nom: "\u{1F360} Patate Douce Steak",
-    slots: ["PRINC", "POST"],
-    temps: "\u{1F550} 15 min",
-    kcal: 620,
-    p: 50,
-    g: 65,
-    l: 18,
-    ing: [
-      { a: "Patate douce", q: "250g (1 grosse)" },
-      { a: "Steak hach\xE9 5% MG", q: "180g" },
-      { a: "Paprika fum\xE9", q: "1 c\xE0c" },
-      { a: "Curcuma", q: "1/2 c\xE0c" },
-      { a: "Sel, poivre", q: "-" },
-      { a: "Yaourt grec (sauce)", q: "30g" },
-      { a: "Ail (poudre, sauce)", q: "1/2 c\xE0c" }
-    ],
-    prep: [
-      "Laver la patate douce sous l'eau, garder la peau (riche en fibres)",
-      "Piquer la patate avec une fourchette PARTOUT, environ 10-15 piq\xFBres (sinon elle peut exploser au micro-onde)",
-      "Mettre dans une assiette et passer au micro-onde 6-7 minutes \xE0 puissance max (variable selon la taille)",
-      "Pour v\xE9rifier : enfoncer un couteau, \xE7a doit s'enfoncer sans r\xE9sistance",
-      "Pendant la cuisson de la patate : sortir le steak hach\xE9 du frigo (mieux \xE0 temp\xE9rature ambiante)",
-      "Mettre une po\xEAle SANS aucune mati\xE8re grasse \xE0 feu TR\xC8S VIF \u2014 laisser chauffer 1 minute",
-      "Saler les deux faces du steak juste avant de le poser",
-      "Poser le steak dans la po\xEAle br\xFBlante \u2014 ne pas bouger pendant 3 minutes",
-      "IMPORTANT : ne JAMAIS \xE9craser avec une spatule \u2014 le jus sortirait, le steak deviendrait sec",
-      "Retourner avec une spatule, cuire 2-3 minutes de l'autre c\xF4t\xE9 (selon l'\xE9paisseur)",
-      "Poser le steak dans une assiette, le laisser reposer 2 minutes (les jus se redistribuent)",
-      "Pendant ce temps : pr\xE9parer la sauce yaourt \u2014 m\xE9langer 30g de yaourt grec + ail en poudre + sel",
-      "Sortir la patate douce du micro-onde, l'ouvrir en deux avec un couteau",
-      "Saupoudrer paprika et curcuma sur la chair",
-      "Servir : patate ouverte + steak \xE0 c\xF4t\xE9 + sauce yaourt par-dessus"
-    ],
-    tips: "Patate au FOUR pour le meilleur r\xE9sultat : 200\xB0C, 35-40 min en quartiers avec huile d'olive + paprika. Caram\xE9lis\xE9e, sucr\xE9e, divine. Faire en batch (4 patates) le dimanche pour la semaine."
-  },
-  {
-    id: 14,
-    nom: "\u{1F32F} Wrap Poulet Maison",
-    slots: ["PRINC", "POST"],
-    temps: "\u{1F550} 15 min",
-    kcal: 520,
-    p: 48,
-    g: 50,
-    l: 14,
-    ing: [
-      { a: "Grand wrap bl\xE9 complet", q: "1" },
-      { a: "Blanc de poulet", q: "150g" },
-      { a: "Salade verte", q: "30g" },
-      { a: "Tomate", q: "1/2" },
-      { a: "Concombre", q: "5cm" },
-      { a: "Yaourt grec", q: "30g" },
-      { a: "Ail en poudre", q: "1/2 c\xE0c" },
-      { a: "Cumin", q: "1/2 c\xE0c" },
-      { a: "Huile d'olive", q: "1 c\xE0c" },
-      { a: "Sel, poivre", q: "-" }
-    ],
-    prep: [
-      "Couper le blanc de poulet en lani\xE8res fines de 1cm",
-      "Dans un bol, m\xE9langer le poulet avec ail, cumin, sel, poivre \u2014 masser pour bien enrober",
-      "Pendant que \xE7a repose (5 min) : pr\xE9parer la sauce dans un autre petit bol",
-      "M\xE9langer 30g de yaourt grec + ail en poudre + sel + jus de citron si dispo = sauce blanche style kebab",
-      "Couper la tomate en petits d\xE9s, le concombre en b\xE2tonnets, laver la salade",
-      "Chauffer 1 c\xE0c d'huile d'olive dans une po\xEAle \xE0 feu vif",
-      "Faire revenir le poulet 7-8 minutes en remuant, jusqu'\xE0 coloration dor\xE9e et cuisson compl\xE8te",
-      "Sortir le wrap du paquet et le tartiner de sauce sur toute la surface",
-      "Disposer les ingr\xE9dients sur la moiti\xE9 du wrap : salade, poulet, tomate, concombre",
-      "Replier les c\xF4t\xE9s gauche et droite vers l'int\xE9rieur (environ 2cm de chaque c\xF4t\xE9)",
-      "Rouler fermement depuis le bord garni vers l'autre \u2014 bien serr\xE9 pour que \xE7a tienne",
-      "OPTIONNEL : remettre 30 secondes dans la po\xEAle (face soudure en bas) pour souder et faire dorer",
-      "Couper en deux en diagonale et servir"
-    ],
-    tips: "Pour gamelle : pr\xE9pare tout, roule serr\xE9 dans du papier sulfuris\xE9, \xE7a tient une demi-journ\xE9e. Astuce kebab : marinade 1h avant pour go\xFBt intense."
-  },
-  {
-    id: 15,
-    nom: "\u{1F959} Chicken Bowl Kebab",
-    slots: ["PRINC", "POST"],
-    temps: "\u{1F550} 20 min",
-    kcal: 700,
-    p: 55,
-    g: 90,
-    l: 16,
-    ing: [
-      { a: "Blanc de poulet", q: "200g" },
-      { a: "Riz basmati cru", q: "130g" },
-      { a: "Yaourt grec", q: "50g (sauce)" },
-      { a: "Cumin", q: "1 c\xE0c" },
-      { a: "Paprika fum\xE9", q: "1 c\xE0c" },
-      { a: "Ail en poudre", q: "1 c\xE0c" },
-      { a: "Huile d'olive", q: "1 c\xE0s" },
-      { a: "Tomate", q: "1" },
-      { a: "Oignon rouge", q: "1/4" },
-      { a: "Salade", q: "30g" }
-    ],
-    prep: [
-      "Lancer le riz : 130g + 260ml d'eau sal\xE9e, couvert, feu min, 13 min sans toucher",
-      "Couper le blanc de poulet en lani\xE8res fines de 8mm (tr\xE8s fin = cuisson rapide + grill\xE9 style kebab)",
-      "Dans un bol : poulet + cumin + paprika + 1/2 c\xE0c d'ail + 1 c\xE0s d'huile d'olive + sel",
-      "M\xE9langer avec les mains pour bien enrober chaque morceau \u2014 laisser mariner 5 minutes minimum",
-      "Pendant ce temps : pr\xE9parer la sauce \u2014 50g yaourt grec + 1/2 c\xE0c d'ail en poudre + cumin + sel = sauce blanche kebab",
-      "Couper la tomate en d\xE9s, l'oignon rouge en fines tranches, laver la salade",
-      "Chauffer une po\xEAle \xE0 FEU TR\xC8S VIF \u2014 c'est la cl\xE9 du grill\xE9 style kebab",
-      "Quand la po\xEAle fume l\xE9g\xE8rement, ajouter le poulet en l'\xE9talant en une seule couche",
-      "Ne pas toucher pendant 2 minutes \u2014 le poulet doit attraper, faire une cro\xFBte dor\xE9e",
-      "Remuer et continuer 4-5 minutes en laissant chaque face se colorer",
-      "V\xE9rifier la cuisson : aucune partie ros\xE9e, l'ext\xE9rieur doit \xEAtre bien dor\xE9-grill\xE9",
-      "Composer le bowl : riz au fond + poulet par-dessus + tomates + oignon + salade",
-      "Drizzler la sauce blanche en filet g\xE9n\xE9reusement"
-    ],
-    tips: "Le FEU VIF est non-n\xE9gociable. Si la po\xEAle n'est pas br\xFBlante, le poulet sort \xE0 la vapeur, pas grill\xE9. Marinade 30 min = niveau pro."
-  },
-  {
-    id: 16,
-    nom: "\u{1F372} Curry Pois Chiches",
-    slots: ["PRINC"],
-    temps: "\u{1F550} 22 min",
-    kcal: 520,
-    p: 25,
-    g: 65,
-    l: 16,
-    ing: [
-      { a: "Pois chiches en bo\xEEte", q: "240g \xE9goutt\xE9s" },
-      { a: "Lait de coco", q: "150ml" },
-      { a: "Tomates concass\xE9es", q: "200g" },
-      { a: "Curry en poudre", q: "1 c\xE0s" },
-      { a: "Oignon", q: "1" },
-      { a: "Ail", q: "2 gousses" },
-      { a: "Huile d'olive", q: "1 c\xE0s" },
-      { a: "Riz (accompagnement)", q: "100g cru" },
-      { a: "Sel, poivre", q: "-" }
-    ],
-    prep: [
-      "Lancer le riz : 100g + 200ml eau sal\xE9e, couvert, feu min, 13 min",
-      "\xC9goutter les pois chiches dans une passoire et les rincer \xE0 l'eau (enl\xE8ve le sel et le mucus)",
-      "Hacher finement l'oignon et l'ail",
-      "Chauffer 1 c\xE0s d'huile d'olive dans une casserole \xE0 feu moyen",
-      "Faire revenir l'oignon 4-5 min jusqu'\xE0 ce qu'il devienne translucide et l\xE9g\xE8rement dor\xE9",
-      "Ajouter l'ail hach\xE9, cuire 30 secondes (attention \xE0 ne pas br\xFBler)",
-      "Saupoudrer 1 c\xE0s de curry, remuer 30 secondes pour lib\xE9rer les ar\xF4mes",
-      "Verser les tomates concass\xE9es + lait de coco, m\xE9langer",
-      "Ajouter les pois chiches \xE9goutt\xE9s, sel et poivre",
-      "Porter \xE0 fr\xE9missement, puis baisser \xE0 feu doux",
-      "Laisser mijoter 15 minutes en remuant de temps en temps \u2014 la sauce doit \xE9paissir",
-      "Go\xFBter et rectifier sel/curry si besoin",
-      "Servir le riz dans une assiette creuse, verser le curry par-dessus g\xE9n\xE9reusement",
-      "Optionnel : coriandre fra\xEEche ou citron par-dessus"
-    ],
-    tips: "Option v\xE9g\xE9 d\xE9licieuse. ENCORE MEILLEUR le lendemain r\xE9chauff\xE9 \u2014 les saveurs se d\xE9veloppent. Top pour batch cooking du dimanche pour 3 repas."
-  },
-  {
-    id: 17,
-    nom: "\u{1F957} Salade Poulet Avocat",
-    slots: ["PRINC"],
-    temps: "\u{1F550} 15 min",
-    kcal: 450,
-    p: 48,
-    g: 18,
-    l: 22,
-    ing: [
-      { a: "Blanc de poulet", q: "150g" },
-      { a: "Salade verte (m\xE2che, roquette)", q: "100g" },
-      { a: "Avocat", q: "1/2" },
-      { a: "Tomates cerises", q: "8" },
-      { a: "\u0152uf dur", q: "1" },
-      { a: "Huile d'olive", q: "1 c\xE0s" },
-      { a: "Citron (jus)", q: "1/2" },
-      { a: "Sel, poivre, paprika", q: "-" }
-    ],
-    prep: [
-      "Mettre l'\u0153uf dans une casserole d'eau froide, porter \xE0 \xE9bullition puis 8 minutes",
-      "Pendant ce temps, couper le poulet en lani\xE8res de 1cm",
-      "Assaisonner le poulet : sel, poivre, paprika fum\xE9, masser pour enrober",
-      "Chauffer 1/2 c\xE0s d'huile d'olive dans une po\xEAle \xE0 feu vif",
-      "Cuire le poulet 7-8 minutes en remuant r\xE9guli\xE8rement jusqu'\xE0 coloration dor\xE9e",
-      "Quand le timer de l'\u0153uf sonne : le plonger dans un bol d'eau glac\xE9e 1 minute (facilite l'\xE9calage)",
-      "Pendant ce temps : laver la salade, couper les tomates cerises en deux",
-      "Couper l'avocat en deux, retirer le noyau, pr\xE9lever la chair \xE0 la cuill\xE8re, trancher en lamelles",
-      "\xC9caler l'\u0153uf, le couper en quartiers",
-      "Composer la salade dans un grand bol : salade au fond \u2192 tomates \u2192 avocat \u2192 \u0153ufs \u2192 poulet ti\xE8de par-dessus",
-      "Pr\xE9parer la vinaigrette : 1/2 c\xE0s d'huile d'olive + jus de 1/2 citron + sel + poivre dans un petit bol",
-      "Verser sur la salade juste avant de servir",
-      "M\xE9langer d\xE9licatement pour ne pas \xE9craser l'avocat"
-    ],
-    tips: "Repas l\xE9ger et complet (48g de prot\xE9ines !). Id\xE9al le soir si tu as bien mang\xE9 en pr\xE9-travail. Ajoute des graines (tournesol, courge) pour +200 kcal et plus de croquant."
-  },
-  {
-    id: 18,
-    nom: "\u{1F363} Buddha Bowl Quinoa",
-    slots: ["PRINC"],
-    temps: "\u{1F550} 22 min",
-    kcal: 570,
-    p: 35,
-    g: 65,
-    l: 20,
-    ing: [
-      { a: "Quinoa cru", q: "80g" },
-      { a: "\u0152ufs (ou tofu)", q: "3" },
-      { a: "Courgette", q: "1/2" },
-      { a: "Poivron rouge", q: "1/2" },
-      { a: "Avocat", q: "1/2" },
-      { a: "Graines de tournesol", q: "15g" },
-      { a: "Huile d'olive", q: "2 c\xE0s" },
-      { a: "Tahini (optionnel)", q: "1 c\xE0s" },
-      { a: "Citron", q: "1/2" },
-      { a: "Sel, poivre, cumin", q: "-" }
-    ],
-    prep: [
-      "Rincer le quinoa sous l'eau froide 30 secondes (enl\xE8ve l'amertume)",
-      "Mettre dans une casserole avec 200ml d'eau sal\xE9e, couvrir, porter \xE0 \xE9bullition",
-      "R\xE9duire \xE0 feu doux et laisser 12-15 minutes jusqu'\xE0 absorption compl\xE8te de l'eau",
-      "Pendant ce temps, mettre l'\u0153uf \xE0 cuire 8 minutes dans une autre casserole d'eau bouillante",
-      "Couper la courgette en rondelles de 5mm, le poivron en lani\xE8res",
-      "Chauffer 1 c\xE0s d'huile d'olive dans une po\xEAle \xE0 feu moyen-vif",
-      "Faire revenir courgette et poivron 6-7 minutes en remuant, jusqu'\xE0 coloration et tendret\xE9",
-      "Saler, poivrer, cumin sur les l\xE9gumes",
-      "Plonger l'\u0153uf dans l'eau glac\xE9e puis l'\xE9caler, le couper en deux",
-      "Couper l'avocat en lamelles",
-      "Faire la sauce : 1 c\xE0s d'huile d'olive + 1 c\xE0s de tahini + jus de 1/2 citron + sel + 1 c\xE0s d'eau (pour fluidifier)",
-      "Composer le bowl dans un grand bol creux :",
-      "- Quinoa au centre",
-      "- L\xE9gumes po\xEAl\xE9s sur un c\xF4t\xE9",
-      "- Avocat sur l'autre",
-      "- \u0152ufs en haut",
-      "- Graines de tournesol parsem\xE9es partout",
-      "Drizzler la sauce tahini par-dessus"
-    ],
-    tips: "Sauce tahini-citron-ail = transformation totale du plat. Tofu po\xEAl\xE9 = version 100% v\xE9g\xE9 qui hit aussi bien."
-  },
-  // ═══ GAMELLES & COLLATIONS ═══
-  {
-    id: 20,
-    nom: "\u{1F41F} Gamelle Bo\xEEte & Pain",
-    slots: ["COLL", "PRINC"],
-    temps: "\u26A1 4 min",
-    kcal: 420,
-    p: 32,
-    g: 50,
-    l: 14,
-    ing: [
-      { a: "Pain complet", q: "80g (2 tranches)" },
-      { a: "Thon / sardines / maquereau", q: "1 bo\xEEte (160g)" },
-      { a: "Tomates cerises", q: "6" },
-      { a: "Moutarde", q: "1 c\xE0c" },
-      { a: "Huile d'olive", q: "1 c\xE0c (si thon naturel)" },
-      { a: "Sel, poivre", q: "-" }
-    ],
-    prep: [
-      "Sortir la bo\xEEte de poisson, l'ouvrir",
-      "\xC9goutter compl\xE8tement dans une passoire (sinon \xE7a d\xE9trempe le pain)",
-      "Si c'est du thon au naturel, ajouter 1 c\xE0c d'huile d'olive pour le go\xFBt",
-      "Couper les tomates cerises en deux",
-      "\xC9taler 1 c\xE0c de moutarde sur chaque tranche de pain (la moutarde \xE9vite que le pain ramollisse au contact du poisson humide)",
-      "Disposer le poisson sur le pain (\xE9craser l\xE9g\xE8rement \xE0 la fourchette pour aplatir)",
-      "Poivrer g\xE9n\xE9reusement par-dessus",
-      "Mettre les tomates cerises \xE0 c\xF4t\xE9 ou dessus",
-      "Transf\xE9rer dans une bo\xEEte herm\xE9tique avec une serviette en papier dessous (absorbe l'humidit\xE9)",
-      "Conservation : 24h au frigo si bien ferm\xE9"
-    ],
-    tips: "Pour le service : pr\xE9pare AVANT de partir au travail. Go\xFBt plus fort : sardines/maquereau. Go\xFBt neutre : thon. La moutarde est cruciale anti-pain-mou."
-  },
-  {
-    id: 21,
-    nom: "\u{1F959} Wrap Thon-Pois Chiches",
-    slots: ["COLL", "PRINC"],
-    temps: "\u26A1 6 min",
-    kcal: 480,
-    p: 38,
-    g: 55,
-    l: 14,
-    ing: [
-      { a: "Grand wrap complet", q: "1" },
-      { a: "Thon au naturel", q: "1 bo\xEEte" },
-      { a: "Pois chiches en bo\xEEte", q: "80g \xE9goutt\xE9s" },
-      { a: "Mayonnaise all\xE9g\xE9e", q: "1 c\xE0s" },
-      { a: "Tomates cerises", q: "4" },
-      { a: "Salade ou roquette", q: "30g" },
-      { a: "Citron", q: "1/4 jus" },
-      { a: "Sel, poivre", q: "-" }
-    ],
-    prep: [
-      "\xC9goutter le thon dans une passoire, presser pour enlever l'eau",
-      "\xC9goutter et rincer les pois chiches",
-      "Mettre les pois chiches dans un bol, les \xE9craser GROSSI\xC8REMENT \xE0 la fourchette (on garde des morceaux pour la texture)",
-      "Ajouter le thon \xE9miett\xE9, la mayonnaise, le jus de 1/4 de citron, sel et poivre",
-      "M\xE9langer pour obtenir une texture style 'rillettes'",
-      "Sortir le wrap, \xE9taler la pr\xE9paration thon-pois chiches sur la moiti\xE9",
-      "Disposer la salade et les tomates cerises coup\xE9es en deux par-dessus",
-      "Replier les c\xF4t\xE9s gauche et droite vers l'int\xE9rieur (2cm)",
-      "Rouler serr\xE9 depuis le bord garni",
-      "Couper en deux en diagonale",
-      "Transf\xE9rer dans une bo\xEEte herm\xE9tique"
-    ],
-    tips: "Conservation : 6-8h au frigo dans une bo\xEEte. Top pour gamelle. Combo thon-pois chiches = profil aminoacides complet."
-  },
-  // ═══ COLLATIONS ═══
-  {
-    id: 30,
-    nom: "\u{1F95A} \u0152ufs durs & avocat",
-    slots: ["COLL", "POST"],
-    temps: "\u{1F550} 12 min",
-    kcal: 430,
-    p: 22,
-    g: 10,
-    l: 35,
-    ing: [
-      { a: "\u0152ufs", q: "3" },
-      { a: "Avocat m\xFBr", q: "1" },
-      { a: "Citron", q: "1/4 jus" },
-      { a: "Sel, poivre, piment optionnel", q: "-" }
-    ],
-    prep: [
-      "Faire bouillir une grande casserole d'eau",
-      "Plonger d\xE9licatement les 3 \u0153ufs avec une cuill\xE8re",
-      "R\xE9gler le timer : 8 minutes pour des \u0153ufs durs",
-      "Pr\xE9parer un bol d'eau glac\xE9e pour plus tard",
-      "Pendant que les \u0153ufs cuisent : couper l'avocat en deux, retirer le noyau",
-      "R\xE9cup\xE9rer toute la chair \xE0 la cuill\xE8re dans un bol",
-      "\xC9craser \xE0 la fourchette avec le jus de 1/4 de citron \u2014 texture pas trop fine",
-      "Saler, poivrer, ajouter du piment si tu aimes",
-      "Quand le timer sonne : sortir les \u0153ufs et les plonger imm\xE9diatement dans l'eau glac\xE9e 2 minutes",
-      "Tapoter chaque \u0153uf sur le bord de l'\xE9vier, le rouler doucement pour briser la coquille partout, \xE9caler sous l'eau froide",
-      "Couper chaque \u0153uf en deux ou en quartiers",
-      "Servir : avocat dans une assiette, \u0153ufs dispos\xE9s autour ou par-dessus"
-    ],
-    tips: "Top sur 2 tranches de pain complet = repas complet rapide \xE0 600 kcal. L'eau glac\xE9e est essentielle pour faciliter l'\xE9calage."
-  },
-  {
-    id: 31,
-    nom: "\u{1F36F} Yaourt grec miel & noix",
-    slots: ["COLL", "SOIR", "PD"],
-    temps: "\u26A1 2 min",
-    kcal: 340,
-    p: 18,
-    g: 25,
-    l: 18,
-    ing: [
-      { a: "Yaourt grec nature", q: "200g" },
-      { a: "Miel", q: "1 c\xE0s" },
-      { a: "Noix", q: "20g (~6 cerneaux)" },
-      { a: "Cannelle (optionnel)", q: "pinc\xE9e" }
-    ],
-    prep: [
-      "Sortir le yaourt grec et le verser dans un bol",
-      "\xC9taler avec le dos de la cuill\xE8re pour faire une surface plane",
-      "Concasser grossi\xE8rement les noix avec les mains (ne pas hacher trop fin, on veut le croquant)",
-      "Drizzler le miel en filet par-dessus (1 grosse c\xE0s)",
-      "Saupoudrer les noix concass\xE9es",
-      "Optionnel : une pinc\xE9e de cannelle",
-      "Manger imm\xE9diatement (le miel s'\xE9coule entre temps si tu attends)"
-    ],
-    tips: "TOP avant coucher : la cas\xE9ine naturelle du yaourt grec a une absorption lente (5-7h), anti-catabolique nocturne. Les noix ajoutent om\xE9ga-3 + magn\xE9sium = sommeil profond."
-  },
-  {
-    id: 32,
-    nom: "\u{1F34C} Banane & beurre de cacahu\xE8te",
-    slots: ["PRE", "COLL"],
-    temps: "\u26A1 1 min",
-    kcal: 340,
-    p: 10,
-    g: 35,
-    l: 18,
-    ing: [
-      { a: "Banane", q: "1" },
-      { a: "Beurre de cacahu\xE8te pur", q: "30g (2 c\xE0s)" }
-    ],
-    prep: [
-      "\xC9plucher la banane",
-      "Option 1 : couper en rondelles de 1cm sur une assiette, \xE9taler le beurre de cacahu\xE8te sur chaque rondelle",
-      "Option 2 : trancher la banane en deux dans la longueur, \xE9taler le beurre de cacahu\xE8te sur les 2 moiti\xE9s",
-      "Option 3 (rapide) : tremper directement la banane dans le pot de beurre de cacahu\xE8te bouch\xE9e par bouch\xE9e"
-    ],
-    tips: "Snack pr\xE9-s\xE9ance ID\xC9AL : la banane apporte des glucides rapides (\xE9nergie imm\xE9diate), le beurre de cacahu\xE8te des graisses + un peu de prot\xE9ines pour une \xE9nergie soutenue 60-90 min."
-  },
-  {
-    id: 33,
-    nom: "\u{1F9C0} Fromage blanc & fruits",
-    slots: ["COLL", "SOIR"],
-    temps: "\u26A1 2 min",
-    kcal: 240,
-    p: 22,
-    g: 25,
-    l: 6,
-    ing: [
-      { a: "Fromage blanc 0%", q: "250g" },
-      { a: "Fruits rouges (frais ou surgel\xE9s)", q: "100g" },
-      { a: "Amandes", q: "15g" },
-      { a: "Miel (optionnel)", q: "1 c\xE0c" }
-    ],
-    prep: [
-      "Verser 250g de fromage blanc dans un bol",
-      "Si fruits rouges surgel\xE9s : passer 30 secondes au micro-onde pour d\xE9congeler partiellement",
-      "Ajouter les fruits par-dessus le fromage blanc",
-      "Concasser les amandes avec les mains et les parsemer",
-      "Optionnel : 1 c\xE0c de miel en filet",
-      "M\xE9langer doucement et d\xE9guster"
-    ],
-    tips: "22g de prot\xE9ines pour seulement 240 kcal \u2014 c'est le ratio TOP pour s\xE8che ou collation propre."
-  },
-  {
-    id: 34,
-    nom: "\u{1F964} Shake whey & banane",
-    slots: ["POST", "PRE"],
-    temps: "\u26A1 30s",
-    kcal: 340,
-    p: 32,
-    g: 38,
-    l: 5,
-    ing: [
-      { a: "Whey prot\xE9ine", q: "30g (1 dose)" },
-      { a: "Banane", q: "1" },
-      { a: "Lait demi-\xE9cr\xE9m\xE9", q: "250ml" },
-      { a: "Glace (optionnel)", q: "-" }
-    ],
-    prep: [
-      "Verser les 250ml de lait dans un shaker",
-      "Ajouter la dose de whey (30g)",
-      "Refermer herm\xE9tiquement",
-      "Secouer \xE9nergiquement 15-20 secondes (sans la banane d'abord pour bien m\xE9langer la whey)",
-      "Ouvrir, ajouter la banane coup\xE9e en morceaux",
-      "Refermer et secouer encore 5-10 secondes",
-      "Boire IMM\xC9DIATEMENT apr\xE8s s\xE9ance (fen\xEAtre anabolique)"
-    ],
-    tips: "30 min post-s\xE9ance = fen\xEAtre optimale d'absorption prot\xE9ique. Si pas de banane \xE0 dispo, juste whey + lait fonctionne aussi tr\xE8s bien."
-  },
-  {
-    id: 35,
-    nom: "\u{1F330} Mix ol\xE9agineux",
-    slots: ["COLL"],
-    temps: "\u26A1 0",
-    kcal: 320,
-    p: 10,
-    g: 12,
-    l: 28,
-    ing: [
-      { a: "Amandes", q: "15g (~12)" },
-      { a: "Noix de cajou", q: "15g (~10)" },
-      { a: "Noix", q: "10g (~3 cerneaux)" }
-    ],
-    prep: [
-      "Sortir les pots / sachets d'ol\xE9agineux",
-      "Composer un mix dans un petit tupperware ou directement dans la main",
-      "Total : environ 40g \u2014 ne PAS d\xE9passer, c'est tr\xE8s calorique"
-    ],
-    tips: "Combine 3 types pour un profil de gras complet (mono-insatur\xE9s des amandes, polyinsatur\xE9s des noix). Top \xE0 emporter au travail."
-  },
-  // ═══ AVANT COUCHER ═══
-  {
-    id: 40,
-    nom: "\u{1F95B} Cas\xE9ine slow",
-    slots: ["SOIR"],
-    temps: "\u26A1 30s",
-    kcal: 240,
-    p: 28,
-    g: 15,
-    l: 5,
-    ing: [
-      { a: "Cas\xE9ine en poudre", q: "30g (1 dose)" },
-      { a: "Lait demi-\xE9cr\xE9m\xE9", q: "250ml" }
-    ],
-    prep: [
-      "Verser 250ml de lait dans un shaker",
-      "Ajouter la dose de cas\xE9ine",
-      "Refermer herm\xE9tiquement",
-      "Secouer 15-20 secondes (la cas\xE9ine est plus dure \xE0 dissoudre que la whey, secoue bien)",
-      "Boire 30 min avant le coucher"
-    ],
-    tips: "Cas\xE9ine = digestion lente 6-8h = anti-catabolique pendant le sommeil. Le yaourt grec offre le m\xEAme effet naturellement \xE0 moindre co\xFBt."
-  },
-  {
-    id: 41,
-    nom: "\u{1F36B} 2 \u0153ufs + chocolat noir",
-    slots: ["SOIR", "COLL"],
-    temps: "\u{1F550} 10 min",
-    kcal: 290,
-    p: 14,
-    g: 8,
-    l: 22,
-    ing: [
-      { a: "\u0152ufs", q: "2" },
-      { a: "Chocolat noir 85%", q: "20g (2 carr\xE9s)" }
-    ],
-    prep: [
-      "Faire bouillir une casserole d'eau",
-      "Plonger d\xE9licatement les 2 \u0153ufs",
-      "R\xE9gler le timer : 8 min pour durs, 6 min pour \u0153ufs \xE0 la coque (jaune coulant)",
-      "Pr\xE9parer un bol d'eau glac\xE9e",
-      "Quand le timer sonne, plonger les \u0153ufs dans l'eau glac\xE9e 1 minute",
-      "\xC9caler les \u0153ufs (sauf si \xE0 la coque \u2014 alors les manger directement avec une cuill\xE8re)",
-      "Croquer dans les 2 carr\xE9s de chocolat noir 85% \xE0 c\xF4t\xE9"
-    ],
-    tips: "Chocolat 85% : tr\xE8s peu de sucre, riche en magn\xE9sium = bon pour la qualit\xE9 du sommeil. Les \u0153ufs apportent du tryptophane = pr\xE9curseur de m\xE9latonine = sommeil."
-  }
-];
-const COURSES = [
-  { r: "\u{1F969} Viandes", items: [
-    { n: "Blanc de poulet (1,5 kg)", macro: "23g P \xB7 1.5g L \xB7 0g G", nutri: "Riche en B6, B12, s\xE9l\xE9nium, niacine", why: "La r\xE9f\xE9rence absolue de la prise de masse : meilleur ratio prot\xE9ines/calories du march\xE9." },
-    { n: "Steak hach\xE9 5% MG \xD76", macro: "21g P \xB7 5g L \xB7 0g G", nutri: "Fer h\xE9minique, zinc, B12, cr\xE9atine naturelle", why: "Prot\xE9ines + fer pour le transport d'oxyg\xE8ne + cr\xE9atine naturelle. Le 5% MG = \xE9quilibre parfait." },
-    { n: "Jambon blanc d\xE9graiss\xE9", macro: "19g P \xB7 4g L \xB7 0g G", nutri: "B1, s\xE9l\xE9nium, phosphore", why: "Pratique, d\xE9j\xE0 cuit. Sandwich, omelette, gamelle. Choisis du d\xE9graiss\xE9 pour limiter le sel." },
-    { n: "\u0152ufs plein air \xD718", macro: "6g P \xB7 5g L \xB7 0.5g G (par \u0153uf)", nutri: "Vit A, D, E, K, B12, choline, lut\xE9ine", why: "L'aliment le plus complet. La choline = m\xE9moire et concentration. Plein air = meilleurs om\xE9ga-3." }
-  ] },
-  { r: "\u{1F41F} Poissons en bo\xEEte", items: [
-    { n: "Thon au naturel \xD78", macro: "27g P \xB7 1g L \xB7 0g G", nutri: "S\xE9l\xE9nium, B12, vitamine D, iode", why: "Prot\xE9ines pures \xE0 1\u20AC. Gamelle parfaite. Max 2-3\xD7/sem (mercure)." },
-    { n: "Sardines \xE0 l'huile d'olive \xD74", macro: "25g P \xB7 11g L \xB7 0g G", nutri: "Om\xE9ga-3 (1.5g), calcium (avec ar\xEAtes), vit D, B12", why: "Top sant\xE9. Petit poisson = peu de mercure. Mange les ar\xEAtes (calcium)." },
-    { n: "Maquereau au naturel \xD74", macro: "19g P \xB7 13g L \xB7 0g G", nutri: "Om\xE9ga-3 (2g), vit D, B12, s\xE9l\xE9nium", why: "Roi des om\xE9ga-3. Anti-inflammatoire, bon pour le c\u0153ur et le cerveau." }
-  ] },
-  { r: "\u{1F95B} Laitiers", items: [
-    { n: "Fromage blanc 0% \xD74 pots", macro: "8g P \xB7 0g L \xB7 4g G", nutri: "Calcium, B12, riboflavine", why: "22g de prot pour 240 kcal \u2014 ratio TOP en s\xE8che. Cas\xE9ine = digestion lente." },
-    { n: "Yaourt grec nature \xD78", macro: "10g P \xB7 5g L \xB7 4g G", nutri: "Calcium, B12, probiotiques", why: "Cas\xE9ine naturelle = anti-catabolique nocturne. Probiotiques = digestion. Top avant coucher." },
-    { n: "Lait demi-\xE9cr\xE9m\xE9 1L", macro: "3.5g P \xB7 1.5g L \xB7 5g G", nutri: "Calcium, B12, vit D, potassium", why: "Mix prot\xE9ique whey + cas\xE9ine naturel. Hydratation + r\xE9cup\xE9ration. Avec les flocons d'avoine." }
-  ] },
-  { r: "\u{1F33E} F\xE9culents", items: [
-    { n: "Riz basmati 2 kg", macro: "7g P \xB7 0.5g L \xB7 78g G (cru)", nutri: "Magn\xE9sium, mangan\xE8se, B1", why: "Glucides complexes peu allerg\xE8nes. IG mod\xE9r\xE9. La base post-s\xE9ance. Cuit = 130 kcal/100g." },
-    { n: "P\xE2tes compl\xE8tes 1 kg", macro: "13g P \xB7 2g L \xB7 65g G", nutri: "Fibres, magn\xE9sium, fer, B-complexe", why: "Glucides + fibres pour sati\xE9t\xE9. \xC9nergie durable. 30g de fibres pour 100g cru." },
-    { n: "Flocons d'avoine 1 kg", macro: "13g P \xB7 7g L \xB7 60g G", nutri: "B\xEAta-glucanes, magn\xE9sium, fer, mangan\xE8se", why: "PRE-workout id\xE9al : IG bas + b\xEAta-glucanes pour cholest\xE9rol. Petit-d\xE9j champion." },
-    { n: "Pain complet \xD72", macro: "9g P \xB7 1.5g L \xB7 45g G", nutri: "Fibres, B-vitamines, fer, zinc", why: "Glucides complexes + fibres. Sandwich post-shift parfait." },
-    { n: "Patates douces 1 kg", macro: "1.6g P \xB7 0.1g L \xB7 20g G", nutri: "B\xEAta-carot\xE8ne (vit A), vit C, potassium, fibres", why: "Sucr\xE9 naturellement mais IG mod\xE9r\xE9. Bourr\xE9e d'antioxydants. Au four = top." },
-    { n: "Quinoa 500g", macro: "14g P \xB7 6g L \xB7 64g G (cru)", nutri: "Tous les AA essentiels, fer, magn\xE9sium", why: "Pseudo-c\xE9r\xE9ale unique : prot\xE9ines compl\xE8tes (rare pour un v\xE9g\xE9tal). Sans gluten." },
-    { n: "Wraps complets", macro: "9g P \xB7 4g L \xB7 35g G", nutri: "Fibres, fer, B-vitamines", why: "Pratique pour gamelle/post-s\xE9ance. Choisis complet pour fibres." }
-  ] },
-  { r: "\u{1F966} Fruits & L\xE9gumes", items: [
-    { n: "Bananes (r\xE9gime)", macro: "1g P \xB7 0g L \xB7 23g G", nutri: "Potassium (358mg), vit B6, vit C", why: "Glucides rapides PRE-workout. Potassium = anti-crampes. M\xFBre = digestion +." },
-    { n: "Pommes", macro: "0.3g P \xB7 0g L \xB7 16g G", nutri: "Fibres (pectine), vit C, polyph\xE9nols", why: "Snack parfait : sucres lents, fibres, antioxydants. Mange la peau (pectine)." },
-    { n: "Fruits rouges surgel\xE9s", macro: "1g P \xB7 0g L \xB7 12g G", nutri: "Antioxydants ++ (anthocyanes), vit C, mangan\xE8se", why: "Le top antioxydants. Anti-inflammatoire. Surgel\xE9 = aussi nutritif que frais et moins cher." },
-    { n: "Brocolis surgel\xE9s", macro: "3g P \xB7 0g L \xB7 7g G", nutri: "Vit C, K, folates, sulforaphane (anti-cancer)", why: "L\xE9gume champion. Vit K = densit\xE9 osseuse. Anti-cancer prouv\xE9. Surgel\xE9 = pratique." },
-    { n: "Tomates cerises", macro: "0.9g P \xB7 0g L \xB7 4g G", nutri: "Lycop\xE8ne (antioxydant), vit C, K, potassium", why: "Lycop\xE8ne prot\xE8ge la peau et la prostate. Go\xFBteuses crues, en cuisine, partout." },
-    { n: "Avocat \xD74", macro: "2g P \xB7 15g L \xB7 2g G", nutri: "Mono-insatur\xE9s, potassium ++, folates, vit K", why: "Bons gras pour testost\xE9rone et hormones. Plus de potassium que la banane." },
-    { n: "Citrons", macro: "0g P \xB7 0g L \xB7 9g G", nutri: "Vit C ++, antioxydants flavono\xEFdes", why: "Booster digestion + immunit\xE9. Anti-oxydation avocat. \xC0 presser partout." },
-    { n: "Oignons rouges", macro: "1g P \xB7 0g L \xB7 9g G", nutri: "Querc\xE9tine, vit C, soufre", why: "Anti-inflammatoire. Saveur en cuisine. Rouges plus riches en antioxydants que blancs." },
-    { n: "Salade verte", macro: "1.4g P \xB7 0g L \xB7 3g G", nutri: "Vit K, A, folates, eau", why: "Volume + micronutriments pour z\xE9ro calorie. M\xE2che/roquette > iceberg (plus de nutri)." }
-  ] },
-  { r: "\u{1F95C} Graisses saines", items: [
-    { n: "Amandes / cajou (300g)", macro: "21g P \xB7 50g L \xB7 22g G", nutri: "Vit E, magn\xE9sium, calcium, fibres", why: "Top ol\xE9agineux : vit E prot\xE8ge muscle, magn\xE9sium = sommeil. 30g max/j (calorique)." },
-    { n: "Noix (200g)", macro: "15g P \xB7 65g L \xB7 14g G", nutri: "Om\xE9ga-3 ALA, magn\xE9sium, antioxydants", why: "Seules ol\xE9agineuses avec om\xE9ga-3 v\xE9g\xE9taux. Bonnes pour le cerveau." },
-    { n: "Beurre de cacahu\xE8te pur", macro: "25g P \xB7 50g L \xB7 20g G", nutri: "Niacine, magn\xE9sium, vit E", why: "Combo prot + gras. V\xE9rifie l'\xE9tiquette : 100% cacahu\xE8tes, pas d'huile ajout\xE9e." },
-    { n: "Huile d'olive 1L", macro: "0g P \xB7 100g L \xB7 0g G", nutri: "Mono-insatur\xE9s, polyph\xE9nols, vit E, K", why: "Reine des huiles. Anti-inflammatoire. Cuisson mod\xE9r\xE9e OK, top \xE0 cru." },
-    { n: "Chocolat noir 85%", macro: "8g P \xB7 50g L \xB7 30g G", nutri: "Magn\xE9sium ++, fer, antioxydants flavono\xEFdes", why: "R\xE9compense saine. Magn\xE9sium = sommeil/r\xE9cup. 20g/j = parfait." }
-  ] },
-  { r: "\u{1F48A} Suppl\xE9ments", items: [
-    { n: "Whey nature/vanille", macro: "80g P \xB7 5g L \xB7 5g G (par 100g)", nutri: "Tous les AA + BCAA", why: "Prot\xE9ine rapide post-s\xE9ance. Pratique. Pas indispensable mais utile si tu peines \xE0 hit ton total." },
-    { n: "Cr\xE9atine 500g", macro: "-", nutri: "Cr\xE9atine monohydrate pure", why: "Le compl\xE9ment le + \xE9tudi\xE9 au monde. +5-10% force/explosivit\xE9. 3-5g/j, peu importe l'heure. R\xE9tention d'eau musculaire normale." },
-    { n: "Magn\xE9sium bisglycinate", macro: "-", nutri: "300mg \xE9l\xE9mentaire", why: "Sommeil + r\xE9cup\xE9ration + anti-crampes. Bisglycinate = meilleure absorption. Le soir." },
-    { n: "Vitamine D3 1000UI", macro: "-", nutri: "Vit D3 chol\xE9calcif\xE9rol", why: "Quasi tout le monde est en d\xE9ficit en France. Booste testost\xE9rone, immunit\xE9, os, humeur. 2000 UI/j en hiver." }
-  ] },
-  { r: "\u{1F9F4} Divers", items: [
-    { n: "Eau 1,5L \xD76", macro: "-", nutri: "H2O + min\xE9raux selon marque", why: "3L/j minimum quand tu t'entra\xEEnes. Hydratation = perf + r\xE9cup." },
-    { n: "Sauce soja all\xE9g\xE9e", macro: "-", nutri: "Faible en kcal, source de glutamate", why: "Booster de go\xFBt z\xE9ro calorie. Marinade poulet/l\xE9gumes. Version all\xE9g\xE9e = -40% sel." },
-    { n: "Pois chiches en bo\xEEte", macro: "9g P \xB7 3g L \xB7 14g G", nutri: "Fibres, fer, folates, magn\xE9sium", why: "L\xE9gumineuse top : prot\xE9ines + fibres. Cure ou houmous." },
-    { n: "Sauce tomate", macro: "1.5g P \xB7 0g L \xB7 7g G", nutri: "Lycop\xE8ne, vit C, potassium", why: "Cuite, le lycop\xE8ne est plus biodisponible que cru. Indispensable." },
-    { n: "Lait de coco", macro: "2g P \xB7 21g L \xB7 3g G", nutri: "MCT (triglyc\xE9rides cha\xEEne moyenne)", why: "Pour curry et plats asiat. Les MCT sont des gras \xE0 \xE9nergie rapide." },
-    { n: "Granola", macro: "10g P \xB7 15g L \xB7 60g G", nutri: "Fibres, magn\xE9sium, fer", why: "Bowls de yaourt grec. Choisis avec peu de sucre ajout\xE9." },
-    { n: "Miel", macro: "0g P \xB7 0g L \xB7 82g G", nutri: "Antioxydants, antibact\xE9riens", why: "Sucre naturel. Booster go\xFBt yaourt/flocons. 1 c\xE0c = 20 kcal." },
-    { n: "Mayonnaise all\xE9g\xE9e", macro: "1g P \xB7 30g L \xB7 5g G", nutri: "Vit E (huile)", why: "Pour les wraps. All\xE9g\xE9e = -50% kcal vs classique." },
-    { n: "\xC9pices (curcuma, paprika, cumin, curry)", macro: "-", nutri: "Antioxydants, anti-inflammatoires", why: "Booster go\xFBt z\xE9ro calorie. Curcuma anti-inflammatoire ++." },
-    { n: "Moutarde", macro: "-", nutri: "S\xE9l\xE9nium, peu de kcal", why: "Booster go\xFBt gamelle. Anti-pain-mou sur sandwich (essentiel)." },
-    { n: "Tahini", macro: "17g P \xB7 50g L \xB7 21g G", nutri: "Calcium ++, magn\xE9sium, fer", why: "P\xE2te de s\xE9same. Sauce Buddha bowl. Plus de calcium que le lait." }
-  ] }
-];
 function Slider({ label, value, min, max, step = 1, unit, onChange, color = "#00ff88" }) {
   return /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: "#888", fontWeight: 600 } }, label), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "baseline", gap: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: -0.5 } }, value), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#555", fontWeight: 600 } }, unit))), /* @__PURE__ */ React.createElement("input", { type: "range", min, max, step, value, onChange: (e) => onChange(Number(e.target.value)), style: { width: "100%", accentColor: color, cursor: "pointer", height: 32 } }));
 }
@@ -1995,7 +252,7 @@ function MealOption({ r, scale = 1, color }) {
   const g = Math.round(r.g * scale);
   return /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", borderRadius: 10, marginBottom: 7, overflow: "hidden", border: open ? `1.5px solid ${color}66` : "1px solid transparent" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpen(!open), style: { width: "100%", background: "none", border: "none", padding: "12px 13px", cursor: "pointer", textAlign: "left", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "flex-start", gap: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { color: "#fff", fontWeight: 700, fontSize: 14, marginBottom: 5 } }, r.nom), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 5 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#888", background: "#1a1a24", padding: "3px 7px", borderRadius: 4 } }, r.temps), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#f59e0b", fontWeight: 700, background: "#1a1208", padding: "3px 7px", borderRadius: 4 } }, kcal, " kcal"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#4ade80", fontWeight: 700, background: "#0a1a0f", padding: "3px 7px", borderRadius: 4 } }, p, "g P"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#60a5fa", fontWeight: 700, background: "#0a0f1f", padding: "3px 7px", borderRadius: 4 } }, g, "g G")), !open && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", lineHeight: 1.5, wordBreak: "break-word" } }, r.ing.slice(0, 3).map((x) => `${x.a} ${scaleIng(x.q, scale)}`).join(" \xB7 "), r.ing.length > 3 ? "..." : "")), /* @__PURE__ */ React.createElement("span", { style: { color: open ? color : "#555", fontSize: 14, flexShrink: 0, fontWeight: 700 } }, open ? "\u25B2" : "\u25BC"))), open && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 13px 13px", borderTop: "1px solid #1a1a24" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", margin: "11px 0 7px" } }, "\u{1F4E6} Ingr\xE9dients (scal\xE9s \xE0 ton profil)"), r.ing.map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: i < r.ing.length - 1 ? "1px solid #1a1a24" : "none" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#ccc" } }, x.a), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#fff", fontWeight: 700 } }, scaleIng(x.q, scale)))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color, textTransform: "uppercase", margin: "13px 0 8px" } }, "\u{1F525} Pr\xE9paration \xE9tape par \xE9tape"), r.prep.map((step, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", gap: 9, padding: "7px 0", alignItems: "flex-start" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 22, height: 22, borderRadius: "50%", background: color + "22", color, fontSize: 10, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 } }, i + 1), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: "#ddd", lineHeight: 1.6 } }, step))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a1a0a", border: "1px solid #1a3a1a", borderRadius: 8, padding: "10px 12px", marginTop: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#4ade80", textTransform: "uppercase", marginBottom: 4 } }, "\u{1F4A1} Astuce du chef"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: "#ccc", lineHeight: 1.6 } }, r.tips))));
 }
-function MealSlot({ heure, slotDef, totalKcal, totalProt, totalGluc }) {
+function MealSlot({ heure, slotDef, totalKcal, totalProt, totalGluc, RECETTES }) {
   const [showAll, setShowAll] = useState(false);
   const cat = CAT[slotDef.slot];
   const isMain = slotDef.main;
@@ -2014,8 +271,54 @@ function MealSlot({ heure, slotDef, totalKcal, totalProt, totalGluc }) {
   }), filtered.length > 3 && /* @__PURE__ */ React.createElement("button", { onClick: () => setShowAll(!showAll), style: { background: "none", border: `1px dashed ${cat.color}55`, color: cat.color, fontSize: 11, fontWeight: 700, cursor: "pointer", padding: "9px 0", width: "100%", borderRadius: 7, marginTop: 4 } }, showAll ? "\u25B2 R\xE9duire" : `\u25BC Voir ${filtered.length - 3} autre${filtered.length - 3 > 1 ? "s" : ""} option${filtered.length - 3 > 1 ? "s" : ""}`)));
 }
 function App() {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v;
   const [tab, setTab] = useState("Nutrition");
+  const [dataReady, setDataReady] = useState(false);
+  const [dataError, setDataError] = useState(null);
+  const [ALIMENTS, setALIMENTS] = useState([]);
+  const [ALI_CATS, setALI_CATS] = useState([]);
+  const [SEANCES, setSEANCES] = useState([]);
+  const [RECETTES, setRECETTES] = useState([]);
+  const [COURSES, setCOURSES] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const bust = "?v=" + Date.now();
+        const [ali, sea, rec, cou] = await Promise.all([
+          fetch("data/aliments.json" + bust).then((r) => {
+            if (!r.ok) throw new Error("aliments.json introuvable");
+            return r.json();
+          }),
+          fetch("data/seances.json" + bust).then((r) => {
+            if (!r.ok) throw new Error("seances.json introuvable");
+            return r.json();
+          }),
+          fetch("data/recettes.json" + bust).then((r) => {
+            if (!r.ok) throw new Error("recettes.json introuvable");
+            return r.json();
+          }),
+          fetch("data/courses.json" + bust).then((r) => {
+            if (!r.ok) throw new Error("courses.json introuvable");
+            return r.json();
+          })
+        ]);
+        if (cancelled) return;
+        setALIMENTS(ali.aliments || []);
+        setALI_CATS(ali.cats || []);
+        setSEANCES(sea || []);
+        setRECETTES(rec || []);
+        setCOURSES(cou || []);
+        setDataReady(true);
+      } catch (e) {
+        if (!cancelled) setDataError(e.message || "Erreur de chargement des donn\xE9es");
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const [userName, setUserName] = useState((_a = SAVED.userName) != null ? _a : "");
   const [poids, setPoids] = useState((_b = SAVED.poids) != null ? _b : 82);
   const [taille, setTaille] = useState((_c = SAVED.taille) != null ? _c : 178);
@@ -2205,6 +508,96 @@ function App() {
   const [importText, setImportText] = useState("");
   const [importMsg, setImportMsg] = useState("");
   const [savedFlash, setSavedFlash] = useState(false);
+  const todayStr = (/* @__PURE__ */ new Date()).toLocaleDateString("fr-FR");
+  const [meals, setMeals] = useState(() => {
+    if (SAVED.mealsDate === todayStr && Array.isArray(SAVED.meals)) return SAVED.meals;
+    return [];
+  });
+  const [mealsDate, setMealsDate] = useState(todayStr);
+  const [showAddMeal, setShowAddMeal] = useState(false);
+  const [aliMode, setAliMode] = useState("lib");
+  const [mealSearch, setMealSearch] = useState("");
+  const [mealCat, setMealCat] = useState("all");
+  const [selectedAli, setSelectedAli] = useState(null);
+  const [mealQty, setMealQty] = useState(100);
+  const [customForm, setCustomForm] = useState({ nom: "", qty: 100, kcal: 0, prot: 0, glu: 0, lip: 0 });
+  useEffect(() => {
+    try {
+      if (typeof window === "undefined" || !window.localStorage) return;
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const data = raw ? JSON.parse(raw) : {};
+      data.meals = meals;
+      data.mealsDate = mealsDate;
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+    }
+  }, [meals, mealsDate]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newDay = (/* @__PURE__ */ new Date()).toLocaleDateString("fr-FR");
+      if (newDay !== mealsDate) {
+        setMeals([]);
+        setMealsDate(newDay);
+      }
+    }, 6e4);
+    return () => clearInterval(interval);
+  }, [mealsDate]);
+  const totals = useMemo(() => {
+    return meals.reduce((acc, m) => ({
+      kcal: acc.kcal + (m.kcal || 0),
+      prot: acc.prot + (m.prot || 0),
+      glu: acc.glu + (m.glu || 0),
+      lip: acc.lip + (m.lip || 0)
+    }), { kcal: 0, prot: 0, glu: 0, lip: 0 });
+  }, [meals]);
+  const filteredAlim = useMemo(() => {
+    let list = ALIMENTS;
+    if (mealCat !== "all") list = list.filter((a) => a.c === mealCat);
+    if (mealSearch.trim()) {
+      const q = mealSearch.trim().toLowerCase();
+      list = list.filter((a) => a.n.toLowerCase().includes(q));
+    }
+    return list;
+  }, [mealCat, mealSearch]);
+  const addMealFromAli = (ali, qty) => {
+    const factor = qty / 100;
+    const meal = {
+      id: Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+      nom: ali.n,
+      qty,
+      kcal: Math.round(ali.k * factor),
+      prot: Math.round(ali.p * factor * 10) / 10,
+      glu: Math.round(ali.g * factor * 10) / 10,
+      lip: Math.round(ali.l * factor * 10) / 10,
+      time: (/* @__PURE__ */ new Date()).toTimeString().slice(0, 5)
+    };
+    setMeals([...meals, meal]);
+    setShowAddMeal(false);
+    setSelectedAli(null);
+    setMealQty(100);
+    setMealSearch("");
+  };
+  const addCustomMeal = () => {
+    if (!customForm.nom.trim()) return;
+    const meal = {
+      id: Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+      nom: customForm.nom.trim(),
+      qty: customForm.qty,
+      kcal: Number(customForm.kcal) || 0,
+      prot: Number(customForm.prot) || 0,
+      glu: Number(customForm.glu) || 0,
+      lip: Number(customForm.lip) || 0,
+      time: (/* @__PURE__ */ new Date()).toTimeString().slice(0, 5),
+      isCustom: true
+    };
+    setMeals([...meals, meal]);
+    setShowAddMeal(false);
+    setCustomForm({ nom: "", qty: 100, kcal: 0, prot: 0, glu: 0, lip: 0 });
+  };
+  const removeMeal = (id) => setMeals(meals.filter((m) => m.id !== id));
+  const resetDay = () => {
+    if (typeof window !== "undefined" && window.confirm("Effacer tous les aliments du jour ?")) setMeals([]);
+  };
   const seanceCat = (id) => {
     if (id === "A" || id === "A2") return "push";
     if (id === "B" || id === "B2") return "pull";
@@ -2252,6 +645,7 @@ function App() {
     { key: "Nutrition", icon: "\u{1F37D}\uFE0F" },
     { key: "Planning", icon: "\u{1F4C5}" },
     { key: "S\xE9ances", icon: "\u{1F4AA}" },
+    { key: "Calcul", icon: "\u{1F9EE}" },
     { key: "Profil", icon: "\u2699\uFE0F" },
     { key: "Courses", icon: "\u{1F6D2}" }
   ];
@@ -2274,6 +668,14 @@ function App() {
   const travailDays = semaineActive === "grande" ? TRAVAIL_GRANDE : TRAVAIL_PETITE;
   const isWorkDay = (j) => travailDays.includes(j);
   const sessCountWeek = JOURS_SEMAINE.filter((j) => planningJour[semaineActive][j.key]).length;
+  if (dataError) {
+    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "#000", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, padding: 30, textAlign: "center", fontFamily: "-apple-system, system-ui, sans-serif" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 40 } }, "\u26A0\uFE0F"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 16, fontWeight: 800, color: "#ef4444" } }, "Erreur de chargement"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: "#888", lineHeight: 1.6, maxWidth: 320 } }, dataError), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#555", lineHeight: 1.6, maxWidth: 320, marginTop: 8 } }, "V\xE9rifie que le dossier ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#aaa" } }, "data/"), " avec les 4 fichiers JSON est bien pr\xE9sent \xE0 c\xF4t\xE9 du index.html."), /* @__PURE__ */ React.createElement("button", { onClick: () => {
+      if (typeof window !== "undefined") window.location.reload();
+    }, style: { marginTop: 12, background: "#00ff88", border: "none", borderRadius: 12, padding: "12px 24px", fontSize: 13, fontWeight: 800, color: "#000", cursor: "pointer" } }, "R\xE9essayer"));
+  }
+  if (!dataReady) {
+    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "#000", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 20, fontFamily: "-apple-system, system-ui, sans-serif" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 44, height: 44, border: "3px solid #14141e", borderTopColor: "#00ff88", borderRadius: "50%", animation: "spin 0.7s linear infinite" } }), /* @__PURE__ */ React.createElement("div", { style: { color: "#00ff88", fontWeight: 800, letterSpacing: 4, fontSize: 11 } }, "PS ULTRA"));
+  }
   return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif", paddingBottom: "calc(95px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "#000", padding: "26px 18px 20px", position: "sticky", top: 0, zIndex: 10, paddingTop: "calc(26px + env(safe-area-inset-top))" } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 680, margin: "0 auto" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("div", { style: {
     width: 8,
     height: 8,
@@ -2333,7 +735,7 @@ function App() {
     fontSize: 11,
     color: nutDay === d.k ? d.c : "#888",
     fontWeight: 700
-  } }, d.l))), nutDay === "repos_seance" && /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #e6394644", borderRadius: 14, padding: "15px 17px", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#e63946", fontWeight: 700 } }, "\u{1F3CB}\uFE0F Heure de s\xE9ance"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", marginTop: 2 } }, "Tous les repas s'adaptent")), /* @__PURE__ */ React.createElement(HourPicker, { hour: planSessionH, onHour: setPlanSessionH, color: "#e63946" })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 10 } }, "\u{1F4C5} Ta journ\xE9e nutrition"), dayPlan.map((s, i) => /* @__PURE__ */ React.createElement(MealSlot, { key: i, heure: s.time, slotDef: s, totalKcal: calc.cal, totalProt: calc.prot, totalGluc: calc.gluc })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0f1a2e", border: "1px solid #1e3a5f", borderRadius: 14, padding: "15px 17px", marginTop: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#60a5fa", fontWeight: 700, marginBottom: 5 } }, "\u{1F4A1} Comment \xE7a marche"), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888", lineHeight: 1.7 } }, "Tape sur une option pour voir la ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#fff" } }, "pr\xE9paration \xE9tape par \xE9tape"), " (8-15 \xE9tapes d\xE9taill\xE9es). Les grammages sont scal\xE9s \xE0 ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#ccc" } }, "ton poids (", poids, "kg)"), " et tes besoins."))), nutSubTab === "recettes" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, overflowX: "auto", marginBottom: 14, paddingBottom: 4 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setRecetteFilter("all"), style: {
+  } }, d.l))), nutDay === "repos_seance" && /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #e6394644", borderRadius: 14, padding: "15px 17px", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#e63946", fontWeight: 700 } }, "\u{1F3CB}\uFE0F Heure de s\xE9ance"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", marginTop: 2 } }, "Tous les repas s'adaptent")), /* @__PURE__ */ React.createElement(HourPicker, { hour: planSessionH, onHour: setPlanSessionH, color: "#e63946" })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 10 } }, "\u{1F4C5} Ta journ\xE9e nutrition"), dayPlan.map((s, i) => /* @__PURE__ */ React.createElement(MealSlot, { key: i, heure: s.time, slotDef: s, totalKcal: calc.cal, totalProt: calc.prot, totalGluc: calc.gluc, RECETTES })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0f1a2e", border: "1px solid #1e3a5f", borderRadius: 14, padding: "15px 17px", marginTop: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#60a5fa", fontWeight: 700, marginBottom: 5 } }, "\u{1F4A1} Comment \xE7a marche"), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888", lineHeight: 1.7 } }, "Tape sur une option pour voir la ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#fff" } }, "pr\xE9paration \xE9tape par \xE9tape"), " (8-15 \xE9tapes d\xE9taill\xE9es). Les grammages sont scal\xE9s \xE0 ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#ccc" } }, "ton poids (", poids, "kg)"), " et tes besoins."))), nutSubTab === "recettes" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, overflowX: "auto", marginBottom: 14, paddingBottom: 4 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setRecetteFilter("all"), style: {
     flexShrink: 0,
     background: recetteFilter === "all" ? "#a78bfa22" : "#111118",
     border: `1.5px solid ${recetteFilter === "all" ? "#a78bfa" : "#222"}`,
@@ -2722,7 +1124,240 @@ function App() {
     { l: "Prot\xE9ines", v: calc.prot + "g", u: "/j", c: "#4ade80", s: `${calc.protCoeff}g/kg` },
     { l: "Glucides", v: calc.gluc + "g", u: "/j", c: "#60a5fa", s: "Reste" },
     { l: "Lipides", v: calc.lip + "g", u: "/j", c: "#f472b6", s: objectif === "seche" ? "0.8g/kg" : "1g/kg" }
-  ].map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", borderRadius: 10, padding: "12px", border: `1px solid ${x.c}33` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 } }, x.l), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, color: x.c } }, x.v, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#444", marginLeft: 2 } }, x.u)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", marginTop: 3 } }, x.s)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 14, padding: "16px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement(MacroBar, { label: `Prot\xE9ines (${Math.round(calc.prot * 4 / calc.cal * 100)}%)`, value: calc.prot, max: 250, color: "#4ade80" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Glucides (${Math.round(calc.gluc * 4 / calc.cal * 100)}%)`, value: calc.gluc, max: 500, color: "#60a5fa" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Lipides (${Math.round(calc.lip * 9 / calc.cal * 100)}%)`, value: calc.lip, max: 150, color: "#f472b6" })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1px solid ${niv.color}44`, borderRadius: 14, padding: "16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 9, alignItems: "center", marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { background: niv.color + "22", border: `1px solid ${niv.color}44`, borderRadius: 7, padding: "7px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, color: niv.color, fontWeight: 800 } }, niv.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555" } }, niv.annees)), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#aaa", lineHeight: 1.5 } }, niv.conseil)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 4 } }, niv.skills.map((sk, i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { background: niv.color + "15", color: niv.color, border: `1px solid ${niv.color}33`, borderRadius: 5, padding: "3px 8px", fontSize: 10 } }, sk))))), tab === "Courses" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #1e3a5f", borderRadius: 14, padding: "14px 16px", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888" } }, "2 semaines \xB7 ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#a78bfa" } }, poids, "kg \xB7 ", calc.prot, "g prot/j \xB7 ", calc.cal, " kcal"))), COURSES.map((c, ri) => /* @__PURE__ */ React.createElement("div", { key: ri, style: { background: "#0a0a12", borderRadius: 11, overflow: "hidden", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "11px 14px", background: "#14141e", borderBottom: "1px solid #1e1e2a", fontSize: 12, fontWeight: 800, color: "#fff" } }, c.r), c.items.map((item, ii) => {
+  ].map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", borderRadius: 10, padding: "12px", border: `1px solid ${x.c}33` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 } }, x.l), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, color: x.c } }, x.v, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#444", marginLeft: 2 } }, x.u)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", marginTop: 3 } }, x.s)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 14, padding: "16px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement(MacroBar, { label: `Prot\xE9ines (${Math.round(calc.prot * 4 / calc.cal * 100)}%)`, value: calc.prot, max: 250, color: "#4ade80" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Glucides (${Math.round(calc.gluc * 4 / calc.cal * 100)}%)`, value: calc.gluc, max: 500, color: "#60a5fa" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Lipides (${Math.round(calc.lip * 9 / calc.cal * 100)}%)`, value: calc.lip, max: 150, color: "#f472b6" })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1px solid ${niv.color}44`, borderRadius: 14, padding: "16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 9, alignItems: "center", marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { background: niv.color + "22", border: `1px solid ${niv.color}44`, borderRadius: 7, padding: "7px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, color: niv.color, fontWeight: 800 } }, niv.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555" } }, niv.annees)), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#aaa", lineHeight: 1.5 } }, niv.conseil)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 4 } }, niv.skills.map((sk, i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { background: niv.color + "15", color: niv.color, border: `1px solid ${niv.color}33`, borderRadius: 5, padding: "3px 8px", fontSize: 10 } }, sk))))), tab === "Calcul" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "\u{1F4CA} Aujourd'hui \xB7 ", mealsDate), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8, marginBottom: 18 } }, [
+    { lab: "Calories", v: totals.kcal, obj: calc.cal, c: "#00ff88", u: "kcal" },
+    { lab: "Prot\xE9ines", v: Math.round(totals.prot), obj: calc.prot, c: "#a78bfa", u: "g" },
+    { lab: "Glucides", v: Math.round(totals.glu), obj: calc.gluc, c: "#60a5fa", u: "g" },
+    { lab: "Lipides", v: Math.round(totals.lip), obj: calc.lip, c: "#f59e0b", u: "g" }
+  ].map((s, i) => {
+    const pct = s.obj > 0 ? Math.min(100, Math.round(s.v / s.obj * 100)) : 0;
+    const remain = s.obj - s.v;
+    const over = remain < 0;
+    return /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "14px 14px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#666", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 } }, s.lab), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 4, marginBottom: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: -0.5, lineHeight: 1 } }, s.v), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#444", fontWeight: 600 } }, "/ ", s.obj, " ", s.u)), /* @__PURE__ */ React.createElement("div", { style: { height: 5, background: "#14141e", borderRadius: 3, overflow: "hidden", marginBottom: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: pct + "%", background: over ? "#ef4444" : s.c, borderRadius: 3, transition: "width 0.3s" } })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: over ? "#ef4444" : pct >= 90 ? "#4ade80" : "#666", fontWeight: 700 } }, over ? `+${Math.abs(remain)} d\xE9pass\xE9` : `${remain} ${s.u} restant`));
+  })), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowAddMeal(!showAddMeal), style: {
+    width: "100%",
+    background: showAddMeal ? "#1a1a24" : "#00ff88",
+    border: "none",
+    borderRadius: 14,
+    padding: "15px",
+    fontSize: 14,
+    fontWeight: 800,
+    color: showAddMeal ? "#fff" : "#000",
+    cursor: "pointer",
+    marginBottom: 18,
+    letterSpacing: 0.3,
+    transition: "all 0.2s"
+  } }, showAddMeal ? "\u2715 Fermer" : "+ Ajouter un aliment"), showAddMeal && /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1.5px solid #1a1a24", borderRadius: 16, padding: "16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, background: "#06060c", border: "1px solid #14141e", borderRadius: 24, padding: 3, marginBottom: 14 } }, [{ k: "lib", l: "\u{1F4DA} Biblioth\xE8que" }, { k: "custom", l: "\u270F\uFE0F Manuel" }].map((m) => /* @__PURE__ */ React.createElement("button", { key: m.k, onClick: () => {
+    setAliMode(m.k);
+    setSelectedAli(null);
+  }, style: {
+    flex: 1,
+    background: aliMode === m.k ? "#fff" : "transparent",
+    border: "none",
+    borderRadius: 20,
+    padding: "9px",
+    cursor: "pointer",
+    fontSize: 11,
+    color: aliMode === m.k ? "#000" : "#666",
+    fontWeight: 700,
+    transition: "all 0.2s"
+  } }, m.l))), aliMode === "lib" && /* @__PURE__ */ React.createElement(React.Fragment, null, selectedAli ? /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14, padding: "12px", background: "#06060c", border: "1px solid #14141e", borderRadius: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 22 } }, (_v = ALI_CATS.find((c) => c.k === selectedAli.c)) == null ? void 0 : _v.e), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: "#fff" } }, selectedAli.n), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", marginTop: 2 } }, selectedAli.k, " kcal \xB7 ", selectedAli.p, "g P \xB7 ", selectedAli.g, "g G \xB7 ", selectedAli.l, "g L (pour 100g)")), /* @__PURE__ */ React.createElement("button", { onClick: () => setSelectedAli(null), style: { background: "#1a1a24", border: "none", color: "#888", width: 28, height: 28, borderRadius: 14, cursor: "pointer", fontSize: 13 } }, "\u2715")), /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "#888", fontWeight: 600 } }, "Quantit\xE9"), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "baseline", gap: 3 } }, /* @__PURE__ */ React.createElement("input", { type: "number", value: mealQty, onChange: (e) => setMealQty(Math.max(1, Number(e.target.value) || 1)), style: {
+    background: "transparent",
+    border: "none",
+    outline: "none",
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: 800,
+    width: 70,
+    textAlign: "right",
+    fontFamily: "inherit"
+  } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#555", fontWeight: 600 } }, "g"))), /* @__PURE__ */ React.createElement("input", { type: "range", min: 10, max: 500, step: 5, value: mealQty, onChange: (e) => setMealQty(Number(e.target.value)), style: { width: "100%", accentColor: "#00ff88", cursor: "pointer", height: 32 } }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, marginTop: 8 } }, [50, 100, 150, 200].map((q) => /* @__PURE__ */ React.createElement("button", { key: q, onClick: () => setMealQty(q), style: {
+    flex: 1,
+    background: mealQty === q ? "#00ff8822" : "#06060c",
+    border: `1px solid ${mealQty === q ? "#00ff88" : "#14141e"}`,
+    borderRadius: 8,
+    padding: "7px 0",
+    cursor: "pointer",
+    fontSize: 11,
+    color: mealQty === q ? "#00ff88" : "#666",
+    fontWeight: 700
+  } }, q, "g")))), /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", border: "1px solid #14141e", borderRadius: 11, padding: "11px 13px", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#555", textTransform: "uppercase", fontWeight: 700, marginBottom: 7 } }, "Apport pour ", mealQty, "g"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 12 } }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#00ff88" } }, Math.round(selectedAli.k * mealQty / 100)), " ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "kcal")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#a78bfa" } }, Math.round(selectedAli.p * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "P")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#60a5fa" } }, Math.round(selectedAli.g * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "G")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#f59e0b" } }, Math.round(selectedAli.l * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "L")))), /* @__PURE__ */ React.createElement("button", { onClick: () => addMealFromAli(selectedAli, mealQty), style: {
+    width: "100%",
+    background: "#00ff88",
+    border: "none",
+    borderRadius: 12,
+    padding: "14px",
+    fontSize: 13,
+    fontWeight: 800,
+    color: "#000",
+    cursor: "pointer",
+    letterSpacing: 0.3
+  } }, "\u2713 Ajouter \xE0 mon jour")) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "text",
+      placeholder: "\u{1F50D} Rechercher un aliment...",
+      value: mealSearch,
+      onChange: (e) => setMealSearch(e.target.value),
+      style: {
+        width: "100%",
+        background: "#06060c",
+        border: "1px solid #14141e",
+        borderRadius: 10,
+        padding: "11px 13px",
+        color: "#fff",
+        fontSize: 13,
+        fontFamily: "inherit",
+        outline: "none",
+        boxSizing: "border-box",
+        marginBottom: 11
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, overflowX: "auto", marginBottom: 13, paddingBottom: 3 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setMealCat("all"), style: {
+    flexShrink: 0,
+    background: mealCat === "all" ? "#00ff8822" : "#06060c",
+    border: `1px solid ${mealCat === "all" ? "#00ff88" : "#14141e"}`,
+    borderRadius: 18,
+    padding: "7px 13px",
+    cursor: "pointer",
+    fontSize: 11,
+    color: mealCat === "all" ? "#00ff88" : "#666",
+    fontWeight: 700,
+    whiteSpace: "nowrap"
+  } }, "Tout"), ALI_CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.k, onClick: () => setMealCat(c.k), style: {
+    flexShrink: 0,
+    background: mealCat === c.k ? "#00ff8822" : "#06060c",
+    border: `1px solid ${mealCat === c.k ? "#00ff88" : "#14141e"}`,
+    borderRadius: 18,
+    padding: "7px 12px",
+    cursor: "pointer",
+    fontSize: 11,
+    color: mealCat === c.k ? "#00ff88" : "#666",
+    fontWeight: 700,
+    whiteSpace: "nowrap",
+    display: "flex",
+    alignItems: "center",
+    gap: 4
+  } }, c.e, " ", c.l))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", fontWeight: 600, marginBottom: 6 } }, filteredAlim.length, " r\xE9sultat", filteredAlim.length > 1 ? "s" : ""), /* @__PURE__ */ React.createElement("div", { style: { maxHeight: 380, overflowY: "auto", margin: "0 -16px", padding: "0 16px" } }, filteredAlim.map((a, ai) => {
+    var _a2;
+    return /* @__PURE__ */ React.createElement("button", { key: a.id, onClick: () => setSelectedAli(a), style: {
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      gap: 11,
+      padding: "11px 0",
+      borderBottom: ai < filteredAlim.length - 1 ? "1px solid #14141e" : "none",
+      background: "transparent",
+      border: "none",
+      cursor: "pointer",
+      textAlign: "left"
+    } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 18, flexShrink: 0, width: 24, textAlign: "center" } }, (_a2 = ALI_CATS.find((c) => c.k === a.c)) == null ? void 0 : _a2.e), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#fff", fontWeight: 600 } }, a.n), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#555", marginTop: 2 } }, a.k, " kcal \xB7 ", a.p, "g P \xB7 ", a.g, "g G \xB7 ", a.l, "g L")), /* @__PURE__ */ React.createElement("span", { style: { color: "#444", fontSize: 14 } }, "\u203A"));
+  }), filteredAlim.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { padding: "30px 0", textAlign: "center", color: "#555", fontSize: 12 } }, "Aucun aliment trouv\xE9.", /* @__PURE__ */ React.createElement("br", null), "Bascule sur ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#888" } }, "\u270F\uFE0F Manuel"), " pour le cr\xE9er.")))), aliMode === "custom" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#888", lineHeight: 1.5, marginBottom: 13 } }, "Saisis les valeurs ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#aaa" } }, "pour la quantit\xE9 que tu as mang\xE9e"), " (lis l'\xE9tiquette du produit)."), /* @__PURE__ */ React.createElement("label", { style: { fontSize: 10, letterSpacing: 1.5, color: "#666", textTransform: "uppercase", fontWeight: 600, display: "block", marginBottom: 5 } }, "Nom de l'aliment"), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "text",
+      placeholder: "ex: Lasagnes maman",
+      value: customForm.nom,
+      onChange: (e) => setCustomForm(__spreadProps(__spreadValues({}, customForm), { nom: e.target.value })),
+      style: {
+        width: "100%",
+        background: "#06060c",
+        border: "1px solid #14141e",
+        borderRadius: 10,
+        padding: "11px 13px",
+        color: "#fff",
+        fontSize: 13,
+        fontFamily: "inherit",
+        outline: "none",
+        boxSizing: "border-box",
+        marginBottom: 13
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("label", { style: { fontSize: 10, letterSpacing: 1.5, color: "#666", textTransform: "uppercase", fontWeight: 600, display: "block", marginBottom: 5 } }, "Quantit\xE9 (g)"), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "number",
+      value: customForm.qty,
+      onChange: (e) => setCustomForm(__spreadProps(__spreadValues({}, customForm), { qty: Number(e.target.value) || 0 })),
+      style: {
+        width: "100%",
+        background: "#06060c",
+        border: "1px solid #14141e",
+        borderRadius: 10,
+        padding: "11px 13px",
+        color: "#fff",
+        fontSize: 13,
+        fontFamily: "inherit",
+        outline: "none",
+        boxSizing: "border-box",
+        marginBottom: 13
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 } }, [
+    { k: "kcal", l: "Calories", u: "kcal", c: "#00ff88" },
+    { k: "prot", l: "Prot\xE9ines", u: "g", c: "#a78bfa" },
+    { k: "glu", l: "Glucides", u: "g", c: "#60a5fa" },
+    { k: "lip", l: "Lipides", u: "g", c: "#f59e0b" }
+  ].map((f) => /* @__PURE__ */ React.createElement("div", { key: f.k }, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 10, letterSpacing: 1.5, color: f.c, textTransform: "uppercase", fontWeight: 700, display: "block", marginBottom: 5 } }, f.l), /* @__PURE__ */ React.createElement("div", { style: { position: "relative" } }, /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "number",
+      step: "0.1",
+      value: customForm[f.k],
+      onChange: (e) => setCustomForm(__spreadProps(__spreadValues({}, customForm), { [f.k]: Number(e.target.value) || 0 })),
+      style: {
+        width: "100%",
+        background: "#06060c",
+        border: `1px solid ${f.c}33`,
+        borderRadius: 10,
+        padding: "11px 38px 11px 13px",
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: 700,
+        fontFamily: "inherit",
+        outline: "none",
+        boxSizing: "border-box"
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("span", { style: { position: "absolute", right: 13, top: "50%", transform: "translateY(-50%)", fontSize: 10, color: "#555", fontWeight: 600 } }, f.u))))), /* @__PURE__ */ React.createElement("button", { onClick: addCustomMeal, disabled: !customForm.nom.trim(), style: {
+    width: "100%",
+    background: customForm.nom.trim() ? "#00ff88" : "#1a1a24",
+    border: "none",
+    borderRadius: 12,
+    padding: "14px",
+    fontSize: 13,
+    fontWeight: 800,
+    color: customForm.nom.trim() ? "#000" : "#444",
+    cursor: customForm.nom.trim() ? "pointer" : "not-allowed",
+    letterSpacing: 0.3
+  } }, "\u2713 Ajouter \xE0 mon jour"))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "\u{1F37D}\uFE0F Mes aliments \xB7 ", meals.length), meals.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1.5px dashed #1a1a24", borderRadius: 14, padding: "34px 18px", textAlign: "center", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 32, marginBottom: 8, opacity: 0.4 } }, "\u{1F37D}\uFE0F"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#555", lineHeight: 1.6 } }, "Aucun aliment ajout\xE9 aujourd'hui.", /* @__PURE__ */ React.createElement("br", null), "Tape ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#aaa" } }, "+ Ajouter"), " pour commencer.")) : /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, overflow: "hidden", marginBottom: 14 } }, meals.map((m, mi) => /* @__PURE__ */ React.createElement("div", { key: m.id, style: {
+    padding: "12px 14px",
+    borderBottom: mi < meals.length - 1 ? "1px solid #14141e" : "none",
+    display: "flex",
+    alignItems: "center",
+    gap: 11
+  } }, /* @__PURE__ */ React.createElement("div", { style: { minWidth: 36, textAlign: "left" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#444", fontWeight: 700, letterSpacing: 0.5 } }, m.time)), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#fff", fontWeight: 700, marginBottom: 2 } }, m.nom, " ", m.isCustom && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#f59e0b", marginLeft: 4 } }, "(manuel)")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666" } }, m.qty, "g \xB7 ", m.kcal, " kcal \xB7 ", m.prot, "g P \xB7 ", m.glu, "g G \xB7 ", m.lip, "g L")), /* @__PURE__ */ React.createElement("button", { onClick: () => removeMeal(m.id), style: {
+    background: "#1a1a24",
+    border: "none",
+    color: "#888",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    cursor: "pointer",
+    fontSize: 12,
+    flexShrink: 0
+  } }, "\u2715")))), meals.length > 0 && /* @__PURE__ */ React.createElement("button", { onClick: resetDay, style: {
+    width: "100%",
+    background: "transparent",
+    border: "1px solid #2a1410",
+    color: "#ef4444",
+    borderRadius: 12,
+    padding: "11px",
+    cursor: "pointer",
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: 0.5
+  } }, "\u{1F5D1} Reset du jour"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#444", marginTop: 13, lineHeight: 1.6, textAlign: "center" } }, "\u{1F4A1} Les donn\xE9es se remettent \xE0 z\xE9ro automatiquement \xE0 chaque nouveau jour.")), tab === "Courses" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #1e3a5f", borderRadius: 14, padding: "14px 16px", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888" } }, "2 semaines \xB7 ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#a78bfa" } }, poids, "kg \xB7 ", calc.prot, "g prot/j \xB7 ", calc.cal, " kcal"))), COURSES.map((c, ri) => /* @__PURE__ */ React.createElement("div", { key: ri, style: { background: "#0a0a12", borderRadius: 11, overflow: "hidden", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "11px 14px", background: "#14141e", borderBottom: "1px solid #1e1e2a", fontSize: 12, fontWeight: 800, color: "#fff" } }, c.r), c.items.map((item, ii) => {
     const itemKey = `${ri}-${ii}`;
     const isOpen = openCourseItem === itemKey;
     return /* @__PURE__ */ React.createElement("div", { key: ii, style: { borderBottom: ii < c.items.length - 1 ? "1px solid #1a1a24" : "none" } }, /* @__PURE__ */ React.createElement("div", { onClick: () => setOpenCourseItem(isOpen ? null : itemKey), style: { padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 18, height: 18, border: "1.5px solid #2a2a3a", borderRadius: 4, flexShrink: 0 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "#ccc", flex: 1 } }, item.n), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: isOpen ? "#a78bfa" : "#444", fontWeight: 700 } }, isOpen ? "\u25B2" : "\u2139\uFE0F")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", padding: "11px 14px 13px", borderTop: "1px solid #1a1a24" } }, item.macro && item.macro !== "-" && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 4 } }, "Macros pour 100g"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#fff", fontWeight: 700 } }, item.macro)), /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#4ade80", textTransform: "uppercase", marginBottom: 4, fontWeight: 700 } }, "\u{1F331} Nutriments cl\xE9s"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#ccc", lineHeight: 1.5 } }, item.nutri)), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a1a0a", border: "1px solid #1a3a1a", borderRadius: 7, padding: "9px 11px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#a78bfa", textTransform: "uppercase", marginBottom: 4, fontWeight: 700 } }, "\u{1F4A1} Pourquoi cet aliment"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#ddd", lineHeight: 1.5 } }, item.why))));
@@ -2785,7 +1420,7 @@ function App() {
       }
     } else {
       document.getElementById('error').style.display = 'block';
-      document.getElementById('error').textContent = 'React non chargé. Connexion ?';
+      document.getElementById('error').textContent = 'React non chargé.';
     }
   </script>
 </body>
