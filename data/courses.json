@@ -1,0 +1,318 @@
+[
+ {
+  "r": "🥩 Viandes",
+  "items": [
+   {
+    "n": "Blanc de poulet (1,5 kg)",
+    "macro": "23g P · 1.5g L · 0g G",
+    "nutri": "Riche en B6, B12, sélénium, niacine",
+    "why": "La référence absolue de la prise de masse : meilleur ratio protéines/calories du marché."
+   },
+   {
+    "n": "Steak haché 5% MG ×6",
+    "macro": "21g P · 5g L · 0g G",
+    "nutri": "Fer héminique, zinc, B12, créatine naturelle",
+    "why": "Protéines + fer pour le transport d'oxygène + créatine naturelle. Le 5% MG = équilibre parfait."
+   },
+   {
+    "n": "Jambon blanc dégraissé",
+    "macro": "19g P · 4g L · 0g G",
+    "nutri": "B1, sélénium, phosphore",
+    "why": "Pratique, déjà cuit. Sandwich, omelette, gamelle. Choisis du dégraissé pour limiter le sel."
+   },
+   {
+    "n": "Œufs plein air ×18",
+    "macro": "6g P · 5g L · 0.5g G (par œuf)",
+    "nutri": "Vit A, D, E, K, B12, choline, lutéine",
+    "why": "L'aliment le plus complet. La choline = mémoire et concentration. Plein air = meilleurs oméga-3."
+   }
+  ]
+ },
+ {
+  "r": "🐟 Poissons en boîte",
+  "items": [
+   {
+    "n": "Thon au naturel ×8",
+    "macro": "27g P · 1g L · 0g G",
+    "nutri": "Sélénium, B12, vitamine D, iode",
+    "why": "Protéines pures à 1€. Gamelle parfaite. Max 2-3×/sem (mercure)."
+   },
+   {
+    "n": "Sardines à l'huile d'olive ×4",
+    "macro": "25g P · 11g L · 0g G",
+    "nutri": "Oméga-3 (1.5g), calcium (avec arêtes), vit D, B12",
+    "why": "Top santé. Petit poisson = peu de mercure. Mange les arêtes (calcium)."
+   },
+   {
+    "n": "Maquereau au naturel ×4",
+    "macro": "19g P · 13g L · 0g G",
+    "nutri": "Oméga-3 (2g), vit D, B12, sélénium",
+    "why": "Roi des oméga-3. Anti-inflammatoire, bon pour le cœur et le cerveau."
+   }
+  ]
+ },
+ {
+  "r": "🥛 Laitiers",
+  "items": [
+   {
+    "n": "Fromage blanc 0% ×4 pots",
+    "macro": "8g P · 0g L · 4g G",
+    "nutri": "Calcium, B12, riboflavine",
+    "why": "22g de prot pour 240 kcal — ratio TOP en sèche. Caséine = digestion lente."
+   },
+   {
+    "n": "Yaourt grec nature ×8",
+    "macro": "10g P · 5g L · 4g G",
+    "nutri": "Calcium, B12, probiotiques",
+    "why": "Caséine naturelle = anti-catabolique nocturne. Probiotiques = digestion. Top avant coucher."
+   },
+   {
+    "n": "Lait demi-écrémé 1L",
+    "macro": "3.5g P · 1.5g L · 5g G",
+    "nutri": "Calcium, B12, vit D, potassium",
+    "why": "Mix protéique whey + caséine naturel. Hydratation + récupération. Avec les flocons d'avoine."
+   }
+  ]
+ },
+ {
+  "r": "🌾 Féculents",
+  "items": [
+   {
+    "n": "Riz basmati 2 kg",
+    "macro": "7g P · 0.5g L · 78g G (cru)",
+    "nutri": "Magnésium, manganèse, B1",
+    "why": "Glucides complexes peu allergènes. IG modéré. La base post-séance. Cuit = 130 kcal/100g."
+   },
+   {
+    "n": "Pâtes complètes 1 kg",
+    "macro": "13g P · 2g L · 65g G",
+    "nutri": "Fibres, magnésium, fer, B-complexe",
+    "why": "Glucides + fibres pour satiété. Énergie durable. 30g de fibres pour 100g cru."
+   },
+   {
+    "n": "Flocons d'avoine 1 kg",
+    "macro": "13g P · 7g L · 60g G",
+    "nutri": "Bêta-glucanes, magnésium, fer, manganèse",
+    "why": "PRE-workout idéal : IG bas + bêta-glucanes pour cholestérol. Petit-déj champion."
+   },
+   {
+    "n": "Pain complet ×2",
+    "macro": "9g P · 1.5g L · 45g G",
+    "nutri": "Fibres, B-vitamines, fer, zinc",
+    "why": "Glucides complexes + fibres. Sandwich post-shift parfait."
+   },
+   {
+    "n": "Patates douces 1 kg",
+    "macro": "1.6g P · 0.1g L · 20g G",
+    "nutri": "Bêta-carotène (vit A), vit C, potassium, fibres",
+    "why": "Sucré naturellement mais IG modéré. Bourrée d'antioxydants. Au four = top."
+   },
+   {
+    "n": "Quinoa 500g",
+    "macro": "14g P · 6g L · 64g G (cru)",
+    "nutri": "Tous les AA essentiels, fer, magnésium",
+    "why": "Pseudo-céréale unique : protéines complètes (rare pour un végétal). Sans gluten."
+   },
+   {
+    "n": "Wraps complets",
+    "macro": "9g P · 4g L · 35g G",
+    "nutri": "Fibres, fer, B-vitamines",
+    "why": "Pratique pour gamelle/post-séance. Choisis complet pour fibres."
+   }
+  ]
+ },
+ {
+  "r": "🥦 Fruits & Légumes",
+  "items": [
+   {
+    "n": "Bananes (régime)",
+    "macro": "1g P · 0g L · 23g G",
+    "nutri": "Potassium (358mg), vit B6, vit C",
+    "why": "Glucides rapides PRE-workout. Potassium = anti-crampes. Mûre = digestion +."
+   },
+   {
+    "n": "Pommes",
+    "macro": "0.3g P · 0g L · 16g G",
+    "nutri": "Fibres (pectine), vit C, polyphénols",
+    "why": "Snack parfait : sucres lents, fibres, antioxydants. Mange la peau (pectine)."
+   },
+   {
+    "n": "Fruits rouges surgelés",
+    "macro": "1g P · 0g L · 12g G",
+    "nutri": "Antioxydants ++ (anthocyanes), vit C, manganèse",
+    "why": "Le top antioxydants. Anti-inflammatoire. Surgelé = aussi nutritif que frais et moins cher."
+   },
+   {
+    "n": "Brocolis surgelés",
+    "macro": "3g P · 0g L · 7g G",
+    "nutri": "Vit C, K, folates, sulforaphane (anti-cancer)",
+    "why": "Légume champion. Vit K = densité osseuse. Anti-cancer prouvé. Surgelé = pratique."
+   },
+   {
+    "n": "Tomates cerises",
+    "macro": "0.9g P · 0g L · 4g G",
+    "nutri": "Lycopène (antioxydant), vit C, K, potassium",
+    "why": "Lycopène protège la peau et la prostate. Goûteuses crues, en cuisine, partout."
+   },
+   {
+    "n": "Avocat ×4",
+    "macro": "2g P · 15g L · 2g G",
+    "nutri": "Mono-insaturés, potassium ++, folates, vit K",
+    "why": "Bons gras pour testostérone et hormones. Plus de potassium que la banane."
+   },
+   {
+    "n": "Citrons",
+    "macro": "0g P · 0g L · 9g G",
+    "nutri": "Vit C ++, antioxydants flavonoïdes",
+    "why": "Booster digestion + immunité. Anti-oxydation avocat. À presser partout."
+   },
+   {
+    "n": "Oignons rouges",
+    "macro": "1g P · 0g L · 9g G",
+    "nutri": "Quercétine, vit C, soufre",
+    "why": "Anti-inflammatoire. Saveur en cuisine. Rouges plus riches en antioxydants que blancs."
+   },
+   {
+    "n": "Salade verte",
+    "macro": "1.4g P · 0g L · 3g G",
+    "nutri": "Vit K, A, folates, eau",
+    "why": "Volume + micronutriments pour zéro calorie. Mâche/roquette > iceberg (plus de nutri)."
+   }
+  ]
+ },
+ {
+  "r": "🥜 Graisses saines",
+  "items": [
+   {
+    "n": "Amandes / cajou (300g)",
+    "macro": "21g P · 50g L · 22g G",
+    "nutri": "Vit E, magnésium, calcium, fibres",
+    "why": "Top oléagineux : vit E protège muscle, magnésium = sommeil. 30g max/j (calorique)."
+   },
+   {
+    "n": "Noix (200g)",
+    "macro": "15g P · 65g L · 14g G",
+    "nutri": "Oméga-3 ALA, magnésium, antioxydants",
+    "why": "Seules oléagineuses avec oméga-3 végétaux. Bonnes pour le cerveau."
+   },
+   {
+    "n": "Beurre de cacahuète pur",
+    "macro": "25g P · 50g L · 20g G",
+    "nutri": "Niacine, magnésium, vit E",
+    "why": "Combo prot + gras. Vérifie l'étiquette : 100% cacahuètes, pas d'huile ajoutée."
+   },
+   {
+    "n": "Huile d'olive 1L",
+    "macro": "0g P · 100g L · 0g G",
+    "nutri": "Mono-insaturés, polyphénols, vit E, K",
+    "why": "Reine des huiles. Anti-inflammatoire. Cuisson modérée OK, top à cru."
+   },
+   {
+    "n": "Chocolat noir 85%",
+    "macro": "8g P · 50g L · 30g G",
+    "nutri": "Magnésium ++, fer, antioxydants flavonoïdes",
+    "why": "Récompense saine. Magnésium = sommeil/récup. 20g/j = parfait."
+   }
+  ]
+ },
+ {
+  "r": "💊 Suppléments",
+  "items": [
+   {
+    "n": "Whey nature/vanille",
+    "macro": "80g P · 5g L · 5g G (par 100g)",
+    "nutri": "Tous les AA + BCAA",
+    "why": "Protéine rapide post-séance. Pratique. Pas indispensable mais utile si tu peines à hit ton total."
+   },
+   {
+    "n": "Créatine 500g",
+    "macro": "-",
+    "nutri": "Créatine monohydrate pure",
+    "why": "Le complément le + étudié au monde. +5-10% force/explosivité. 3-5g/j, peu importe l'heure. Rétention d'eau musculaire normale."
+   },
+   {
+    "n": "Magnésium bisglycinate",
+    "macro": "-",
+    "nutri": "300mg élémentaire",
+    "why": "Sommeil + récupération + anti-crampes. Bisglycinate = meilleure absorption. Le soir."
+   },
+   {
+    "n": "Vitamine D3 1000UI",
+    "macro": "-",
+    "nutri": "Vit D3 cholécalciférol",
+    "why": "Quasi tout le monde est en déficit en France. Booste testostérone, immunité, os, humeur. 2000 UI/j en hiver."
+   }
+  ]
+ },
+ {
+  "r": "🧴 Divers",
+  "items": [
+   {
+    "n": "Eau 1,5L ×6",
+    "macro": "-",
+    "nutri": "H2O + minéraux selon marque",
+    "why": "3L/j minimum quand tu t'entraînes. Hydratation = perf + récup."
+   },
+   {
+    "n": "Sauce soja allégée",
+    "macro": "-",
+    "nutri": "Faible en kcal, source de glutamate",
+    "why": "Booster de goût zéro calorie. Marinade poulet/légumes. Version allégée = -40% sel."
+   },
+   {
+    "n": "Pois chiches en boîte",
+    "macro": "9g P · 3g L · 14g G",
+    "nutri": "Fibres, fer, folates, magnésium",
+    "why": "Légumineuse top : protéines + fibres. Cure ou houmous."
+   },
+   {
+    "n": "Sauce tomate",
+    "macro": "1.5g P · 0g L · 7g G",
+    "nutri": "Lycopène, vit C, potassium",
+    "why": "Cuite, le lycopène est plus biodisponible que cru. Indispensable."
+   },
+   {
+    "n": "Lait de coco",
+    "macro": "2g P · 21g L · 3g G",
+    "nutri": "MCT (triglycérides chaîne moyenne)",
+    "why": "Pour curry et plats asiat. Les MCT sont des gras à énergie rapide."
+   },
+   {
+    "n": "Granola",
+    "macro": "10g P · 15g L · 60g G",
+    "nutri": "Fibres, magnésium, fer",
+    "why": "Bowls de yaourt grec. Choisis avec peu de sucre ajouté."
+   },
+   {
+    "n": "Miel",
+    "macro": "0g P · 0g L · 82g G",
+    "nutri": "Antioxydants, antibactériens",
+    "why": "Sucre naturel. Booster goût yaourt/flocons. 1 càc = 20 kcal."
+   },
+   {
+    "n": "Mayonnaise allégée",
+    "macro": "1g P · 30g L · 5g G",
+    "nutri": "Vit E (huile)",
+    "why": "Pour les wraps. Allégée = -50% kcal vs classique."
+   },
+   {
+    "n": "Épices (curcuma, paprika, cumin, curry)",
+    "macro": "-",
+    "nutri": "Antioxydants, anti-inflammatoires",
+    "why": "Booster goût zéro calorie. Curcuma anti-inflammatoire ++."
+   },
+   {
+    "n": "Moutarde",
+    "macro": "-",
+    "nutri": "Sélénium, peu de kcal",
+    "why": "Booster goût gamelle. Anti-pain-mou sur sandwich (essentiel)."
+   },
+   {
+    "n": "Tahini",
+    "macro": "17g P · 50g L · 21g G",
+    "nutri": "Calcium ++, magnésium, fer",
+    "why": "Pâte de sésame. Sauce Buddha bowl. Plus de calcium que le lait."
+   }
+  ]
+ }
+]
