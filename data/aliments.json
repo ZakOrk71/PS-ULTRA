@@ -1,1 +1,1580 @@
-d
+{
+ "aliments": [
+  {
+   "id": "pou_blanc",
+   "n": "Poulet (blanc)",
+   "c": "viande",
+   "k": 165,
+   "p": 31,
+   "g": 0,
+   "l": 3.6
+  },
+  {
+   "id": "pou_cuisse",
+   "n": "Poulet (cuisse)",
+   "c": "viande",
+   "k": 180,
+   "p": 28,
+   "g": 0,
+   "l": 7
+  },
+  {
+   "id": "dinde",
+   "n": "Dinde escalope",
+   "c": "viande",
+   "k": 145,
+   "p": 30,
+   "g": 0,
+   "l": 2
+  },
+  {
+   "id": "steak5",
+   "n": "Steak haché 5% MG",
+   "c": "viande",
+   "k": 135,
+   "p": 21,
+   "g": 0,
+   "l": 5
+  },
+  {
+   "id": "steak15",
+   "n": "Steak haché 15% MG",
+   "c": "viande",
+   "k": 220,
+   "p": 19,
+   "g": 0,
+   "l": 15
+  },
+  {
+   "id": "boeuf_bav",
+   "n": "Bœuf bavette",
+   "c": "viande",
+   "k": 175,
+   "p": 28,
+   "g": 0,
+   "l": 7
+  },
+  {
+   "id": "boeuf_entre",
+   "n": "Bœuf entrecôte",
+   "c": "viande",
+   "k": 240,
+   "p": 24,
+   "g": 0,
+   "l": 16
+  },
+  {
+   "id": "porc_filet",
+   "n": "Porc filet mignon",
+   "c": "viande",
+   "k": 145,
+   "p": 28,
+   "g": 0,
+   "l": 3
+  },
+  {
+   "id": "cote_porc",
+   "n": "Côte de porc",
+   "c": "viande",
+   "k": 230,
+   "p": 22,
+   "g": 0,
+   "l": 16
+  },
+  {
+   "id": "jambon_b",
+   "n": "Jambon blanc dégraissé",
+   "c": "viande",
+   "k": 110,
+   "p": 19,
+   "g": 1,
+   "l": 3.5
+  },
+  {
+   "id": "jambon_cru",
+   "n": "Jambon cru",
+   "c": "viande",
+   "k": 240,
+   "p": 28,
+   "g": 0,
+   "l": 15
+  },
+  {
+   "id": "saucisson",
+   "n": "Saucisson sec",
+   "c": "viande",
+   "k": 425,
+   "p": 24,
+   "g": 1,
+   "l": 36
+  },
+  {
+   "id": "magret",
+   "n": "Magret de canard",
+   "c": "viande",
+   "k": 195,
+   "p": 22,
+   "g": 0,
+   "l": 12
+  },
+  {
+   "id": "lardons",
+   "n": "Lardons fumés",
+   "c": "viande",
+   "k": 290,
+   "p": 17,
+   "g": 0,
+   "l": 25
+  },
+  {
+   "id": "lapin",
+   "n": "Lapin",
+   "c": "viande",
+   "k": 165,
+   "p": 25,
+   "g": 0,
+   "l": 7
+  },
+  {
+   "id": "saumon",
+   "n": "Saumon",
+   "c": "poisson",
+   "k": 200,
+   "p": 22,
+   "g": 0,
+   "l": 13
+  },
+  {
+   "id": "thon_frais",
+   "n": "Thon frais",
+   "c": "poisson",
+   "k": 145,
+   "p": 23,
+   "g": 0,
+   "l": 5
+  },
+  {
+   "id": "thon_boite",
+   "n": "Thon en boîte au naturel",
+   "c": "poisson",
+   "k": 100,
+   "p": 26,
+   "g": 0,
+   "l": 1
+  },
+  {
+   "id": "sardines",
+   "n": "Sardines à l'huile d'olive",
+   "c": "poisson",
+   "k": 220,
+   "p": 25,
+   "g": 0,
+   "l": 13
+  },
+  {
+   "id": "maquereau",
+   "n": "Maquereau au naturel",
+   "c": "poisson",
+   "k": 175,
+   "p": 19,
+   "g": 0,
+   "l": 11
+  },
+  {
+   "id": "cabillaud",
+   "n": "Cabillaud",
+   "c": "poisson",
+   "k": 80,
+   "p": 18,
+   "g": 0,
+   "l": 0.7
+  },
+  {
+   "id": "lieu",
+   "n": "Lieu noir",
+   "c": "poisson",
+   "k": 80,
+   "p": 18,
+   "g": 0,
+   "l": 0.7
+  },
+  {
+   "id": "crevettes",
+   "n": "Crevettes",
+   "c": "poisson",
+   "k": 100,
+   "p": 22,
+   "g": 0,
+   "l": 1.5
+  },
+  {
+   "id": "saumon_fum",
+   "n": "Saumon fumé",
+   "c": "poisson",
+   "k": 175,
+   "p": 25,
+   "g": 0,
+   "l": 8
+  },
+  {
+   "id": "tilapia",
+   "n": "Tilapia",
+   "c": "poisson",
+   "k": 130,
+   "p": 26,
+   "g": 0,
+   "l": 2.7
+  },
+  {
+   "id": "sole",
+   "n": "Sole",
+   "c": "poisson",
+   "k": 90,
+   "p": 19,
+   "g": 0,
+   "l": 1.2
+  },
+  {
+   "id": "hareng",
+   "n": "Hareng",
+   "c": "poisson",
+   "k": 220,
+   "p": 18,
+   "g": 0,
+   "l": 16
+  },
+  {
+   "id": "oeuf",
+   "n": "Œuf entier (~60g)",
+   "c": "oeuf",
+   "k": 155,
+   "p": 13,
+   "g": 1,
+   "l": 11
+  },
+  {
+   "id": "blanc_oeuf",
+   "n": "Blanc d'œuf",
+   "c": "oeuf",
+   "k": 50,
+   "p": 11,
+   "g": 0.7,
+   "l": 0.2
+  },
+  {
+   "id": "fb0",
+   "n": "Fromage blanc 0% MG",
+   "c": "laitier",
+   "k": 47,
+   "p": 8,
+   "g": 4,
+   "l": 0.2
+  },
+  {
+   "id": "fb20",
+   "n": "Fromage blanc 20% MG",
+   "c": "laitier",
+   "k": 105,
+   "p": 8,
+   "g": 4,
+   "l": 6.5
+  },
+  {
+   "id": "yog_nature",
+   "n": "Yaourt nature",
+   "c": "laitier",
+   "k": 60,
+   "p": 4,
+   "g": 5,
+   "l": 3.5
+  },
+  {
+   "id": "yog_grec",
+   "n": "Yaourt grec",
+   "c": "laitier",
+   "k": 95,
+   "p": 9,
+   "g": 4,
+   "l": 5
+  },
+  {
+   "id": "yog0",
+   "n": "Yaourt 0% sucré",
+   "c": "laitier",
+   "k": 40,
+   "p": 4,
+   "g": 5,
+   "l": 0
+  },
+  {
+   "id": "skyr",
+   "n": "Skyr nature",
+   "c": "laitier",
+   "k": 65,
+   "p": 11,
+   "g": 4,
+   "l": 0.2
+  },
+  {
+   "id": "lait_demi",
+   "n": "Lait demi-écrémé",
+   "c": "laitier",
+   "k": 47,
+   "p": 3.3,
+   "g": 5,
+   "l": 1.6
+  },
+  {
+   "id": "lait_ent",
+   "n": "Lait entier",
+   "c": "laitier",
+   "k": 64,
+   "p": 3.3,
+   "g": 4.8,
+   "l": 3.6
+  },
+  {
+   "id": "lait_ecr",
+   "n": "Lait écrémé",
+   "c": "laitier",
+   "k": 33,
+   "p": 3.3,
+   "g": 5,
+   "l": 0.1
+  },
+  {
+   "id": "lait_am",
+   "n": "Lait d'amande non sucré",
+   "c": "laitier",
+   "k": 13,
+   "p": 0.4,
+   "g": 0.1,
+   "l": 1.1
+  },
+  {
+   "id": "creme30",
+   "n": "Crème fraîche 30%",
+   "c": "laitier",
+   "k": 290,
+   "p": 2.5,
+   "g": 3,
+   "l": 30
+  },
+  {
+   "id": "creme5",
+   "n": "Crème allégée 5%",
+   "c": "laitier",
+   "k": 75,
+   "p": 3,
+   "g": 4,
+   "l": 5
+  },
+  {
+   "id": "beurre",
+   "n": "Beurre",
+   "c": "laitier",
+   "k": 745,
+   "p": 0.7,
+   "g": 0.6,
+   "l": 82
+  },
+  {
+   "id": "comte",
+   "n": "Comté",
+   "c": "fromage",
+   "k": 405,
+   "p": 28,
+   "g": 0.5,
+   "l": 32
+  },
+  {
+   "id": "emmental",
+   "n": "Emmental",
+   "c": "fromage",
+   "k": 380,
+   "p": 28,
+   "g": 0,
+   "l": 28
+  },
+  {
+   "id": "mozza",
+   "n": "Mozzarella",
+   "c": "fromage",
+   "k": 280,
+   "p": 22,
+   "g": 1,
+   "l": 21
+  },
+  {
+   "id": "parm",
+   "n": "Parmesan",
+   "c": "fromage",
+   "k": 390,
+   "p": 36,
+   "g": 0,
+   "l": 28
+  },
+  {
+   "id": "camembert",
+   "n": "Camembert",
+   "c": "fromage",
+   "k": 295,
+   "p": 20,
+   "g": 0,
+   "l": 24
+  },
+  {
+   "id": "roquefort",
+   "n": "Roquefort",
+   "c": "fromage",
+   "k": 370,
+   "p": 19,
+   "g": 2,
+   "l": 32
+  },
+  {
+   "id": "chevre_fr",
+   "n": "Chèvre frais",
+   "c": "fromage",
+   "k": 200,
+   "p": 16,
+   "g": 1,
+   "l": 14
+  },
+  {
+   "id": "brie",
+   "n": "Brie",
+   "c": "fromage",
+   "k": 335,
+   "p": 20,
+   "g": 0.5,
+   "l": 28
+  },
+  {
+   "id": "feta",
+   "n": "Feta",
+   "c": "fromage",
+   "k": 265,
+   "p": 14,
+   "g": 4,
+   "l": 21
+  },
+  {
+   "id": "cancoil",
+   "n": "Cancoillotte",
+   "c": "fromage",
+   "k": 130,
+   "p": 13,
+   "g": 4,
+   "l": 8
+  },
+  {
+   "id": "riz_b_cuit",
+   "n": "Riz blanc cuit",
+   "c": "feculent",
+   "k": 130,
+   "p": 2.7,
+   "g": 28,
+   "l": 0.3
+  },
+  {
+   "id": "riz_b_cru",
+   "n": "Riz blanc cru",
+   "c": "feculent",
+   "k": 360,
+   "p": 7,
+   "g": 78,
+   "l": 0.8
+  },
+  {
+   "id": "riz_c_cuit",
+   "n": "Riz complet cuit",
+   "c": "feculent",
+   "k": 110,
+   "p": 2.5,
+   "g": 23,
+   "l": 0.9
+  },
+  {
+   "id": "riz_bas",
+   "n": "Riz basmati cuit",
+   "c": "feculent",
+   "k": 120,
+   "p": 3,
+   "g": 25,
+   "l": 0.5
+  },
+  {
+   "id": "pates_cuit",
+   "n": "Pâtes blanches cuites",
+   "c": "feculent",
+   "k": 130,
+   "p": 5,
+   "g": 27,
+   "l": 1
+  },
+  {
+   "id": "pates_comp",
+   "n": "Pâtes complètes cuites",
+   "c": "feculent",
+   "k": 125,
+   "p": 5.5,
+   "g": 25,
+   "l": 1
+  },
+  {
+   "id": "pates_cru",
+   "n": "Pâtes (crues)",
+   "c": "feculent",
+   "k": 365,
+   "p": 12,
+   "g": 75,
+   "l": 1.5
+  },
+  {
+   "id": "quinoa",
+   "n": "Quinoa cuit",
+   "c": "feculent",
+   "k": 120,
+   "p": 4.5,
+   "g": 21,
+   "l": 1.9
+  },
+  {
+   "id": "boulgour",
+   "n": "Boulgour cuit",
+   "c": "feculent",
+   "k": 90,
+   "p": 3.3,
+   "g": 18,
+   "l": 0.3
+  },
+  {
+   "id": "couscous",
+   "n": "Couscous cuit",
+   "c": "feculent",
+   "k": 110,
+   "p": 4,
+   "g": 23,
+   "l": 0.2
+  },
+  {
+   "id": "patate_d",
+   "n": "Patate douce cuite",
+   "c": "feculent",
+   "k": 90,
+   "p": 1.6,
+   "g": 20,
+   "l": 0.1
+  },
+  {
+   "id": "pdt",
+   "n": "Pomme de terre cuite",
+   "c": "feculent",
+   "k": 85,
+   "p": 2,
+   "g": 20,
+   "l": 0.1
+  },
+  {
+   "id": "frites",
+   "n": "Frites maison cuites",
+   "c": "feculent",
+   "k": 310,
+   "p": 4,
+   "g": 35,
+   "l": 17
+  },
+  {
+   "id": "polenta",
+   "n": "Polenta cuite",
+   "c": "feculent",
+   "k": 70,
+   "p": 1.5,
+   "g": 14,
+   "l": 0.5
+  },
+  {
+   "id": "avoine",
+   "n": "Flocons d'avoine",
+   "c": "feculent",
+   "k": 380,
+   "p": 13,
+   "g": 60,
+   "l": 7
+  },
+  {
+   "id": "muesli",
+   "n": "Muesli sans sucre",
+   "c": "feculent",
+   "k": 360,
+   "p": 12,
+   "g": 60,
+   "l": 8
+  },
+  {
+   "id": "granola",
+   "n": "Granola",
+   "c": "feculent",
+   "k": 460,
+   "p": 10,
+   "g": 60,
+   "l": 18
+  },
+  {
+   "id": "semoule",
+   "n": "Semoule cuite",
+   "c": "feculent",
+   "k": 130,
+   "p": 4,
+   "g": 28,
+   "l": 0.3
+  },
+  {
+   "id": "pain_b",
+   "n": "Pain blanc",
+   "c": "pain",
+   "k": 270,
+   "p": 9,
+   "g": 50,
+   "l": 2
+  },
+  {
+   "id": "pain_comp",
+   "n": "Pain complet",
+   "c": "pain",
+   "k": 240,
+   "p": 11,
+   "g": 42,
+   "l": 2.5
+  },
+  {
+   "id": "baguette",
+   "n": "Baguette",
+   "c": "pain",
+   "k": 270,
+   "p": 9,
+   "g": 55,
+   "l": 1
+  },
+  {
+   "id": "wrap",
+   "n": "Wrap blé",
+   "c": "pain",
+   "k": 290,
+   "p": 9,
+   "g": 50,
+   "l": 6
+  },
+  {
+   "id": "pain_mie",
+   "n": "Pain de mie",
+   "c": "pain",
+   "k": 280,
+   "p": 8,
+   "g": 50,
+   "l": 5
+  },
+  {
+   "id": "brioche",
+   "n": "Brioche",
+   "c": "pain",
+   "k": 380,
+   "p": 7,
+   "g": 55,
+   "l": 14
+  },
+  {
+   "id": "pita",
+   "n": "Pain pita",
+   "c": "pain",
+   "k": 270,
+   "p": 8,
+   "g": 55,
+   "l": 1.5
+  },
+  {
+   "id": "biscotte",
+   "n": "Biscotte",
+   "c": "pain",
+   "k": 410,
+   "p": 11,
+   "g": 75,
+   "l": 7
+  },
+  {
+   "id": "lentilles",
+   "n": "Lentilles cuites",
+   "c": "legumineuse",
+   "k": 115,
+   "p": 9,
+   "g": 19,
+   "l": 0.5
+  },
+  {
+   "id": "haricots_r",
+   "n": "Haricots rouges cuits",
+   "c": "legumineuse",
+   "k": 130,
+   "p": 9,
+   "g": 22,
+   "l": 0.5
+  },
+  {
+   "id": "pois_ch",
+   "n": "Pois chiches cuits",
+   "c": "legumineuse",
+   "k": 165,
+   "p": 8,
+   "g": 27,
+   "l": 3
+  },
+  {
+   "id": "haricots_b",
+   "n": "Haricots blancs cuits",
+   "c": "legumineuse",
+   "k": 130,
+   "p": 9,
+   "g": 23,
+   "l": 0.5
+  },
+  {
+   "id": "edamame",
+   "n": "Edamame",
+   "c": "legumineuse",
+   "k": 120,
+   "p": 11,
+   "g": 9,
+   "l": 5
+  },
+  {
+   "id": "tofu",
+   "n": "Tofu nature",
+   "c": "legumineuse",
+   "k": 75,
+   "p": 8,
+   "g": 2,
+   "l": 4
+  },
+  {
+   "id": "tempeh",
+   "n": "Tempeh",
+   "c": "legumineuse",
+   "k": 195,
+   "p": 19,
+   "g": 9,
+   "l": 11
+  },
+  {
+   "id": "soja_g",
+   "n": "Soja en grain cuit",
+   "c": "legumineuse",
+   "k": 175,
+   "p": 17,
+   "g": 9,
+   "l": 9
+  },
+  {
+   "id": "pomme",
+   "n": "Pomme (~150g)",
+   "c": "fruit",
+   "k": 52,
+   "p": 0.3,
+   "g": 14,
+   "l": 0.2
+  },
+  {
+   "id": "banane",
+   "n": "Banane (~120g)",
+   "c": "fruit",
+   "k": 89,
+   "p": 1,
+   "g": 23,
+   "l": 0.3
+  },
+  {
+   "id": "orange",
+   "n": "Orange",
+   "c": "fruit",
+   "k": 47,
+   "p": 1,
+   "g": 12,
+   "l": 0.1
+  },
+  {
+   "id": "mandarine",
+   "n": "Mandarine",
+   "c": "fruit",
+   "k": 53,
+   "p": 0.8,
+   "g": 13,
+   "l": 0.3
+  },
+  {
+   "id": "fraise",
+   "n": "Fraises",
+   "c": "fruit",
+   "k": 33,
+   "p": 0.7,
+   "g": 8,
+   "l": 0.3
+  },
+  {
+   "id": "framboise",
+   "n": "Framboises",
+   "c": "fruit",
+   "k": 52,
+   "p": 1,
+   "g": 12,
+   "l": 0.7
+  },
+  {
+   "id": "myrtille",
+   "n": "Myrtilles",
+   "c": "fruit",
+   "k": 57,
+   "p": 0.7,
+   "g": 14,
+   "l": 0.3
+  },
+  {
+   "id": "kiwi",
+   "n": "Kiwi",
+   "c": "fruit",
+   "k": 61,
+   "p": 1,
+   "g": 15,
+   "l": 0.5
+  },
+  {
+   "id": "mangue",
+   "n": "Mangue",
+   "c": "fruit",
+   "k": 60,
+   "p": 0.8,
+   "g": 15,
+   "l": 0.4
+  },
+  {
+   "id": "ananas",
+   "n": "Ananas",
+   "c": "fruit",
+   "k": 50,
+   "p": 0.5,
+   "g": 13,
+   "l": 0.1
+  },
+  {
+   "id": "raisin",
+   "n": "Raisin",
+   "c": "fruit",
+   "k": 67,
+   "p": 0.7,
+   "g": 17,
+   "l": 0.4
+  },
+  {
+   "id": "peche",
+   "n": "Pêche",
+   "c": "fruit",
+   "k": 39,
+   "p": 1,
+   "g": 10,
+   "l": 0.3
+  },
+  {
+   "id": "pasteque",
+   "n": "Pastèque",
+   "c": "fruit",
+   "k": 30,
+   "p": 0.6,
+   "g": 8,
+   "l": 0.2
+  },
+  {
+   "id": "avocat",
+   "n": "Avocat",
+   "c": "fruit",
+   "k": 160,
+   "p": 2,
+   "g": 9,
+   "l": 15
+  },
+  {
+   "id": "citron",
+   "n": "Citron",
+   "c": "fruit",
+   "k": 29,
+   "p": 1,
+   "g": 9,
+   "l": 0.3
+  },
+  {
+   "id": "brocoli",
+   "n": "Brocoli",
+   "c": "legume",
+   "k": 35,
+   "p": 3,
+   "g": 7,
+   "l": 0.4
+  },
+  {
+   "id": "carotte",
+   "n": "Carotte",
+   "c": "legume",
+   "k": 41,
+   "p": 1,
+   "g": 10,
+   "l": 0.2
+  },
+  {
+   "id": "tomate",
+   "n": "Tomate",
+   "c": "legume",
+   "k": 18,
+   "p": 0.9,
+   "g": 4,
+   "l": 0.2
+  },
+  {
+   "id": "concombre",
+   "n": "Concombre",
+   "c": "legume",
+   "k": 16,
+   "p": 0.7,
+   "g": 4,
+   "l": 0.1
+  },
+  {
+   "id": "courgette",
+   "n": "Courgette",
+   "c": "legume",
+   "k": 17,
+   "p": 1.2,
+   "g": 3,
+   "l": 0.3
+  },
+  {
+   "id": "salade",
+   "n": "Salade verte",
+   "c": "legume",
+   "k": 15,
+   "p": 1.4,
+   "g": 3,
+   "l": 0.2
+  },
+  {
+   "id": "epinard",
+   "n": "Épinards cru",
+   "c": "legume",
+   "k": 23,
+   "p": 3,
+   "g": 4,
+   "l": 0.4
+  },
+  {
+   "id": "poivron",
+   "n": "Poivron",
+   "c": "legume",
+   "k": 31,
+   "p": 1,
+   "g": 6,
+   "l": 0.3
+  },
+  {
+   "id": "aubergine",
+   "n": "Aubergine",
+   "c": "legume",
+   "k": 25,
+   "p": 1,
+   "g": 6,
+   "l": 0.2
+  },
+  {
+   "id": "champig",
+   "n": "Champignons",
+   "c": "legume",
+   "k": 22,
+   "p": 3,
+   "g": 3,
+   "l": 0.3
+  },
+  {
+   "id": "oignon",
+   "n": "Oignon",
+   "c": "legume",
+   "k": 40,
+   "p": 1,
+   "g": 9,
+   "l": 0.1
+  },
+  {
+   "id": "ail",
+   "n": "Ail",
+   "c": "legume",
+   "k": 150,
+   "p": 6,
+   "g": 33,
+   "l": 0.5
+  },
+  {
+   "id": "choufleur",
+   "n": "Chou-fleur",
+   "c": "legume",
+   "k": 25,
+   "p": 2,
+   "g": 5,
+   "l": 0.3
+  },
+  {
+   "id": "pois_v",
+   "n": "Petits pois cuit",
+   "c": "legume",
+   "k": 80,
+   "p": 5,
+   "g": 14,
+   "l": 0.4
+  },
+  {
+   "id": "mais",
+   "n": "Maïs en boîte",
+   "c": "legume",
+   "k": 95,
+   "p": 3,
+   "g": 18,
+   "l": 1.3
+  },
+  {
+   "id": "amandes",
+   "n": "Amandes",
+   "c": "olea",
+   "k": 580,
+   "p": 21,
+   "g": 22,
+   "l": 50
+  },
+  {
+   "id": "noix",
+   "n": "Noix",
+   "c": "olea",
+   "k": 700,
+   "p": 15,
+   "g": 14,
+   "l": 65
+  },
+  {
+   "id": "cajou",
+   "n": "Noix de cajou",
+   "c": "olea",
+   "k": 555,
+   "p": 18,
+   "g": 30,
+   "l": 44
+  },
+  {
+   "id": "pistaches",
+   "n": "Pistaches",
+   "c": "olea",
+   "k": 560,
+   "p": 20,
+   "g": 28,
+   "l": 45
+  },
+  {
+   "id": "noisettes",
+   "n": "Noisettes",
+   "c": "olea",
+   "k": 630,
+   "p": 15,
+   "g": 17,
+   "l": 60
+  },
+  {
+   "id": "bcacahuete",
+   "n": "Beurre de cacahuète pur",
+   "c": "olea",
+   "k": 590,
+   "p": 25,
+   "g": 20,
+   "l": 50
+  },
+  {
+   "id": "cacahuetes",
+   "n": "Cacahuètes",
+   "c": "olea",
+   "k": 570,
+   "p": 26,
+   "g": 16,
+   "l": 49
+  },
+  {
+   "id": "chia",
+   "n": "Graines de chia",
+   "c": "olea",
+   "k": 485,
+   "p": 17,
+   "g": 7,
+   "l": 31
+  },
+  {
+   "id": "tournesol",
+   "n": "Graines de tournesol",
+   "c": "olea",
+   "k": 580,
+   "p": 21,
+   "g": 20,
+   "l": 50
+  },
+  {
+   "id": "lin",
+   "n": "Graines de lin",
+   "c": "olea",
+   "k": 540,
+   "p": 18,
+   "g": 28,
+   "l": 42
+  },
+  {
+   "id": "h_olive",
+   "n": "Huile d'olive",
+   "c": "huile",
+   "k": 880,
+   "p": 0,
+   "g": 0,
+   "l": 100
+  },
+  {
+   "id": "h_coco",
+   "n": "Huile de coco",
+   "c": "huile",
+   "k": 880,
+   "p": 0,
+   "g": 0,
+   "l": 100
+  },
+  {
+   "id": "margarine",
+   "n": "Margarine",
+   "c": "huile",
+   "k": 720,
+   "p": 0.2,
+   "g": 0.4,
+   "l": 80
+  },
+  {
+   "id": "mayo",
+   "n": "Mayonnaise",
+   "c": "huile",
+   "k": 700,
+   "p": 1,
+   "g": 1,
+   "l": 78
+  },
+  {
+   "id": "vinaigrette",
+   "n": "Vinaigrette industrielle",
+   "c": "huile",
+   "k": 350,
+   "p": 0.5,
+   "g": 12,
+   "l": 32
+  },
+  {
+   "id": "whey",
+   "n": "Whey isolat",
+   "c": "suppl",
+   "k": 365,
+   "p": 90,
+   "g": 1,
+   "l": 3
+  },
+  {
+   "id": "barre_prot",
+   "n": "Barre protéinée (moyenne)",
+   "c": "suppl",
+   "k": 380,
+   "p": 30,
+   "g": 30,
+   "l": 12
+  },
+  {
+   "id": "mass_gainer",
+   "n": "Mass gainer",
+   "c": "suppl",
+   "k": 380,
+   "p": 35,
+   "g": 50,
+   "l": 5
+  },
+  {
+   "id": "collagene",
+   "n": "Collagène en poudre",
+   "c": "suppl",
+   "k": 400,
+   "p": 95,
+   "g": 0,
+   "l": 0
+  },
+  {
+   "id": "bcaa",
+   "n": "BCAA poudre",
+   "c": "suppl",
+   "k": 290,
+   "p": 70,
+   "g": 0,
+   "l": 0
+  },
+  {
+   "id": "bigmac",
+   "n": "Big Mac (~250g)",
+   "c": "fastfood",
+   "k": 250,
+   "p": 12,
+   "g": 19,
+   "l": 13
+  },
+  {
+   "id": "cheese",
+   "n": "Cheeseburger",
+   "c": "fastfood",
+   "k": 250,
+   "p": 13,
+   "g": 25,
+   "l": 11
+  },
+  {
+   "id": "frites_mc",
+   "n": "Frites McDo",
+   "c": "fastfood",
+   "k": 312,
+   "p": 4,
+   "g": 41,
+   "l": 15
+  },
+  {
+   "id": "pizza_marg",
+   "n": "Pizza Margherita",
+   "c": "fastfood",
+   "k": 270,
+   "p": 11,
+   "g": 30,
+   "l": 12
+  },
+  {
+   "id": "kebab",
+   "n": "Kebab pita",
+   "c": "fastfood",
+   "k": 280,
+   "p": 13,
+   "g": 28,
+   "l": 14
+  },
+  {
+   "id": "sushi",
+   "n": "Sushi maki saumon",
+   "c": "fastfood",
+   "k": 145,
+   "p": 6,
+   "g": 25,
+   "l": 2.5
+  },
+  {
+   "id": "nuggets",
+   "n": "Nuggets de poulet",
+   "c": "fastfood",
+   "k": 305,
+   "p": 17,
+   "g": 14,
+   "l": 21
+  },
+  {
+   "id": "hotdog",
+   "n": "Hot-dog",
+   "c": "fastfood",
+   "k": 290,
+   "p": 11,
+   "g": 23,
+   "l": 17
+  },
+  {
+   "id": "quiche",
+   "n": "Quiche lorraine",
+   "c": "fastfood",
+   "k": 350,
+   "p": 11,
+   "g": 22,
+   "l": 24
+  },
+  {
+   "id": "sandwich",
+   "n": "Sandwich jambon-fromage",
+   "c": "fastfood",
+   "k": 270,
+   "p": 12,
+   "g": 30,
+   "l": 11
+  },
+  {
+   "id": "choc_n",
+   "n": "Chocolat noir 70%",
+   "c": "snack",
+   "k": 535,
+   "p": 8,
+   "g": 30,
+   "l": 40
+  },
+  {
+   "id": "choc_lait",
+   "n": "Chocolat au lait",
+   "c": "snack",
+   "k": 545,
+   "p": 8,
+   "g": 60,
+   "l": 30
+  },
+  {
+   "id": "nutella",
+   "n": "Nutella",
+   "c": "snack",
+   "k": 535,
+   "p": 6,
+   "g": 57,
+   "l": 31
+  },
+  {
+   "id": "biscuit_b",
+   "n": "Biscuit beurre",
+   "c": "snack",
+   "k": 460,
+   "p": 7,
+   "g": 65,
+   "l": 18
+  },
+  {
+   "id": "chips",
+   "n": "Chips",
+   "c": "snack",
+   "k": 540,
+   "p": 6,
+   "g": 50,
+   "l": 35
+  },
+  {
+   "id": "glace_v",
+   "n": "Glace vanille",
+   "c": "snack",
+   "k": 200,
+   "p": 4,
+   "g": 24,
+   "l": 10
+  },
+  {
+   "id": "cookies",
+   "n": "Cookies",
+   "c": "snack",
+   "k": 480,
+   "p": 6,
+   "g": 60,
+   "l": 23
+  },
+  {
+   "id": "bonbons",
+   "n": "Bonbons gélifiés",
+   "c": "snack",
+   "k": 380,
+   "p": 0.5,
+   "g": 90,
+   "l": 0
+  },
+  {
+   "id": "madeleine",
+   "n": "Madeleine",
+   "c": "snack",
+   "k": 430,
+   "p": 6,
+   "g": 55,
+   "l": 21
+  },
+  {
+   "id": "gateau_c",
+   "n": "Gâteau au chocolat",
+   "c": "snack",
+   "k": 420,
+   "p": 6,
+   "g": 50,
+   "l": 22
+  },
+  {
+   "id": "coca",
+   "n": "Coca-Cola",
+   "c": "boisson",
+   "k": 42,
+   "p": 0,
+   "g": 10.6,
+   "l": 0
+  },
+  {
+   "id": "coca_z",
+   "n": "Coca Zero",
+   "c": "boisson",
+   "k": 0,
+   "p": 0,
+   "g": 0,
+   "l": 0
+  },
+  {
+   "id": "jus_o",
+   "n": "Jus d'orange",
+   "c": "boisson",
+   "k": 45,
+   "p": 0.7,
+   "g": 10,
+   "l": 0.2
+  },
+  {
+   "id": "biere",
+   "n": "Bière 5%",
+   "c": "boisson",
+   "k": 43,
+   "p": 0.5,
+   "g": 3.6,
+   "l": 0
+  },
+  {
+   "id": "vin_r",
+   "n": "Vin rouge",
+   "c": "boisson",
+   "k": 85,
+   "p": 0.1,
+   "g": 2.6,
+   "l": 0
+  },
+  {
+   "id": "whisky",
+   "n": "Whisky",
+   "c": "boisson",
+   "k": 235,
+   "p": 0,
+   "g": 0,
+   "l": 0
+  },
+  {
+   "id": "cafe_n",
+   "n": "Café noir",
+   "c": "boisson",
+   "k": 2,
+   "p": 0,
+   "g": 0,
+   "l": 0
+  },
+  {
+   "id": "the",
+   "n": "Thé",
+   "c": "boisson",
+   "k": 1,
+   "p": 0,
+   "g": 0,
+   "l": 0
+  },
+  {
+   "id": "lait_am_s",
+   "n": "Lait amande sucré",
+   "c": "boisson",
+   "k": 35,
+   "p": 0.4,
+   "g": 4,
+   "l": 1.1
+  },
+  {
+   "id": "smoothie",
+   "n": "Smoothie fruits",
+   "c": "boisson",
+   "k": 70,
+   "p": 1,
+   "g": 16,
+   "l": 0.3
+  }
+ ],
+ "cats": [
+  {
+   "k": "viande",
+   "l": "Viande",
+   "e": "🥩"
+  },
+  {
+   "k": "poisson",
+   "l": "Poisson",
+   "e": "🐟"
+  },
+  {
+   "k": "oeuf",
+   "l": "Œuf",
+   "e": "🥚"
+  },
+  {
+   "k": "laitier",
+   "l": "Laitier",
+   "e": "🥛"
+  },
+  {
+   "k": "fromage",
+   "l": "Fromage",
+   "e": "🧀"
+  },
+  {
+   "k": "feculent",
+   "l": "Féculent",
+   "e": "🌾"
+  },
+  {
+   "k": "pain",
+   "l": "Pain",
+   "e": "🍞"
+  },
+  {
+   "k": "legumineuse",
+   "l": "Légumineuse",
+   "e": "🌱"
+  },
+  {
+   "k": "fruit",
+   "l": "Fruit",
+   "e": "🍎"
+  },
+  {
+   "k": "legume",
+   "l": "Légume",
+   "e": "🥦"
+  },
+  {
+   "k": "olea",
+   "l": "Oléagineux",
+   "e": "🥜"
+  },
+  {
+   "k": "huile",
+   "l": "Huile/Gras",
+   "e": "🥑"
+  },
+  {
+   "k": "suppl",
+   "l": "Supplément",
+   "e": "💊"
+  },
+  {
+   "k": "fastfood",
+   "l": "Fast-food",
+   "e": "🍔"
+  },
+  {
+   "k": "snack",
+   "l": "Snack",
+   "e": "🍫"
+  },
+  {
+   "k": "boisson",
+   "l": "Boisson",
+   "e": "🥤"
+  }
+ ]
+}
