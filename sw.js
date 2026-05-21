@@ -1,6 +1,6 @@
-// Service Worker PS ULTRA — v3
-// Offline intelligent + auto-nettoyage des vieux caches
-const CACHE = "ps-ultra-v3";
+// Service Worker PS ULTRA — v4
+// Offline robuste : ignore les query strings (?v=timestamp) pour le cache
+const CACHE = "ps-ultra-v4";
 
 const ASSETS = [
   "./",
@@ -13,6 +13,13 @@ const ASSETS = [
   "https://unpkg.com/react@18.2.0/umd/react.production.min.js",
   "https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js",
 ];
+
+// Normalise une requête : enlève le ?v=... pour matcher le cache
+function cacheKey(request) {
+  const url = new URL(request.url);
+  url.search = "";  // retire ?v=timestamp
+  return url.toString();
+}
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
@@ -31,38 +38,41 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  const url = e.request.url;
+  const req = e.request;
+  if (req.method !== "GET") return;
+
+  const url = req.url;
   const isCDN = url.includes("unpkg.com");
-  const isData = url.includes("/data/") && url.endsWith(".json");
-  // app.js arrive avec ?v=timestamp → on le traite en network-first
-  const isCode = url.includes("app.js") || url.endsWith("index.html") || url.endsWith("/");
+  const key = cacheKey(req);  // clé sans ?v=
 
   if (isCDN) {
-    // React : cache-first (jamais modifié)
+    // React : cache-first
     e.respondWith(
-      caches.match(e.request).then((c) =>
-        c || fetch(e.request).then((res) => {
+      caches.match(req).then((c) =>
+        c || fetch(req).then((res) => {
           const copy = res.clone();
-          caches.open(CACHE).then((cc) => cc.put(e.request, copy));
+          caches.open(CACHE).then((cc) => cc.put(req, copy));
           return res;
         })
       )
     );
-  } else if (isData || isCode) {
-    // Code + données : NETWORK-FIRST (toujours frais si online, cache si offline)
-    e.respondWith(
-      fetch(e.request)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((cc) => cc.put(e.request, copy));
-          return res;
-        })
-        .catch(() => caches.match(e.request).then((c) => c || caches.match("./app.js")))
-    );
-  } else {
-    // Reste : cache-first basique
-    e.respondWith(caches.match(e.request).then((c) => c || fetch(e.request)));
+    return;
   }
+
+  // Code + données : network-first, fallback cache (en ignorant ?v=)
+  e.respondWith(
+    fetch(req)
+      .then((res) => {
+        // Met en cache sous la clé normalisée (sans ?v=)
+        const copy = res.clone();
+        caches.open(CACHE).then((cc) => cc.put(key, copy));
+        return res;
+      })
+      .catch(() =>
+        // Offline : cherche dans le cache avec la clé normalisée
+        caches.match(key).then((c) => c || caches.match(req))
+      )
+  );
 });
 
 self.addEventListener("message", (e) => {
