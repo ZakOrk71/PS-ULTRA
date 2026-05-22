@@ -19,6 +19,7 @@ var __spreadValues = (a, b) => {
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 const { useState, useMemo, useEffect } = React;
 const STORAGE_KEY = "ps_ultra_progz_lenny_v11";
+const APP_VERSION = "v15 \xB7 timer arri\xE8re-plan";
 const loadSaved = () => {
   try {
     if (typeof window === "undefined" || !window.localStorage) return {};
@@ -449,7 +450,10 @@ function App() {
   const [activeWorkout, setActiveWorkout] = useState(null);
   const [workoutHistory, setWorkoutHistory] = useState((_v = SAVED.workoutHistory) != null ? _v : []);
   const [restTimer, setRestTimer] = useState(null);
+  const [nowTick, setNowTick] = useState(Date.now());
+  const [restDoneFlash, setRestDoneFlash] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const restRemaining = restTimer ? Math.max(0, Math.ceil((restTimer.endTime - nowTick) / 1e3)) : 0;
   useEffect(() => {
     try {
       if (typeof window === "undefined" || !window.localStorage) return;
@@ -461,23 +465,38 @@ function App() {
     }
   }, [workoutHistory]);
   useEffect(() => {
-    if (!restTimer || restTimer.secondsLeft <= 0) return;
-    const t = setTimeout(() => {
-      setRestTimer((rt) => {
-        if (!rt) return null;
-        const next = rt.secondsLeft - 1;
-        if (next <= 0) {
-          try {
-            if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate([300, 120, 300]);
-          } catch (e) {
-          }
-          return null;
-        }
-        return __spreadProps(__spreadValues({}, rt), { secondsLeft: next });
-      });
-    }, 1e3);
-    return () => clearTimeout(t);
+    if (!restTimer) return;
+    const id = setInterval(() => setNowTick(Date.now()), 250);
+    return () => clearInterval(id);
   }, [restTimer]);
+  useEffect(() => {
+    const onVis = () => {
+      if (typeof document !== "undefined" && !document.hidden) {
+        setNowTick(Date.now());
+      }
+    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", onVis);
+      window.addEventListener("focus", onVis);
+    }
+    return () => {
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", onVis);
+        window.removeEventListener("focus", onVis);
+      }
+    };
+  }, []);
+  useEffect(() => {
+    if (restTimer && restRemaining <= 0) {
+      try {
+        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate([400, 150, 400]);
+      } catch (e) {
+      }
+      setRestTimer(null);
+      setRestDoneFlash(true);
+      setTimeout(() => setRestDoneFlash(false), 3500);
+    }
+  }, [restRemaining, restTimer]);
   const [showBackup, setShowBackup] = useState(false);
   const [importText, setImportText] = useState("");
   const [importMsg, setImportMsg] = useState("");
@@ -676,7 +695,8 @@ function App() {
       } else {
         sets[key] = { done: true, reps: ((_b2 = sets[key]) == null ? void 0 : _b2.reps) || "", charge: ((_c2 = sets[key]) == null ? void 0 : _c2.charge) || "" };
         const sec = parseRest(restStr);
-        setRestTimer({ secondsLeft: sec, total: sec, label: "Repos" });
+        setNowTick(Date.now());
+        setRestTimer({ endTime: Date.now() + sec * 1e3, total: sec, label: "Repos" });
       }
       return __spreadProps(__spreadValues({}, aw), { sets });
     });
@@ -1299,7 +1319,7 @@ function App() {
     { l: "Prot\xE9ines", v: calc.prot + "g", u: "/j", c: "#4ade80", s: `${calc.protCoeff}g/kg` },
     { l: "Glucides", v: calc.gluc + "g", u: "/j", c: "#60a5fa", s: "Reste" },
     { l: "Lipides", v: calc.lip + "g", u: "/j", c: "#f472b6", s: objectif === "seche" ? "0.8g/kg" : "1g/kg" }
-  ].map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", borderRadius: 10, padding: "12px", border: `1px solid ${x.c}33` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 } }, x.l), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, color: x.c } }, x.v, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#444", marginLeft: 2 } }, x.u)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", marginTop: 3 } }, x.s)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 14, padding: "16px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement(MacroBar, { label: `Prot\xE9ines (${Math.round(calc.prot * 4 / calc.cal * 100)}%)`, value: calc.prot, max: 250, color: "#4ade80" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Glucides (${Math.round(calc.gluc * 4 / calc.cal * 100)}%)`, value: calc.gluc, max: 500, color: "#60a5fa" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Lipides (${Math.round(calc.lip * 9 / calc.cal * 100)}%)`, value: calc.lip, max: 150, color: "#f472b6" })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1px solid ${niv.color}44`, borderRadius: 14, padding: "16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 9, alignItems: "center", marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { background: niv.color + "22", border: `1px solid ${niv.color}44`, borderRadius: 7, padding: "7px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, color: niv.color, fontWeight: 800 } }, niv.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555" } }, niv.annees)), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#aaa", lineHeight: 1.5 } }, niv.conseil)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 4 } }, niv.skills.map((sk, i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { background: niv.color + "15", color: niv.color, border: `1px solid ${niv.color}33`, borderRadius: 5, padding: "3px 8px", fontSize: 10 } }, sk))))), tab === "Calcul" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "\u{1F4CA} Aujourd'hui \xB7 ", mealsDate), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8, marginBottom: 18 } }, [
+  ].map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", borderRadius: 10, padding: "12px", border: `1px solid ${x.c}33` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 } }, x.l), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, color: x.c } }, x.v, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#444", marginLeft: 2 } }, x.u)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", marginTop: 3 } }, x.s)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 14, padding: "16px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement(MacroBar, { label: `Prot\xE9ines (${Math.round(calc.prot * 4 / calc.cal * 100)}%)`, value: calc.prot, max: 250, color: "#4ade80" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Glucides (${Math.round(calc.gluc * 4 / calc.cal * 100)}%)`, value: calc.gluc, max: 500, color: "#60a5fa" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Lipides (${Math.round(calc.lip * 9 / calc.cal * 100)}%)`, value: calc.lip, max: 150, color: "#f472b6" })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1px solid ${niv.color}44`, borderRadius: 14, padding: "16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 9, alignItems: "center", marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { background: niv.color + "22", border: `1px solid ${niv.color}44`, borderRadius: 7, padding: "7px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, color: niv.color, fontWeight: 800 } }, niv.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555" } }, niv.annees)), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#aaa", lineHeight: 1.5 } }, niv.conseil)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 4 } }, niv.skills.map((sk, i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { background: niv.color + "15", color: niv.color, border: `1px solid ${niv.color}33`, borderRadius: 5, padding: "3px 8px", fontSize: 10 } }, sk)))), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", marginTop: 20, marginBottom: 4 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#333", letterSpacing: 1, fontWeight: 600 } }, "\u26A1 PS ULTRA \xB7 ", APP_VERSION))), tab === "Calcul" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "\u{1F4CA} Aujourd'hui \xB7 ", mealsDate), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8, marginBottom: 18 } }, [
     { lab: "Calories", v: totals.kcal, obj: calc.cal, c: "#00ff88", u: "kcal" },
     { lab: "Prot\xE9ines", v: Math.round(totals.prot), obj: calc.prot, c: "#a78bfa", u: "g" },
     { lab: "Glucides", v: Math.round(totals.glu), obj: calc.gluc, c: "#60a5fa", u: "g" },
@@ -1564,11 +1584,11 @@ function App() {
       stroke: "#00ff88",
       strokeWidth: "4",
       strokeDasharray: 2 * Math.PI * 19,
-      strokeDashoffset: 2 * Math.PI * 19 * (1 - restTimer.secondsLeft / restTimer.total),
+      strokeDashoffset: 2 * Math.PI * 19 * (1 - restRemaining / restTimer.total),
       strokeLinecap: "round",
-      style: { transition: "stroke-dashoffset 1s linear" }
+      style: { transition: "stroke-dashoffset 0.3s linear" }
     }
-  ))), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#00ff88", textTransform: "uppercase", fontWeight: 700 } }, "\u23F1 Repos"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: -0.5, lineHeight: 1.1 } }, Math.floor(restTimer.secondsLeft / 60), ":", String(restTimer.secondsLeft % 60).padStart(2, "0"))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 7 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setRestTimer((rt) => rt ? __spreadProps(__spreadValues({}, rt), { secondsLeft: rt.secondsLeft + 15, total: Math.max(rt.total, rt.secondsLeft + 15) }) : null), style: {
+  ))), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#00ff88", textTransform: "uppercase", fontWeight: 700 } }, "\u23F1 Repos"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: -0.5, lineHeight: 1.1 } }, Math.floor(restRemaining / 60), ":", String(restRemaining % 60).padStart(2, "0"))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 7 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setRestTimer((rt) => rt ? __spreadProps(__spreadValues({}, rt), { endTime: rt.endTime + 15e3, total: rt.total + 15 }) : null), style: {
     background: "#0a2a1a",
     border: "1px solid #00ff8844",
     color: "#00ff88",
@@ -1586,7 +1606,24 @@ function App() {
     cursor: "pointer",
     fontSize: 12,
     fontWeight: 800
-  } }, "Passer"))), /* @__PURE__ */ React.createElement("div", { style: {
+  } }, "Passer"))), restDoneFlash && /* @__PURE__ */ React.createElement("div", { onClick: () => setRestDoneFlash(false), style: {
+    position: "fixed",
+    bottom: "calc(76px + env(safe-area-inset-bottom))",
+    left: 14,
+    right: 14,
+    zIndex: 99,
+    maxWidth: 652,
+    margin: "0 auto",
+    background: "#00ff88",
+    borderRadius: 16,
+    padding: "16px 18px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    boxShadow: "0 8px 30px rgba(0,255,136,0.45)",
+    cursor: "pointer"
+  } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 20 } }, "\u{1F4AA}"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, fontWeight: 800, color: "#000", letterSpacing: 0.3 } }, "Repos termin\xE9 \u2014 go !")), /* @__PURE__ */ React.createElement("div", { style: {
     position: "fixed",
     bottom: 0,
     left: 0,
