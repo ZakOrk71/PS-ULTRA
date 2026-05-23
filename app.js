@@ -19,7 +19,7 @@ var __spreadValues = (a, b) => {
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 const { useState, useMemo, useEffect } = React;
 const STORAGE_KEY = "ps_ultra_progz_lenny_v11";
-const APP_VERSION = "v15 \xB7 timer arri\xE8re-plan";
+const APP_VERSION = "v16 \xB7 s\xE9ance bras+abdos";
 const loadSaved = () => {
   try {
     if (typeof window === "undefined" || !window.localStorage) return {};
@@ -602,7 +602,7 @@ function App() {
     if (id === "C" || id === "C2") return "legs";
     if (id === "D") return "full";
     if (id === "E") return "skills";
-    if (id === "F") return "core";
+    if (id === "F" || id === "I") return "core";
     if (id === "G") return "cardio";
     if (id === "H") return "mob";
     return "all";
