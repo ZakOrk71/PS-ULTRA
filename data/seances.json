@@ -850,5 +850,101 @@
     "desc": "4 étirements : bras croisé devant, derrière la tête, derrière le dos (mains jointes), porte (chambranle). Sauve la santé des épaules à long terme."
    }
   ]
+ },
+ {
+  "id": "I",
+  "label": "BRAS & ABDOS",
+  "subtitle": "Biceps · Triceps · Avant-bras · Core",
+  "emoji": "💪",
+  "color": "#fbbf24",
+  "duree": "40-50 min",
+  "echauff": "5 min mobilité coudes/poignets + 2×10 pompes légères",
+  "fin": "Étirement biceps/triceps + gainage 30s",
+  "exos": [
+   {
+    "nom": "Chin-ups (tractions supination)",
+    "s": "4×8-10",
+    "rest": "90 s",
+    "obj": "Biceps + dos",
+    "outdoor": "Chin-ups barre — paumes vers toi",
+    "maison": "Chin-ups barre de porte",
+    "leste": "Chin-ups lestées",
+    "easy": "Chin-ups assistées élastique OU négatives",
+    "salle": "Tirage poulie supination OU chin-ups",
+    "desc": "Tractions paumes vers toi : recrutement maximal des biceps tout en travaillant le dos. Monte le menton au-dessus de la barre, descente contrôlée bras tendus."
+   },
+   {
+    "nom": "Dips triceps",
+    "s": "4×8-12",
+    "rest": "90 s",
+    "obj": "Triceps + bas pecs",
+    "outdoor": "Dips parallèles — buste droit (focus triceps)",
+    "maison": "Dips entre 2 chaises",
+    "leste": "Dips lestés (gilet/ceinture)",
+    "easy": "Dips banc pieds au sol",
+    "salle": "Dips machine assistée OU dips station lestés",
+    "desc": "Buste le plus vertical possible pour cibler les triceps. Coudes près du corps, descente jusqu'à 90° au coude, poussée explosive."
+   },
+   {
+    "nom": "Curl biceps",
+    "s": "3×10-12",
+    "rest": "75 s",
+    "obj": "Biceps (pic)",
+    "outdoor": "Curl avec sac lesté ou pierre",
+    "maison": "Curl haltères OU bouteilles d'eau / sac à dos chargé",
+    "leste": "Curl haltères lourds",
+    "easy": "Curl charge légère, tempo lent",
+    "salle": "Curl haltères ou barre EZ 3×10-12",
+    "desc": "Isolation du biceps. Coudes fixes le long du corps, contraction maximale en haut, descente lente (3s) pour maximiser la tension."
+   },
+   {
+    "nom": "Extension triceps au-dessus de la tête",
+    "s": "3×10-12",
+    "rest": "75 s",
+    "obj": "Triceps (longue portion)",
+    "outdoor": "Extension avec sac lesté derrière la tête",
+    "maison": "Extension haltère/bouteille à 2 mains au-dessus de la tête",
+    "leste": "Extension haltère lourd",
+    "easy": "Extension charge légère",
+    "salle": "Extension triceps poulie haute à la corde",
+    "desc": "Bras au-dessus de la tête, descends la charge derrière la nuque en gardant les coudes serrés et pointés vers le haut. Cible la longue portion du triceps."
+   },
+   {
+    "nom": "Curl marteau (hammer)",
+    "s": "3×10",
+    "rest": "60 s",
+    "obj": "Brachial + avant-bras",
+    "outdoor": "Hammer avec sac (prise neutre)",
+    "maison": "Hammer curl haltères/bouteilles prise neutre",
+    "leste": "Hammer curl haltères lourds",
+    "easy": "Hammer curl léger",
+    "salle": "Hammer curl haltères 3×10",
+    "desc": "Prise neutre (paumes face à face). Cible le brachial (sous le biceps) et les avant-bras pour des bras plus épais. Pas de balancement."
+   },
+   {
+    "nom": "Hanging leg raise",
+    "s": "4×10-12",
+    "rest": "75 s",
+    "obj": "Abdos inférieurs",
+    "outdoor": "Relevé de jambes suspendu à la barre",
+    "maison": "Relevé de jambes barre de porte OU au sol",
+    "leste": "Relevé de jambes lesté aux chevilles",
+    "easy": "Relevé de genoux pliés",
+    "salle": "Captain's chair leg raise",
+    "desc": "Suspendu, lève les jambes tendues jusqu'à l'horizontale (ou plus haut). Contrôle la descente, pas de balancement. Cible les abdos inférieurs."
+   },
+   {
+    "nom": "Crunch + gainage (superset abdos)",
+    "s": "3× (20 crunch + 45s planche)",
+    "rest": "60 s",
+    "obj": "Abdos complets",
+    "outdoor": "Crunch au sol + planche",
+    "maison": "Crunch + planche sur tapis",
+    "leste": "Crunch lesté (disque/sac) + planche lestée",
+    "easy": "Crunch + planche sur genoux",
+    "salle": "Crunch poulie à genoux + planche",
+    "desc": "Superset : enchaîne 20 crunchs (grand droit) puis 45s de planche (gainage profond) sans repos entre les deux. Repos seulement à la fin du superset."
+   }
+  ]
  }
 ]
