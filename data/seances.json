@@ -946,5 +946,857 @@
     "desc": "Superset : enchaîne 20 crunchs (grand droit) puis 45s de planche (gainage profond) sans repos entre les deux. Repos seulement à la fin du superset."
    }
   ]
+ },
+ {
+  "id": "J",
+  "label": "PUSH EXPRESS",
+  "subtitle": "Séance courte · Épaules · Pecs · Triceps",
+  "emoji": "⚡",
+  "color": "#f97316",
+  "duree": "30-35 min",
+  "echauff": "5 min mobilité épaules rapide · 10 pompes activation",
+  "fin": "Pompes max en 2 min — batte ton record",
+  "exos": [
+   {
+    "nom": "Pike push-up intensif",
+    "s": "4×10-12",
+    "rest": "75 s",
+    "obj": "Épaules explosives",
+    "outdoor": "Pike push-up 90° au sol, pieds surélevés sur banc",
+    "maison": "Pike push-up pieds surélevés sur chaise",
+    "leste": "Pike push-up avec gilet lesté",
+    "easy": "Pike push-up pieds au sol, hanches hautes",
+    "salle": "Développé épaules haltères debout 4×10-12",
+    "desc": "Hanches pointées vers le ciel, tête entre les mains, descends le front vers le sol puis pousse explosif. Isole les deltoïdes antérieurs et médians avec une efficacité maximale. Tempo 2s descente, montée explosive pour activer le système nerveux rapidement."
+   },
+   {
+    "nom": "Dips explosifs",
+    "s": "4×10",
+    "rest": "90 s",
+    "obj": "Triceps + pecs rapides",
+    "outdoor": "Dips sur barres parallèles du parc — poussée explosive",
+    "maison": "Dips entre deux chaises robustes",
+    "leste": "Dips lestés avec ceinture ou gilet",
+    "easy": "Dips au banc, pieds au sol",
+    "salle": "Dips station ou machine assistée à vitesse modérée",
+    "desc": "Descente contrôlée (2 secondes), montée EXPLOSIVE pour activer les fibres rapides. Le but est la puissance, pas le volume pur. Garde le buste légèrement incliné vers l'avant pour cibler les pecs en plus des triceps."
+   },
+   {
+    "nom": "Archer push-up",
+    "s": "3×8/côté",
+    "rest": "90 s",
+    "obj": "Pecs unilatéral",
+    "outdoor": "Archer push-up au sol ou sur banc de parc",
+    "maison": "Archer push-up sur tapis",
+    "leste": "Archer push-up avec gilet",
+    "easy": "Pompes larges en déportant légèrement le poids d'un côté",
+    "salle": "Développé couché haltère unilatéral 3×8",
+    "desc": "Un bras travaille, l'autre reste tendu comme appui. Charge maximale sur un côté à la fois — excellent pour corriger les déséquilibres pectoraux. Gainde les épaules et l'ensemble du ceinture scapulaire de façon asymétrique."
+   },
+   {
+    "nom": "Triceps dips banc",
+    "s": "3×15",
+    "rest": "60 s",
+    "obj": "Finisher triceps",
+    "outdoor": "Dips sur un banc de parc, pieds tendus loin",
+    "maison": "Dips entre deux chaises ou sur le bord du canapé",
+    "leste": "Poser une bouteille d'eau lestée sur les cuisses",
+    "easy": "Dips banc genoux pliés, pieds proches",
+    "salle": "Triceps corde à la poulie haute 3×15",
+    "desc": "Finisher brûlant pour les triceps. Mains derrière soi sur le banc, fesses descendent vers le sol puis on pousse. À enchaîner rapidement pour maximiser la congestion. Maintenir les coudes serrés près du corps tout au long du mouvement."
+   }
+  ]
+ },
+ {
+  "id": "K",
+  "label": "PULL FORCE",
+  "subtitle": "Dos épais · Biceps · Avant-bras · Force",
+  "emoji": "🦾",
+  "color": "#1d4ed8",
+  "duree": "65-75 min",
+  "echauff": "10 min mobilité épaules · front lever tuck 3×10s",
+  "fin": "Dead hang 2×max — objectif 2min",
+  "exos": [
+   {
+    "nom": "Muscle-up",
+    "s": "5×2-4",
+    "rest": "3-4 min",
+    "obj": "Force totale haut du corps",
+    "outdoor": "Muscle-up sur barre de street workout",
+    "maison": "Muscle-up barre fixe haute ou negative",
+    "leste": "Muscle-up avec gilet lesté +5kg",
+    "easy": "Tractions explosives sternum à la barre",
+    "salle": "Tractions explosives barre + dips station",
+    "desc": "Séance de force sur muscle-up : faible nombre de reps, repos long, concentration sur la qualité. Chaque répétition doit être parfaite — montée explosive, transition propre, dip complet. Repose-toi entièrement entre les séries."
+   },
+   {
+    "nom": "Tractions lestées",
+    "s": "5×4-6",
+    "rest": "3 min",
+    "obj": "Force dorsale maximale",
+    "outdoor": "Tractions lestées sur barre de parc avec gilet ou sac",
+    "maison": "Tractions lestées barre de porte avec sac à dos chargé",
+    "leste": "Tractions avec ceinture de lest ou gilet",
+    "easy": "Tractions avec élastique d'assistance",
+    "salle": "Tirage poulie haute charge maximale 5×4-6",
+    "desc": "Traction lourde pour développer la force absolue du dos. Descente bras entièrement tendus, remontée jusqu'au menton au-dessus de la barre. Les séries longues de repos permettent de récupérer le système nerveux entre les efforts intenses."
+   },
+   {
+    "nom": "Archer pull-up",
+    "s": "4×4-6/côté",
+    "rest": "3 min",
+    "obj": "Force unilatérale dos",
+    "outdoor": "Archer pull-up barre de parc",
+    "maison": "Archer pull-up barre fixe",
+    "leste": "Archer pull-up avec gilet",
+    "easy": "Tractions larges en asymétrique avec grip décalé",
+    "salle": "Tirage poulie unilatéral lourd alterné",
+    "desc": "Progression directe vers la traction à un bras (OAP). Un bras tire pleinement, l'autre reste tendu en appui. Plus tu rapproches la main libre du corps, plus la difficulté augmente. Constitue la base indispensable pour la one-arm pull-up."
+   },
+   {
+    "nom": "Inverted row lesté",
+    "s": "4×10",
+    "rest": "90 s",
+    "obj": "Dos moyen et rhomboïdes",
+    "outdoor": "Inverted row sous barre basse avec gilet lesté",
+    "maison": "Inverted row sous une table solide avec sac sur le ventre",
+    "leste": "Inverted row avec gilet lesté",
+    "easy": "Inverted row classique corps incliné",
+    "salle": "Rowing barre ou T-bar 4×10",
+    "desc": "Tirage horizontal qui cible les rhomboïdes, le milieu du dos et les trapèzes inférieurs. Corps horizontal comme une planche, tire la poitrine vers la barre en serrant les omoplates. Excellent complément aux tractions verticales pour un dos complet."
+   },
+   {
+    "nom": "Hammer curl",
+    "s": "3×10",
+    "rest": "75 s",
+    "obj": "Biceps brachial et avant-bras",
+    "outdoor": "Curl hammer avec bouteilles d'eau ou pierre",
+    "maison": "Hammer curl avec haltères ou sac à dos",
+    "leste": "Hammer curl haltères lourds",
+    "easy": "Hammer curl léger avec tempo lent 3s",
+    "salle": "Hammer curl haltères assis 3×10",
+    "desc": "Prise neutre (pouces vers le haut) qui recrute intensément le muscle brachial, souvent sous-développé. Ce muscle pousse le biceps vers le haut et donne du volume aux bras. Contrôle la descente sur 3 secondes pour maximiser la tension excentrique."
+   }
+  ]
+ },
+ {
+  "id": "L",
+  "label": "GLUTES DAY",
+  "subtitle": "Fessiers · Ischios · Mollets",
+  "emoji": "🍑",
+  "color": "#ec4899",
+  "duree": "55-65 min",
+  "echauff": "5 min marche + activation fessiers · 20 clamshells/côté",
+  "fin": "Plank 3×60s pour le gainage",
+  "exos": [
+   {
+    "nom": "Hip thrust lesté",
+    "s": "5×10-12",
+    "rest": "2 min",
+    "obj": "Fessiers maximaux",
+    "outdoor": "Hip thrust sur banc de parc avec sac lesté",
+    "maison": "Hip thrust épaules sur canapé avec sac à dos chargé",
+    "leste": "Hip thrust barre ou haltères lourds",
+    "easy": "Glute bridge au sol, deux jambes",
+    "salle": "Hip thrust barre sur banc 5×10-12",
+    "desc": "Le mouvement roi pour les fessiers. Épaules appuyées sur un banc, pieds à plat, monte les hanches à fond et contracte les fessiers 2 secondes en haut. Pense à creuser le ventre et garder le dos neutre — pas cambré. 5 séries intenses pour une congestion maximale des fessiers."
+   },
+   {
+    "nom": "Romanian deadlift",
+    "s": "4×10",
+    "rest": "2 min",
+    "obj": "Ischios et fessiers profonds",
+    "outdoor": "Romanian deadlift avec sac à dos lesté",
+    "maison": "Romanian deadlift avec haltères ou sac",
+    "leste": "Romanian deadlift barre ou haltères lourds",
+    "easy": "Romanian deadlift au poids du corps avec tempo lent",
+    "salle": "Romanian deadlift barre 4×10 lourd",
+    "desc": "Descend la barre le long des jambes en gardant le dos parfaitement droit et les genoux légèrement fléchis. L'étirement des ischio-jambiers doit être intense en bas. Contracte les fessiers pour remonter. Excellent pour développer la force de la chaîne postérieure complète."
+   },
+   {
+    "nom": "Bulgarian split squat",
+    "s": "4×10/côté",
+    "rest": "90 s",
+    "obj": "Quads et fessiers unilatéral",
+    "outdoor": "Bulgarian split squat pied arrière sur banc de parc",
+    "maison": "Bulgarian split squat pied arrière sur chaise ou canapé",
+    "leste": "Bulgarian split squat avec haltères ou gilet",
+    "easy": "Fente avant classique deux jambes",
+    "salle": "Bulgarian split squat haltères ou barre 4×10",
+    "desc": "Pied arrière surélevé sur banc, descends le genou avant vers le sol en gardant le torse droit. Cible simultanément le quad, le fessier et le psoas. L'instabilité force un gainage profond du tronc. Excellent pour corriger les déséquilibres entre jambes droite et gauche."
+   },
+   {
+    "nom": "Sumo squat",
+    "s": "4×12",
+    "rest": "90 s",
+    "obj": "Adducteurs et fessiers",
+    "outdoor": "Sumo squat au poids du corps ou avec pierre",
+    "maison": "Sumo squat goblet avec haltère ou bouteille lestée",
+    "leste": "Sumo squat goblet ou haltères lourds",
+    "easy": "Sumo squat au poids du corps",
+    "salle": "Sumo squat barre ou goblet 4×12",
+    "desc": "Pieds très écartés, pointes de pieds tournées vers l'extérieur à 45°. Descends en gardant les genoux dans l'axe des pieds. Active intensément les adducteurs et les fessiers médiaux souvent négligés. Contracte fort les fessiers en remontant."
+   },
+   {
+    "nom": "Calf raise unilatéral",
+    "s": "4×15",
+    "rest": "60 s",
+    "obj": "Mollets",
+    "outdoor": "Calf raise unilatéral sur une marche ou bordure",
+    "maison": "Calf raise unilatéral sur la première marche d'un escalier",
+    "leste": "Calf raise unilatéral lesté avec haltère dans une main",
+    "easy": "Calf raise bilatéral sur sol plat",
+    "salle": "Calf raise machine unilatéral 4×15",
+    "desc": "Sur un seul pied, le talon dans le vide, monte sur la pointe des pieds en amplitude maximale. Descends lentement en dessous de la marche pour l'étirement complet. Les mollets sont des muscles très résistants — 15 reps strictes avec pleine amplitude sont indispensables pour les stimuler."
+   }
+  ]
+ },
+ {
+  "id": "M",
+  "label": "ÉPAULES",
+  "subtitle": "Deltoïdes · Trapèzes · Rotateurs",
+  "emoji": "🏔️",
+  "color": "#7c3aed",
+  "duree": "50-60 min",
+  "echauff": "10 min bandes d'épaules + YTW légère",
+  "fin": "Face pull léger 2×20 pour finir les rotateurs",
+  "exos": [
+   {
+    "nom": "HSPU",
+    "s": "4×5-8",
+    "rest": "2-3 min",
+    "obj": "Force épaules",
+    "outdoor": "HSPU strict contre mur de parc",
+    "maison": "HSPU strict contre le mur",
+    "leste": "HSPU avec gilet lesté",
+    "easy": "Pike push-up 90° pieds surélevés",
+    "salle": "Développé militaire barre 4×5-8",
+    "desc": "Épaule day oblige — le HSPU est l'exercice roi des épaules en calisthenics. Concentration sur la qualité technique : coudes à 45° du corps, descente lente (3 secondes), poussée explosive. Séries modérées pour préserver la fraîcheur des épaules sur toute la séance."
+   },
+   {
+    "nom": "Lateral raise",
+    "s": "4×15",
+    "rest": "75 s",
+    "obj": "Deltoïdes latéraux",
+    "outdoor": "Lateral raise avec bouteilles d'eau ou pierres légères",
+    "maison": "Lateral raise haltères légers",
+    "leste": "Lateral raise haltères lourds",
+    "easy": "Lateral raise très léger avec focus contraction",
+    "salle": "Lateral raise haltères ou machine 4×15",
+    "desc": "Bras légèrement fléchis, monte les bras sur les côtés jusqu'à l'horizontale. Petite inclinaison des poignets vers le bas (comme vider un verre) pour mieux cibler le deltoïde latéral. 15 reps strictes sans momentum — c'est ce qui compte, pas la charge."
+   },
+   {
+    "nom": "Front raise",
+    "s": "3×12",
+    "rest": "75 s",
+    "obj": "Deltoïdes antérieurs",
+    "outdoor": "Front raise avec bouteilles d'eau",
+    "maison": "Front raise haltères ou sac à dos",
+    "leste": "Front raise haltères",
+    "easy": "Front raise léger tempo lent",
+    "salle": "Front raise haltères alternés 3×12",
+    "desc": "Lève les bras devant soi jusqu'à la hauteur des épaules, paume vers le bas. Contrôle la descente — le travail excentrique est aussi important. Peut être réalisé en alternance (gauche-droite) ou simultanément. Évite de balancer le torse pour initier le mouvement."
+   },
+   {
+    "nom": "Rear delt fly",
+    "s": "3×15",
+    "rest": "60 s",
+    "obj": "Deltoïdes postérieurs",
+    "outdoor": "Rear delt fly penché avec bouteilles",
+    "maison": "Rear delt fly penché haltères",
+    "leste": "Rear delt fly haltères lourds",
+    "easy": "YTW au sol, position T",
+    "salle": "Rear delt fly machine ou poulie basse 3×15",
+    "desc": "Penché vers l'avant à 45°, bras tendus, ouvre les bras comme des ailes en contractant les rhomboïdes et le deltoïde postérieur. Souvent sous-développé, le deltoïde postérieur est essentiel pour l'équilibre et la santé des épaules. Gardez la tête dans l'alignement du dos."
+   },
+   {
+    "nom": "Shrug KB/barre",
+    "s": "4×15",
+    "rest": "60 s",
+    "obj": "Trapèzes supérieurs",
+    "outdoor": "Shrug avec sac à dos chargé ou pierres lourdes",
+    "maison": "Shrug avec haltères ou sac à dos bien chargé",
+    "leste": "Shrug barre ou haltères lourds",
+    "easy": "Shrug léger avec focus contraction maximale en haut",
+    "salle": "Shrug barre ou haltères 4×15",
+    "desc": "Monte les épaules vers les oreilles puis contracte les trapèzes supérieurs 1 seconde en haut. Descente contrôlée. Les trapèzes sont des muscles très toniques qui nécessitent beaucoup de volume. Ne pas rouler les épaules — mouvement vertical pur."
+   }
+  ]
+ },
+ {
+  "id": "N",
+  "label": "ENDURANCE",
+  "subtitle": "Cardio · Souffle · Récupération active",
+  "emoji": "🏃",
+  "color": "#0891b2",
+  "duree": "40-60 min",
+  "echauff": "5 min marche + 5 min course légère",
+  "fin": "10 min retour au calme à pied",
+  "exos": [
+   {
+    "nom": "Course intervalles",
+    "s": "5×2min rapide / 1min récup",
+    "rest": "1 min marche",
+    "obj": "VO2max et endurance",
+    "outdoor": "Course rapide en extérieur ou sur piste",
+    "maison": "Course sur place à haute intensité ou vélo statique",
+    "leste": "Course avec gilet lesté (+ difficile)",
+    "easy": "Marche rapide inclinée ou course légère continue",
+    "salle": "Tapis roulant intervalle ou vélo cardio",
+    "desc": "5 blocs d'effort intense (80-90% FC max) alternés avec récupération active. Ce type d'entraînement par intervalles est bien supérieur à la course lente pour améliorer le VO2max et brûler les graisses. Vise à maintenir la même vitesse sur chacun des 5 blocs."
+   },
+   {
+    "nom": "Jump rope",
+    "s": "5×30s ON / 15s OFF",
+    "rest": "15 s",
+    "obj": "Cardio et coordination",
+    "outdoor": "Corde à sauter en extérieur",
+    "maison": "Corde à sauter en intérieur ou sauts sur place",
+    "leste": "Corde lestée pour plus d'intensité",
+    "easy": "Sauts sur place sans corde, tempo modéré",
+    "salle": "Corde à sauter en salle",
+    "desc": "La corde à sauter est l'un des meilleurs cardio-training existant : brûle beaucoup de calories, améliore la coordination, la proprioception et l'explosivité des mollets. 30s à fond, 15s de récup — rythme intense mais gérable. Vise à enchaîner sans s'arrêter."
+   },
+   {
+    "nom": "Box step-ups",
+    "s": "4×20",
+    "rest": "60 s",
+    "obj": "Cardio jambes",
+    "outdoor": "Step-ups sur marche ou banc de parc",
+    "maison": "Step-ups sur chaise robuste ou escalier",
+    "leste": "Step-ups avec haltères ou gilet lesté",
+    "easy": "Step-ups lents sur petite marche",
+    "salle": "Step-ups sur step ou box 4×20",
+    "desc": "Monte et descends d'une marche ou d'un banc en alternant les jambes. Excellent cardio à faible impact pour les genoux, idéal en journée de récup active. Garde un rythme soutenu pour maintenir la FC élevée. Peut être accéléré pour augmenter l'intensité cardio."
+   },
+   {
+    "nom": "Cycling sur place",
+    "s": "3×3min cardio",
+    "rest": "90 s",
+    "obj": "Endurance aérobie",
+    "outdoor": "Vélo en extérieur ou sprints en côte",
+    "maison": "Vélo statique ou pédalage sur le dos au sol",
+    "leste": "Vélo statique en résistance haute",
+    "easy": "Vélo statique résistance faible, cadence modérée",
+    "salle": "Vélo spinning ou elliptique 3×3min",
+    "desc": "Pédaler sur 3 minutes à un rythme soutenu (environ 70-75% FC max) pour développer l'endurance aérobie de base. Cette filière énergétique est la fondation de tout. Récupération active entre les blocs plutôt que le repos complet pour ne pas laisser la FC trop descendre."
+   }
+  ]
+ },
+ {
+  "id": "O",
+  "label": "CIRCUIT",
+  "subtitle": "Full Body · Stations · Cardio-Force",
+  "emoji": "🔄",
+  "color": "#d97706",
+  "duree": "45-55 min",
+  "echauff": "5 min cardio doux + mobilité",
+  "fin": "30 burpees le plus vite possible — record à battre",
+  "exos": [
+   {
+    "nom": "Burpees",
+    "s": "3 rounds AMRAP 45s",
+    "rest": "15 s",
+    "obj": "Cardio total corps",
+    "outdoor": "Burpees explosifs sur terrain plat",
+    "maison": "Burpees dans le salon",
+    "leste": "Burpees avec gilet lesté",
+    "easy": "Burpees sans saut, tempo modéré",
+    "salle": "Burpees + box jump enchaîné",
+    "desc": "AMRAP (As Many Reps As Possible) sur 45 secondes. L'objectif est de maintenir un nombre constant de répétitions sur les 3 rounds. Si tu tombes à 5 reps au 3e round alors que tu en faisais 10 au 1er, tu es parti trop vite. Gère ton énergie intelligemment."
+   },
+   {
+    "nom": "Pull-ups",
+    "s": "3×max",
+    "rest": "45 s",
+    "obj": "Force tirage",
+    "outdoor": "Tractions sur barre de parc",
+    "maison": "Tractions barre de porte",
+    "leste": "Tractions lestées",
+    "easy": "Australian pull-up ou tractions assistées",
+    "salle": "Tirage poulie haute ou tractions barre",
+    "desc": "Maximum de répétitions strictes en format circuit. Descente complète, pas de triche. En circuit, la fatigue s'accumule vite — les dernières séries seront difficiles. Accepte la baisse de performance et continue à pousser fort malgré la fatigue cardio et musculaire."
+   },
+   {
+    "nom": "Jump squats",
+    "s": "3×20",
+    "rest": "30 s",
+    "obj": "Explosivité et cardio jambes",
+    "outdoor": "Jump squats en extérieur",
+    "maison": "Jump squats sur tapis",
+    "leste": "Jump squats avec gilet",
+    "easy": "Squats rapides sans saut",
+    "salle": "Box jumps ou jump squats en salle",
+    "desc": "Squat rapide puis saut vertical maximal. Atterrissage amorti (ne jamais atterrir jambes tendues). 20 reps en circuit = très intense. L'enchaînement sans repos suffisant avec les burpees et les tractions crée un stress cardiovasculaire maximal."
+   },
+   {
+    "nom": "Pike push-up",
+    "s": "3×15",
+    "rest": "30 s",
+    "obj": "Épaules en circuit",
+    "outdoor": "Pike push-up pieds au sol",
+    "maison": "Pike push-up",
+    "leste": "Pike push-up lesté ou pieds très surélevés",
+    "easy": "Pompes classiques",
+    "salle": "Développé épaules machine légère ou pompes",
+    "desc": "Station épaules du circuit. Maintenir la forme technique malgré la fatigue accumulée des stations précédentes. Les épaules reçoivent beaucoup de stimulation même en circuit — c'est là que la résistance mentale entre en jeu."
+   },
+   {
+    "nom": "Mountain climbers",
+    "s": "3×30s",
+    "rest": "15 s",
+    "obj": "Core et cardio",
+    "outdoor": "Mountain climbers rapides sur sol plat",
+    "maison": "Mountain climbers sur tapis",
+    "leste": "Mountain climbers avec gilet",
+    "easy": "Mountain climbers tempo lent",
+    "salle": "Mountain climbers sur tapis",
+    "desc": "Position de planche, genoux alternés vers la poitrine le plus vite possible. En fin de circuit, les bras sont déjà fatigués des tractions et push-ups — le gainage du tronc est donc encore plus sollicité. 30 secondes à fond, récup minimale."
+   },
+   {
+    "nom": "L-sit",
+    "s": "3×max",
+    "rest": "30 s",
+    "obj": "Core isométrique",
+    "outdoor": "L-sit sur barres parallèles",
+    "maison": "L-sit entre 2 chaises",
+    "leste": "L-sit avec chaussettes lestées",
+    "easy": "Tuck L-sit (genoux pliés)",
+    "salle": "L-sit sur parallettes ou captain's chair",
+    "desc": "Dernière station du circuit — la plus exigeante mentalement car tout est fatigué. Tiens le L-sit le plus longtemps possible. Même si la tête dit stop, les abdos peuvent tenir encore 10 secondes. Le L-sit en circuit teste autant la résistance mentale que physique."
+   }
+  ]
+ },
+ {
+  "id": "P",
+  "label": "YOGA FLOW",
+  "subtitle": "Force · Souplesse · Équilibre",
+  "emoji": "🧘",
+  "color": "#10b981",
+  "duree": "45-60 min",
+  "echauff": "5 min respiration pranayama",
+  "fin": "10 min savasana (relaxation totale allongé)",
+  "exos": [
+   {
+    "nom": "Sun salutation series",
+    "s": "5 rounds",
+    "rest": "lent",
+    "obj": "Mobilité et activation globale",
+    "outdoor": "Salutation au soleil en extérieur",
+    "maison": "Salutation au soleil sur tapis de yoga",
+    "leste": "—",
+    "easy": "Salutation au soleil simplifiée (sans chaturanga)",
+    "salle": "Salutation au soleil sur tapis yoga",
+    "desc": "Enchaînement fluide de postures qui mobilise chaque articulation du corps. Montagne → plongeon → chien tête en bas → planche → chaturanga → cobra → chien tête en bas → retour. Respiration synchronisée avec le mouvement : inspiration en montant, expiration en descendant. 5 rounds complets à vitesse lente."
+   },
+   {
+    "nom": "Warrior flow",
+    "s": "3×5/côté",
+    "rest": "lent",
+    "obj": "Force et souplesse jambes",
+    "outdoor": "Warrior flow en extérieur",
+    "maison": "Warrior flow sur tapis",
+    "leste": "—",
+    "easy": "Warrior I seul, statique",
+    "salle": "Warrior flow sur tapis yoga",
+    "desc": "Enchaînement guerrier I → guerrier II → triangle → demi-lune. Chaque posture est tenue 3-5 respirations avant de transiter vers la suivante. Développe la force des jambes, l'ouverture des hanches et l'équilibre dynamique. Le flow continu brûle plus de calories que les postures statiques."
+   },
+   {
+    "nom": "Crow pose progression",
+    "s": "5×10-15s",
+    "rest": "2 min",
+    "obj": "Force bras et équilibre",
+    "outdoor": "Crow pose sur sol plat",
+    "maison": "Crow pose sur tapis épais pour sécurité",
+    "leste": "—",
+    "easy": "Pied-corneille (un pied à la fois) ou juste lean-forward planche",
+    "salle": "Crow pose sur tapis yoga",
+    "desc": "Accroupi, mains au sol, genoux posés sur les bras juste au-dessus des coudes. Penche le poids en avant jusqu'à décoller les pieds. L'équilibre se trouve juste avant le point de bascule. Renforce les poignets, les triceps et le core. Posture bras qui peut mener au headstand."
+   },
+   {
+    "nom": "Downward dog push-up flow",
+    "s": "3×10",
+    "rest": "90 s",
+    "obj": "Force et mobilité combinées",
+    "outdoor": "Chien tête en bas → planche → cobra enchaîné",
+    "maison": "Flow chien tête en bas → planche sur tapis",
+    "leste": "—",
+    "easy": "Chien tête en bas statique 30s puis planche statique",
+    "salle": "Flow yoga sur tapis",
+    "desc": "Enchaînement dynamique : chien tête en bas (V inversé) → planche → cobra → retour chien tête en bas. Combine mobilité des ischio-jambiers, force du core et extension de la colonne. Chaque transition est lente et contrôlée — la vitesse diminue l'efficacité. 10 cycles complets."
+   },
+   {
+    "nom": "Bridge + roue progression",
+    "s": "3×hold 30s",
+    "rest": "90 s",
+    "obj": "Extension colonne et épaules",
+    "outdoor": "Bridge au sol en extérieur",
+    "maison": "Bridge ou roue sur tapis",
+    "leste": "—",
+    "easy": "Bridge simple (hanches au plafond, épaules au sol)",
+    "salle": "Bridge ou roue sur tapis yoga",
+    "desc": "Bridge : allongé sur le dos, pieds au sol, pousse les hanches vers le plafond. Roue : idem mais on monte aussi les épaules et les bras. Étirement intense de la colonne, des épaules et des abdos. Contre-posture parfaite après beaucoup de flexion. Tenir 30 secondes en respirant profondément."
+   }
+  ]
+ },
+ {
+  "id": "Q",
+  "label": "FORCE MAX",
+  "subtitle": "Force pure · Système nerveux · Intensité max",
+  "emoji": "🏆",
+  "color": "#dc2626",
+  "duree": "70-80 min",
+  "echauff": "15 min activation + 3 séries progressives légères",
+  "fin": "Dead hang 2×max — objectif force mentale",
+  "exos": [
+   {
+    "nom": "Muscle-up",
+    "s": "6×1-2",
+    "rest": "4-5 min",
+    "obj": "Force neuromusculaire maximale",
+    "outdoor": "Muscle-up sur barre de street workout",
+    "maison": "Muscle-up barre haute ou negatives",
+    "leste": "Muscle-up lesté +10-15kg",
+    "easy": "Tractions explosives hautes (sternum à la barre)",
+    "salle": "Tractions explosives + dips lourds enchaînés",
+    "desc": "1-2 répétitions PARFAITES avec repos complet (4-5 minutes) entre chaque série. L'objectif n'est pas la fatigue musculaire mais l'activation maximale du système nerveux. Qualité absolue de chaque rep. Si le 2e rep est moins bien que le premier, fais une seule rep."
+   },
+   {
+    "nom": "HSPU strict",
+    "s": "6×2-3",
+    "rest": "4 min",
+    "obj": "Force épaules maximale",
+    "outdoor": "HSPU strict contre mur",
+    "maison": "HSPU strict au mur — qualité maximale",
+    "leste": "HSPU avec gilet +5-10kg",
+    "easy": "Pike push-up déficit lourd",
+    "salle": "Développé militaire barre lourd 6×2-3",
+    "desc": "2-3 répétitions strictes en force maximum. Pas de rebond, pas de kipping — chaque rep est contrôlée. Le tempo est libre mais la qualité est absolue. Ces 6 séries sollicitent le système nerveux de façon intense — d'où les 4 minutes de repos impératives."
+   },
+   {
+    "nom": "Pistol squat lesté",
+    "s": "5×3/côté",
+    "rest": "3 min",
+    "obj": "Force jambes unilatérale",
+    "outdoor": "Pistol squat lesté avec sac ou gilet",
+    "maison": "Pistol squat lesté avec sac à dos chargé",
+    "leste": "Pistol squat avec gilet lourd ou haltère",
+    "easy": "Pistol squat au poids du corps assisté",
+    "salle": "Pistol squat ou squat bulgare barre lourd 5×3",
+    "desc": "Pistol squat avec charge additionnelle — le test ultime de la force et de l'équilibre unilatéral. 3 répétitions parfaites par côté, descente complète, remontée contrôlée. Augmente la charge progressivement chaque semaine. L'équilibre se dégrade avec la charge — c'est normal, adapte-toi."
+   },
+   {
+    "nom": "Front lever",
+    "s": "5×8-12s",
+    "rest": "3 min",
+    "obj": "Force isométrique pull",
+    "outdoor": "Front lever sur barre de parc",
+    "maison": "Front lever sur barre fixe",
+    "leste": "—",
+    "easy": "Advanced tuck front lever (genoux pliés vers poitrine)",
+    "salle": "Front lever ou lat pull-down isométrique lourd",
+    "desc": "Maintien isométrique en position horizontale, corps parfaitement droit face vers le haut. La progression va de tuck (genoux pliés) à full lever (jambes tendues). Chaque seconde tenue au-delà de ta limite habituelle développe la force de retenue des dorsaux. Repos complet entre les séries."
+   }
+  ]
+ },
+ {
+  "id": "R",
+  "label": "RÉCUP ACTIVE",
+  "subtitle": "Mobilité · Étirements · Bas rythme",
+  "emoji": "♻️",
+  "color": "#6b7280",
+  "duree": "30-40 min",
+  "echauff": "3 min marche lente",
+  "fin": "10 min méditation/respiration",
+  "exos": [
+   {
+    "nom": "Foam rolling full body",
+    "s": "2×30s/zone",
+    "rest": "lent",
+    "obj": "Récupération musculaire",
+    "outdoor": "Automassage au sol avec bouteille ou balle de tennis",
+    "maison": "Foam roller ou bouteille d'eau sur chaque groupe musculaire",
+    "leste": "—",
+    "easy": "Automassage doux avec les mains",
+    "salle": "Foam roller sur tapis 2×30s par zone",
+    "desc": "Passe le rouleau lentement sur chaque zone musculaire : mollets, ischio-jambiers, quadriceps, fessiers, bas du dos, dorsaux, pectoraux, épaules. Lorsque tu trouves un point douloureux, maintiens la pression 20-30 secondes. Le foam rolling améliore la circulation et élimine les tensions résiduelles."
+   },
+   {
+    "nom": "Cat-cow",
+    "s": "3×10",
+    "rest": "lent",
+    "obj": "Mobilité colonne vertébrale",
+    "outdoor": "Cat-cow au sol en extérieur",
+    "maison": "Cat-cow sur tapis",
+    "leste": "—",
+    "easy": "Cat-cow très lent en se concentrant sur la respiration",
+    "salle": "Cat-cow sur tapis yoga",
+    "desc": "À 4 pattes, alterne dos rond (cat — expiration) et dos creux (cow — inspiration). Chaque cycle mobilise l'ensemble de la colonne vertébrale de façon douce et thérapeutique. Parfait après des journées de séances intenses. 10 cycles = 2-3 minutes de mobilité vertébrale complète."
+   },
+   {
+    "nom": "Pigeon pose",
+    "s": "2×90s/côté",
+    "rest": "lent",
+    "obj": "Hanches et fessiers profonds",
+    "outdoor": "Pigeon pose sur herbe en extérieur",
+    "maison": "Pigeon pose sur tapis",
+    "leste": "—",
+    "easy": "Pigeon pose allongé sur le dos (Figure 4)",
+    "salle": "Pigeon pose sur tapis yoga",
+    "desc": "90 secondes de chaque côté — le temps nécessaire pour que le tissu conjonctif se relâche vraiment. Respire profondément et laisse la gravité faire le travail. Ne force jamais. La sensation de tension doit diminuer progressivement pendant le maintien."
+   },
+   {
+    "nom": "Shoulder circles",
+    "s": "3×10/dir",
+    "rest": "lent",
+    "obj": "Mobilité épaules",
+    "outdoor": "Shoulder circles debout",
+    "maison": "Shoulder circles debout ou avec un bâton",
+    "leste": "—",
+    "easy": "Petits cercles d'épaules très lents",
+    "salle": "Shoulder circles + mobilité bande élastique",
+    "desc": "Grands cercles d'épaules dans les deux directions — 10 en avant, 10 en arrière. Mobilise l'articulation gléno-humérale et lubrifie le liquide synovial. Incontournable pour la santé des épaules à long terme. Peut aussi être fait avec un élastique tendu entre les mains pour plus d'efficacité."
+   },
+   {
+    "nom": "Walking",
+    "s": "20 min modéré",
+    "rest": "-",
+    "obj": "Récupération active et circulation",
+    "outdoor": "Marche en nature ou en ville",
+    "maison": "Marche dans un couloir ou sur tapis",
+    "leste": "—",
+    "easy": "Marche très lente à son rythme",
+    "salle": "Tapis de marche à 5-6 km/h",
+    "desc": "La marche est la forme la plus sous-estimée de récupération active. 20 minutes à allure modérée (5-6 km/h) augmente la circulation sanguine, élimine les métabolites de fatigue et améliore l'humeur via la dopamine. Profite pour prendre l'air et récupérer mentalement aussi."
+   }
+  ]
+ },
+ {
+  "id": "S",
+  "label": "CORE CRUSHER",
+  "subtitle": "Abdos · Obliques · Gainage profond",
+  "emoji": "🎯",
+  "color": "#be185d",
+  "duree": "35-45 min",
+  "echauff": "5 min mobilité bassin · deadbug léger",
+  "fin": "Hollow body hold max — objectif 60s",
+  "exos": [
+   {
+    "nom": "Dragon flag",
+    "s": "4×5-8",
+    "rest": "2 min",
+    "obj": "Core total avancé",
+    "outdoor": "Dragon flag sur banc de parc",
+    "maison": "Dragon flag sur table ou banc solide",
+    "leste": "Dragon flag avec chaussures lestées",
+    "easy": "Reverse crunch jambes pliées",
+    "salle": "Crunch décliné lesté + relevé jambes",
+    "desc": "L'exercice le plus difficile pour les abdos — popularisé par Bruce Lee. Corps rigide comme une planche, descente ultra-lente en gardant la ligne droite. Aucune cambrure lombaire autorisée. Le simple fait de descendre correctement constitue un travail intense sur 5-8 répétitions."
+   },
+   {
+    "nom": "Hanging leg raise",
+    "s": "4×12",
+    "rest": "90 s",
+    "obj": "Abdos inférieurs",
+    "outdoor": "Hanging leg raise sur barre de parc",
+    "maison": "Hanging leg raise barre de porte",
+    "leste": "Hanging leg raise avec chaussettes lestées",
+    "easy": "Knee raise suspendu (genoux pliés remontés)",
+    "salle": "Captain's chair leg raise strict",
+    "desc": "Suspendu à la barre, lève les jambes tendues jusqu'à l'horizontale ou plus haut (toucher la barre pour les plus forts). Descente contrôlée — pas de lâchage. Cible les abdos inférieurs et le psoas avec une efficacité maximale. Pas de balancement du corps."
+   },
+   {
+    "nom": "L-sit",
+    "s": "4×25s",
+    "rest": "90 s",
+    "obj": "Compression core isométrique",
+    "outdoor": "L-sit sur barres parallèles de parc",
+    "maison": "L-sit entre 2 chaises stables",
+    "leste": "L-sit avec chaussettes lestées",
+    "easy": "Tuck L-sit (genoux pliés contre la poitrine)",
+    "salle": "L-sit sur parallettes ou captain's chair",
+    "desc": "25 secondes de L-sit strict, 4 séries. La compression isométrique des abdos requiert une gainage profond qui va bien au-delà du simple crunch. Pousse sur les mains pour déprimer les épaules, maintiens les jambes horizontales. Enchaîner 4 séries de 25s est déjà un excellent niveau."
+   },
+   {
+    "nom": "Russian twist",
+    "s": "4×25",
+    "rest": "60 s",
+    "obj": "Obliques et rotation",
+    "outdoor": "Russian twist au sol avec pierre ou sac",
+    "maison": "Russian twist avec bouteille lestée ou haltère",
+    "leste": "Russian twist avec disque ou haltère lourd",
+    "easy": "Russian twist sans charge, pieds au sol",
+    "salle": "Russian twist médecine ball 4×25",
+    "desc": "Assis à 45°, pieds décollés, tourne le buste de gauche à droite en touchant le sol de chaque côté. 25 reps = 25 touches, pas 25 allers-retours. Accélère progressivement pour augmenter l'intensité. Les obliques sont en feu dès la 2e série — c'est le but."
+   },
+   {
+    "nom": "Ab wheel",
+    "s": "3×10-15",
+    "rest": "90 s",
+    "obj": "Core profond et long",
+    "outdoor": "Ab wheel ou planche dynamique au sol",
+    "maison": "Ab wheel sur sol dur ou rouleau improvisé",
+    "leste": "Ab wheel standard",
+    "easy": "Ab wheel genoux au sol avec amplitude réduite",
+    "salle": "Ab wheel 3×10-15 ou câble crunch debout",
+    "desc": "La roue abdominale est l'un des meilleurs exercices pour le core : sollicite l'ensemble du rectus abdominis, le transverse profond et les érecteurs spinaux. Part des genoux au sol, roule en avant jusqu'à quasi-couché, reviens sans que le bas du dos ne s'affaisse. Très avancé."
+   },
+   {
+    "nom": "Plank latéral",
+    "s": "3×45s/côté",
+    "rest": "30 s",
+    "obj": "Obliques et stabilité latérale",
+    "outdoor": "Plank latéral au sol en extérieur",
+    "maison": "Plank latéral sur tapis",
+    "leste": "Plank latéral avec disque sur la hanche",
+    "easy": "Plank latéral genou au sol",
+    "salle": "Plank latéral avec abduction de jambe",
+    "desc": "45 secondes de chaque côté pour les obliques. Corps parfaitement droit, hanche ne doit pas s'affaisser ni pointer vers le haut. En fin de séance Core Crusher, tenir 45s par côté est mentalement aussi difficile que physiquement. Respire profondément et ne cède pas."
+   }
+  ]
+ },
+ {
+  "id": "T",
+  "label": "POITRINE",
+  "subtitle": "Pecs · Isolation · Hypertrophie",
+  "emoji": "💥",
+  "color": "#b45309",
+  "duree": "55-65 min",
+  "echauff": "5 min mobilité épaules · 20 pompes légères",
+  "fin": "Stretch pectoraux 2×60s",
+  "exos": [
+   {
+    "nom": "Pompes déficit",
+    "s": "4×12-15",
+    "rest": "90 s",
+    "obj": "Pecs + étirement profond",
+    "outdoor": "Pompes déficit sur marches ou bancs de parc",
+    "maison": "Pompes déficit sur 2 chaises ou livres épais",
+    "leste": "Pompes déficit avec gilet lesté",
+    "easy": "Pompes classiques au sol pleine amplitude",
+    "salle": "Développé couché avec haltères (pleine amplitude) 4×12-15",
+    "desc": "Mains surélevées (sur des marches, chaises ou livres), le torse descend en dessous des mains pour un étirement maximal des pectoraux. Cette amplitude augmentée active plus de fibres musculaires. 12-15 reps, tempo lent (3s descente). Protège les épaules — ne va pas trop profond si douleur."
+   },
+   {
+    "nom": "Dips inclinés",
+    "s": "4×12",
+    "rest": "90 s",
+    "obj": "Bas pectoraux",
+    "outdoor": "Dips inclinés avant sur barres de parc",
+    "maison": "Dips inclinés entre 2 chaises avec buste penché en avant",
+    "leste": "Dips inclinés avec gilet lesté",
+    "easy": "Dips banc classiques pieds au sol",
+    "salle": "Dips station inclinaison maximale vers l'avant 4×12",
+    "desc": "Dips avec le buste le plus incliné possible vers l'avant pour maximiser l'activation des pectoraux (surtout le bas). Cela réduit la participation des triceps et met l'accent sur la poitrine. Descends jusqu'à étirement des pecs (pas plus loin), remonte avec force. 12 reps bien réalisées."
+   },
+   {
+    "nom": "Pseudo planche",
+    "s": "4×8-10",
+    "rest": "2 min",
+    "obj": "Pecs antérieurs + progression planche",
+    "outdoor": "Pseudo planche au sol en extérieur",
+    "maison": "Pseudo planche sur sol dur",
+    "leste": "Pseudo planche avec gilet lesté",
+    "easy": "Pompes avec léger décalage des mains vers les hanches",
+    "salle": "Pseudo planche ou pec deck machine légère 4×8",
+    "desc": "Mains sous les hanches (pas sous les épaules), épaules avancées devant les mains. Cette position place une tension intense sur les pectoraux supérieurs et les épaules antérieures. La pompe devient très difficile à partir du moment où les épaules sont vraiment devant les poignets."
+   },
+   {
+    "nom": "Ring push-up",
+    "s": "3×12",
+    "rest": "90 s",
+    "obj": "Stabilisation et pecs complets",
+    "outdoor": "Ring push-up sur anneaux accrochés à un arbre ou barre",
+    "maison": "Ring push-up sur anneaux à basse hauteur",
+    "leste": "Ring push-up avec gilet",
+    "easy": "Ring push-up anneaux hauts (incliné)",
+    "salle": "Ring push-up anneaux à hauteur de banc",
+    "desc": "Les anneaux créent une instabilité qui force les pectoraux, les stabilisateurs d'épaules et le core à travailler ensemble. Plus difficile que les pompes classiques à charge égale. Pronatation des poignets en haut du mouvement pour maximiser la contraction pectorale. 12 reps bien contrôlées."
+   },
+   {
+    "nom": "Flies aux anneaux",
+    "s": "3×12-15",
+    "rest": "75 s",
+    "obj": "Isolation pecs pur",
+    "outdoor": "Flies aux anneaux accrochés à une barre de parc",
+    "maison": "Flies aux anneaux ou élastiques",
+    "leste": "Flies aux anneaux (difficulté selon hauteur des anneaux)",
+    "easy": "Flies élastique ou câble horizontal léger",
+    "salle": "Flies haltères couché ou câbles croix 3×12-15",
+    "desc": "Finisher isolation des pectoraux. Anneaux à hauteur de hanches, corps incliné vers l'avant, ouvre les bras comme des ailes puis referme. Le grand pectoral est en contraction maximale. Mouvement de câble reconstitué en calisthenics. 12-15 reps lentes pour la congestion maximale."
+   }
+  ]
+ },
+ {
+  "id": "U",
+  "label": "UPPER POWER",
+  "subtitle": "Force explosive haut du corps",
+  "emoji": "⚡",
+  "color": "#4f46e5",
+  "duree": "60-70 min",
+  "echauff": "10 min activation complète haut du corps",
+  "fin": "Max reps: tractions + dips enchaînées sans repos",
+  "exos": [
+   {
+    "nom": "Muscle-up explosif",
+    "s": "5×3-5",
+    "rest": "3-4 min",
+    "obj": "Puissance explosive",
+    "outdoor": "Muscle-up explosif sur barre de street workout",
+    "maison": "Muscle-up sur barre fixe haute",
+    "leste": "Muscle-up avec gilet léger +5kg",
+    "easy": "Tractions explosives hautes (menton très haut)",
+    "salle": "Tractions explosives + dips station enchaînés",
+    "desc": "Muscle-ups explosifs — l'accent est sur la vitesse de la phase concentrique. Descente lente (3 secondes), pause 1 seconde en bas, puis montée aussi vite que possible. Cette technique d'effort explosif développe la puissance neuromusculaire supérieure à l'hypertrophie pure."
+   },
+   {
+    "nom": "HSPU lesté",
+    "s": "4×5-8",
+    "rest": "3 min",
+    "obj": "Force et puissance épaules",
+    "outdoor": "HSPU strict contre mur avec gilet",
+    "maison": "HSPU strict au mur avec gilet lesté",
+    "leste": "HSPU avec gilet +5 à +15kg",
+    "easy": "HSPU standard sans lest",
+    "salle": "Développé militaire barre lourd debout 4×5-8",
+    "desc": "HSPU avec charge additionnelle — teste les limites des épaules en force. Le gilet lesté est le moyen le plus simple d'augmenter la difficulté en calisthenics. Si tu peux faire 10+ HSPU strict, commence à lester. 5-8 reps lestées correspondent à 3-5 reps sans lest en termes d'effort."
+   },
+   {
+    "nom": "Tractions lestées",
+    "s": "4×6-8",
+    "rest": "2-3 min",
+    "obj": "Force dorsale sous charge",
+    "outdoor": "Tractions lestées avec sac à dos ou gilet",
+    "maison": "Tractions lestées barre de porte avec sac chargé",
+    "leste": "Tractions avec ceinture de lest ou gilet lourd",
+    "easy": "Tractions classiques au poids du corps",
+    "salle": "Tirage poulie charge maximale 4×6-8",
+    "desc": "Même principe : descente contrôlée bras tendus, montée explosive. La charge additionnelle force le recrutement maximal des dorsaux. 6-8 reps lourdes construisent beaucoup plus de force que 15 reps légères. Augmente la charge de 2,5kg toutes les 2-3 semaines."
+   },
+   {
+    "nom": "Dips explosifs",
+    "s": "4×8-10",
+    "rest": "2 min",
+    "obj": "Puissance poussée",
+    "outdoor": "Dips explosifs sur barres de parc",
+    "maison": "Dips explosifs entre 2 chaises",
+    "leste": "Dips explosifs avec gilet",
+    "easy": "Dips classiques tempo lent",
+    "salle": "Dips station charge maximale 4×8-10",
+    "desc": "Même concept que les tractions explosives mais pour la poussée. Descente lente (2-3s), montée rapide comme une explosion. Les dips explosifs développent la puissance du triceps et des pectoraux au-delà de ce qu'offrent les dips classiques. Base du muscle-up."
+   },
+   {
+    "nom": "Pseudo planche push",
+    "s": "4×8",
+    "rest": "2 min",
+    "obj": "Force antérieure épaules et pecs",
+    "outdoor": "Pseudo planche au sol en extérieur",
+    "maison": "Pseudo planche sur sol dur ou tapis",
+    "leste": "Pseudo planche avec gilet lesté",
+    "easy": "Pompes avec mains décalées vers les hanches",
+    "salle": "Pec deck lourd ou développé couché prise serrée 4×8",
+    "desc": "Ferme le programme en ciblant les zones antérieures. La pseudo planche intègre force des épaules, pecs supérieurs et activation du core en une seule position. 8 répétitions de qualité avec les épaules vraiment devant les mains — chaque centimètre de lean vers l'avant augmente la difficulté exponentiellement."
+   }
+  ]
  }
 ]
