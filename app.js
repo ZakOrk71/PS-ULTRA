@@ -1,3 +1,4 @@
+(function(){var s=document.createElement("style");s.id="ps-ultra-css";if(!document.getElementById("ps-ultra-css")){s.textContent=":root{--bg:#000;--bg1:#0c0c14;--bg2:#111118;--bg3:#18181f;--card:#0d0d16;--border:#1e1e2c;--text:#fff;--text2:#ccc;--text3:#888;--text4:#555;--accent:#00cc66;--accent-dim:rgba(0,204,102,.1);--accent-border:rgba(0,204,102,.25);--nav-bg:rgba(0,0,0,0.92);--header-bg:rgba(0,0,0,0.97);}body.light{--bg:#f2f2f7;--bg1:#fff;--bg2:#f5f5fa;--bg3:#eaeaf0;--card:#fff;--border:#e0e0ea;--text:#08080f;--text2:#404055;--text3:#70708a;--text4:#a0a0b5;--accent:#009d4f;--accent-dim:rgba(0,157,79,.12);--accent-border:rgba(0,157,79,.25);--nav-bg:rgba(242,242,247,0.96);--header-bg:rgba(242,242,247,0.99);}body{background:var(--bg)!important;transition:background .28s,color .28s;}body.light{color:var(--text)!important;}@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeOut{0%,80%{opacity:1}100%{opacity:0}}.btn{-webkit-tap-highlight-color:transparent!important;transition:transform .12s ease,opacity .12s ease;cursor:pointer;font-family:inherit;}.btn:active{transform:scale(0.93)!important;opacity:.82;}.anim-up{animation:slideUp .26s cubic-bezier(.25,.46,.45,.94) both;}.anim-fade{animation:fadeIn .2s ease both;}";document.head.appendChild(s);}})();
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -18,8 +19,8 @@ var __spreadValues = (a, b) => {
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 const { useState, useMemo, useEffect } = React;
-const STORAGE_KEY = "ps_ultra_progz_lenny_v11";
-const APP_VERSION = "v16 \xB7 s\xE9ance bras+abdos";
+const STORAGE_KEY = "ps_ultra_progz_lenny_v12";
+const APP_VERSION = "v17 \xB7 th\xE8me + suggestions repas";
 const loadSaved = () => {
   try {
     if (typeof window === "undefined" || !window.localStorage) return {};
@@ -213,8 +214,33 @@ function MealSlot({ heure, slotDef, totalKcal, totalProt, totalGluc, RECETTES })
     return /* @__PURE__ */ React.createElement(MealOption, { key: r.id, r, scale: sc, color: cat.color });
   }), filtered.length > 3 && /* @__PURE__ */ React.createElement("button", { onClick: () => setShowAll(!showAll), style: { background: "none", border: `1px dashed ${cat.color}55`, color: cat.color, fontSize: 11, fontWeight: 700, cursor: "pointer", padding: "9px 0", width: "100%", borderRadius: 7, marginTop: 4 } }, showAll ? "\u25B2 R\xE9duire" : `\u25BC Voir ${filtered.length - 3} autre${filtered.length - 3 > 1 ? "s" : ""} option${filtered.length - 3 > 1 ? "s" : ""}`)));
 }
+function MealSuggestions({ remainKcal, RECETTES }) {
+  const [showAll, setShowAll] = useState(false);
+  if (!RECETTES || RECETTES.length === 0 || remainKcal < 100) return null;
+  const hour = new Date().getHours();
+  const slots = hour < 11 ? ["PD", "PRE"] : hour < 15 ? ["PRINC", "COLL"] : hour < 20 ? ["PRINC", "POST", "COLL"] : ["SOIR", "PRINC"];
+  const suggestions = RECETTES
+    .filter(function(r) { return r.kcal >= remainKcal * 0.3 && r.kcal <= remainKcal * 1.55; })
+    .sort(function(a, b) {
+      var aM = a.slots.some(function(s) { return slots.indexOf(s) >= 0; });
+      var bM = b.slots.some(function(s) { return slots.indexOf(s) >= 0; });
+      if (aM !== bM) return aM ? -1 : 1;
+      return Math.abs(a.kcal - remainKcal) - Math.abs(b.kcal - remainKcal);
+    });
+  if (!suggestions.length) return null;
+  var display = showAll ? suggestions : suggestions.slice(0, 4);
+  return /* @__PURE__ */ React.createElement("div", { className: "anim-up", style: { marginTop: 20 } },
+    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#00cc66", textTransform: "uppercase", fontWeight: 700, marginBottom: 4 } }, "\u{1F4A1} Id\xE9es repas pour toi"),
+    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#888", marginBottom: 12 } }, suggestions.length + " options \xB7 " + remainKcal + " kcal restantes"),
+    display.map(function(r) { return /* @__PURE__ */ React.createElement(MealOption, { key: r.id, r: r, scale: remainKcal / r.kcal, color: "#a78bfa" }); }),
+    suggestions.length > 4 && /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: function() { setShowAll(!showAll); }, style: { background: "none", border: "1px dashed #2a2a3a", color: "#888", fontSize: 11, fontWeight: 700, padding: "9px 0", width: "100%", borderRadius: 8, marginTop: 4 } }, showAll ? "▲ R\xE9duire" : "▼ " + (suggestions.length - 4) + " autres id\xE9es")
+  );
+}
 function App() {
   var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w;
+  const [theme, setTheme] = useState(function() {
+    try { return window.localStorage.getItem("ps_ultra_theme") || "dark"; } catch(e) { return "dark"; }
+  });
   const [tab, setTab] = useState("Nutrition");
   const [dataReady, setDataReady] = useState(false);
   const [dataError, setDataError] = useState(null);
@@ -261,6 +287,15 @@ function App() {
     return () => {
       cancelled = true;
     };
+  }, []);
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("ps_ultra_theme", theme);
+      document.body.classList.toggle("light", theme === "light");
+    } catch(e) {}
+  }, [theme]);
+  useEffect(() => {
+    try { document.body.classList.toggle("light", theme === "light"); } catch(e) {}
   }, []);
   const [userName, setUserName] = useState((_a = SAVED.userName) != null ? _a : "");
   const [poids, setPoids] = useState((_b = SAVED.poids) != null ? _b : 82);
@@ -604,7 +639,14 @@ function App() {
     if (id === "E") return "skills";
     if (id === "F" || id === "I") return "core";
     if (id === "G") return "cardio";
-    if (id === "H") return "mob";
+    if (id === "H" || id === "P" || id === "R") return "mob";
+    if (id === "J" || id === "T") return "push";
+    if (id === "K") return "pull";
+    if (id === "L") return "legs";
+    if (id === "M") return "push";
+    if (id === "N" || id === "O") return "cardio";
+    if (id === "Q" || id === "U") return "full";
+    if (id === "S") return "core";
     return "all";
   };
   const filteredSeances = seanceFilter === "all" ? SEANCES : SEANCES.filter((s) => seanceCat(s.id) === seanceFilter);
@@ -759,14 +801,14 @@ function App() {
   if (!dataReady) {
     return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "#000", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 20, fontFamily: "-apple-system, system-ui, sans-serif" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 44, height: 44, border: "3px solid #14141e", borderTopColor: "#00ff88", borderRadius: "50%", animation: "spin 0.7s linear infinite" } }), /* @__PURE__ */ React.createElement("div", { style: { color: "#00ff88", fontWeight: 800, letterSpacing: 4, fontSize: 11 } }, "PS ULTRA"));
   }
-  return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif", paddingBottom: "calc(95px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "#000", padding: "26px 18px 20px", position: "sticky", top: 0, zIndex: 10, paddingTop: "calc(26px + env(safe-area-inset-top))" } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 680, margin: "0 auto" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("div", { style: {
+  return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "var(--bg)", color: "var(--text)", fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif", paddingBottom: "calc(95px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "var(--header-bg)", padding: "26px 18px 20px", position: "sticky", top: 0, zIndex: 10, paddingTop: "calc(26px + env(safe-area-inset-top))", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 680, margin: "0 auto" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("div", { style: {
     width: 8,
     height: 8,
     borderRadius: "50%",
-    background: savedFlash ? "#00ff88" : "#333",
+    background: savedFlash ? "#00cc66" : "#333",
     transition: "background 0.3s",
-    boxShadow: savedFlash ? "0 0 10px #00ff88" : "none"
-  } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, letterSpacing: 2.5, color: "#666", textTransform: "uppercase", fontWeight: 700 } }, "PS Ultra \xB7 Progz")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, background: "#050508", border: "1px solid #14141e", borderRadius: 24, padding: 3 } }, [{ k: "nuit", l: "\u{1F319}", f: "Nuit" }, { k: "jour", l: "\u2600\uFE0F", f: "Jour" }].map((c) => /* @__PURE__ */ React.createElement("button", { key: c.k, onClick: () => applyCycle(c.k), style: {
+    boxShadow: savedFlash ? "0 0 10px #00cc66" : "none"
+  } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, letterSpacing: 2.5, color: "#666", textTransform: "uppercase", fontWeight: 700 } }, "PS Ultra \xB7 Progz"), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => { const t = theme === "dark" ? "light" : "dark"; setTheme(t); document.body.classList.toggle("light", t === "light"); try { localStorage.setItem("ps_ultra_theme", t); } catch(e) {} }, style: { background: theme === "light" ? "#e0e0ea" : "#1a1a24", border: "none", borderRadius: "50%", width: 28, height: 28, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, flexShrink: 0 } }, theme === "dark" ? "☀️" : "\u{1F319}")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, background: "#050508", border: "1px solid #14141e", borderRadius: 24, padding: 3 } }, [{ k: "nuit", l: "\u{1F319}", f: "Nuit" }, { k: "jour", l: "\u2600\uFE0F", f: "Jour" }].map((c) => /* @__PURE__ */ React.createElement("button", { key: c.k, onClick: () => applyCycle(c.k), style: {
     background: shiftType === c.k ? "#fff" : "transparent",
     border: "none",
     borderRadius: 20,
@@ -780,7 +822,7 @@ function App() {
     alignItems: "center",
     gap: 5
   } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13 } }, c.l), /* @__PURE__ */ React.createElement("span", null, c.f))))), userName ? /* @__PURE__ */ React.createElement("h1", { style: { fontSize: 32, fontWeight: 800, margin: "0 0 4px", letterSpacing: -1.2, lineHeight: 1.05, color: "#fff" } }, "Bonjour, ", userName, ".") : /* @__PURE__ */ React.createElement("h1", { onClick: () => setTab("Profil"), style: { fontSize: 24, fontWeight: 800, margin: "0 0 4px", letterSpacing: -0.8, lineHeight: 1.1, color: "#666", cursor: "pointer" } }, "\u{1F44B} Tape ici pour mettre ton pr\xE9nom"), /* @__PURE__ */ React.createElement("p", { style: { margin: "0 0 18px", fontSize: 14, color: "#666", fontWeight: 500 } }, shiftType === "nuit" ? "Cycle nuit \xB7 3 nuits + 3 repos" : "Cycle jour \xB7 grande/petite semaine"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 } }, [
-    { v: calc.cal, u: "kcal", l: "Objectif", c: "#00ff88" },
+    { v: calc.cal, u: "kcal", l: "Objectif", c: "#00cc66" },
     { v: calc.prot + "g", u: "prot", l: "Prot\xE9ines", c: "#a78bfa" },
     { v: poids, u: "kg", l: "Poids", c: "#fff" },
     { v: niv.label.slice(0, 4), u: "", l: "Niveau", c: niv.color }
@@ -790,7 +832,7 @@ function App() {
     borderRadius: 14,
     padding: "11px 8px",
     textAlign: "center"
-  } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 18, fontWeight: 800, color: s.c, letterSpacing: -0.4, lineHeight: 1 } }, s.v), s.u && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#444", fontWeight: 700, marginTop: 2 } }, s.u), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", marginTop: 5, fontWeight: 600 } }, s.l)))))), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 680, margin: "0 auto", padding: "24px 18px 24px" } }, tab === "Nutrition" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", background: "#0a0a12", borderRadius: 11, padding: 4, marginBottom: 14, gap: 3 } }, [{ k: "plan", l: "\u{1F4CB} Plan du jour" }, { k: "recettes", l: "\u{1F4D6} Toutes les recettes" }].map((s) => /* @__PURE__ */ React.createElement("button", { key: s.k, onClick: () => setNutSubTab(s.k), style: {
+  } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 18, fontWeight: 800, color: s.c, letterSpacing: -0.4, lineHeight: 1 } }, s.v), s.u && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#444", fontWeight: 700, marginTop: 2 } }, s.u), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", marginTop: 5, fontWeight: 600 } }, s.l)))))), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 680, margin: "0 auto", padding: "24px 18px 24px" } }, tab === "Nutrition" && /* @__PURE__ */ React.createElement("div", { className: "anim-up" }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", background: "#0a0a12", borderRadius: 11, padding: 4, marginBottom: 14, gap: 3 } }, [{ k: "plan", l: "\u{1F4CB} Plan du jour" }, { k: "recettes", l: "\u{1F4D6} Toutes les recettes" }].map((s) => /* @__PURE__ */ React.createElement("button", { key: s.k, onClick: () => setNutSubTab(s.k), style: {
     flex: 1,
     background: nutSubTab === s.k ? "#a78bfa22" : "transparent",
     border: "none",
@@ -997,7 +1039,7 @@ function App() {
       })));
     }), /* @__PURE__ */ React.createElement("button", { onClick: finishWorkout, style: {
       width: "100%",
-      background: "#00ff88",
+      background: "#00cc66",
       border: "none",
       borderRadius: 14,
       padding: "16px",
@@ -1008,7 +1050,7 @@ function App() {
       marginTop: 6,
       marginBottom: 10,
       letterSpacing: 0.3,
-      boxShadow: "0 4px 16px rgba(0,255,136,0.35)"
+      boxShadow: "0 6px 20px rgba(0,204,102,0.4)"
     } }, "\u2713 Terminer & enregistrer (", doneCount, " s\xE9ries)"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#444", textAlign: "center", lineHeight: 1.6 } }, "Le minuteur de repos d\xE9marre automatiquement quand tu valides une s\xE9rie."));
   })(), tab === "S\xE9ances" && !activeWorkout && showHistory && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShowHistory(false), style: { background: "#0a0a12", border: "1px solid #14141e", color: "#888", borderRadius: 10, padding: "10px 14px", cursor: "pointer", fontSize: 12, fontWeight: 700, marginBottom: 16 } }, "\u2039 Retour aux s\xE9ances"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "16px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 28, fontWeight: 800, color: "#00ff88", lineHeight: 1 } }, workoutStats.thisMonth), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", marginTop: 6, fontWeight: 600 } }, "Ce mois-ci")), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "16px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 28, fontWeight: 800, color: "#fff", lineHeight: 1 } }, workoutStats.total), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", marginTop: 6, fontWeight: 600 } }, "Total s\xE9ances"))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 } }, "\u{1F4CA} Historique"), workoutHistory.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1.5px dashed #1a1a24", borderRadius: 14, padding: "34px 18px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 32, marginBottom: 8, opacity: 0.4 } }, "\u{1F4CA}"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#555", lineHeight: 1.6 } }, "Aucune s\xE9ance enregistr\xE9e.", /* @__PURE__ */ React.createElement("br", null), "Lance une s\xE9ance et termine-la pour la voir ici.")) : workoutHistory.map((w) => {
     var _a2;
@@ -1069,11 +1111,11 @@ function App() {
     color: seanceFilter === c.k ? c.c : "#666",
     fontWeight: 700,
     whiteSpace: "nowrap"
-  } }, c.l))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 } }, "\u{1F4DA} Biblioth\xE8que \xB7 ", filteredSeances.length, " s\xE9ance", filteredSeances.length > 1 ? "s" : ""), filteredSeances.map((s) => /* @__PURE__ */ React.createElement("div", { key: s.id, style: { background: "#06060c", border: `1px solid ${openSeance === s.id ? s.color + "66" : "#1a1a24"}`, borderRadius: 14, marginBottom: 12, overflow: "hidden", transition: "border 0.2s" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpenSeance(openSeance === s.id ? null : s.id), style: { width: "100%", background: "none", border: "none", padding: "16px 18px", cursor: "pointer", display: "flex", alignItems: "center", gap: 14, textAlign: "left" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 50, height: 50, background: `linear-gradient(135deg, ${s.color}33, ${s.color}11)`, border: `1px solid ${s.color}44`, borderRadius: 11, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 } }, s.emoji), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: s.color, fontWeight: 800, letterSpacing: 2, textTransform: "uppercase", marginBottom: 1 } }, "S\xE9ance ", s.id), /* @__PURE__ */ React.createElement("div", { style: { color: "#fff", fontWeight: 700, fontSize: 15, marginBottom: 3 } }, s.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#777", marginBottom: 3, lineHeight: 1.4 } }, s.subtitle), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#444" } }, "\u23F1 ", s.duree)), /* @__PURE__ */ React.createElement("span", { style: { color: "#444", fontSize: 14 } }, openSeance === s.id ? "\u25B2" : "\u25BC")), openSeance === s.id && /* @__PURE__ */ React.createElement("div", { style: { padding: "4px 18px 18px" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => startWorkout(s.id), style: {
+  } }, c.l))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 } }, "\u{1F4DA} Biblioth\xE8que \xB7 ", filteredSeances.length, " s\xE9ance", filteredSeances.length > 1 ? "s" : ""), filteredSeances.map((s) => /* @__PURE__ */ React.createElement("div", { key: s.id, style: { background: "#06060c", border: `1px solid ${openSeance === s.id ? s.color + "66" : "#1a1a24"}`, borderRadius: 14, marginBottom: 12, overflow: "hidden", transition: "border 0.2s" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpenSeance(openSeance === s.id ? null : s.id), style: { width: "100%", background: "none", border: "none", padding: "16px 18px", cursor: "pointer", display: "flex", alignItems: "center", gap: 14, textAlign: "left" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 50, height: 50, background: `linear-gradient(135deg, ${s.color}33, ${s.color}11)`, border: `1px solid ${s.color}44`, borderRadius: 11, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 } }, s.emoji), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: s.color, fontWeight: 800, letterSpacing: 2, textTransform: "uppercase", marginBottom: 1 } }, "S\xE9ance ", s.id), /* @__PURE__ */ React.createElement("div", { style: { color: "#fff", fontWeight: 700, fontSize: 15, marginBottom: 3 } }, s.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#777", marginBottom: 3, lineHeight: 1.4 } }, s.subtitle), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#444" } }, "\u23F1 ", s.duree)), /* @__PURE__ */ React.createElement("span", { style: { color: "#444", fontSize: 14 } }, openSeance === s.id ? "\u25B2" : "\u25BC")), openSeance === s.id && /* @__PURE__ */ React.createElement("div", { style: { padding: "4px 18px 18px" } }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => startWorkout(s.id), style: {
     width: "100%",
-    background: "#00ff88",
-    border: "2px solid #00ff88",
-    borderRadius: 12,
+    background: "#00cc66",
+    border: "none",
+    borderRadius: 14,
     padding: "16px",
     fontSize: 15,
     fontWeight: 800,
@@ -1086,7 +1128,7 @@ function App() {
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    boxShadow: "0 4px 16px rgba(0,255,136,0.35)",
+    boxShadow: "0 6px 20px rgba(0,204,102,0.4)",
     WebkitTapHighlightColor: "transparent",
     touchAction: "manipulation"
   } }, "\u25B6 D\xC9MARRER LA S\xC9ANCE"), (() => {
@@ -1319,7 +1361,7 @@ function App() {
     { l: "Prot\xE9ines", v: calc.prot + "g", u: "/j", c: "#4ade80", s: `${calc.protCoeff}g/kg` },
     { l: "Glucides", v: calc.gluc + "g", u: "/j", c: "#60a5fa", s: "Reste" },
     { l: "Lipides", v: calc.lip + "g", u: "/j", c: "#f472b6", s: objectif === "seche" ? "0.8g/kg" : "1g/kg" }
-  ].map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", borderRadius: 10, padding: "12px", border: `1px solid ${x.c}33` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 } }, x.l), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, color: x.c } }, x.v, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#444", marginLeft: 2 } }, x.u)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", marginTop: 3 } }, x.s)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 14, padding: "16px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement(MacroBar, { label: `Prot\xE9ines (${Math.round(calc.prot * 4 / calc.cal * 100)}%)`, value: calc.prot, max: 250, color: "#4ade80" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Glucides (${Math.round(calc.gluc * 4 / calc.cal * 100)}%)`, value: calc.gluc, max: 500, color: "#60a5fa" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Lipides (${Math.round(calc.lip * 9 / calc.cal * 100)}%)`, value: calc.lip, max: 150, color: "#f472b6" })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1px solid ${niv.color}44`, borderRadius: 14, padding: "16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 9, alignItems: "center", marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { background: niv.color + "22", border: `1px solid ${niv.color}44`, borderRadius: 7, padding: "7px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, color: niv.color, fontWeight: 800 } }, niv.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555" } }, niv.annees)), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#aaa", lineHeight: 1.5 } }, niv.conseil)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 4 } }, niv.skills.map((sk, i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { background: niv.color + "15", color: niv.color, border: `1px solid ${niv.color}33`, borderRadius: 5, padding: "3px 8px", fontSize: 10 } }, sk)))), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", marginTop: 20, marginBottom: 4 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#333", letterSpacing: 1, fontWeight: 600 } }, "\u26A1 PS ULTRA \xB7 ", APP_VERSION))), tab === "Calcul" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "\u{1F4CA} Aujourd'hui \xB7 ", mealsDate), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8, marginBottom: 18 } }, [
+  ].map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", borderRadius: 10, padding: "12px", border: `1px solid ${x.c}33` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 } }, x.l), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, color: x.c } }, x.v, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: "#444", marginLeft: 2 } }, x.u)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555", marginTop: 3 } }, x.s)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", borderRadius: 14, padding: "16px", marginBottom: 13 } }, /* @__PURE__ */ React.createElement(MacroBar, { label: `Prot\xE9ines (${Math.round(calc.prot * 4 / calc.cal * 100)}%)`, value: calc.prot, max: 250, color: "#4ade80" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Glucides (${Math.round(calc.gluc * 4 / calc.cal * 100)}%)`, value: calc.gluc, max: 500, color: "#60a5fa" }), /* @__PURE__ */ React.createElement(MacroBar, { label: `Lipides (${Math.round(calc.lip * 9 / calc.cal * 100)}%)`, value: calc.lip, max: 150, color: "#f472b6" })), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: `1px solid ${niv.color}44`, borderRadius: 14, padding: "16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 9, alignItems: "center", marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { background: niv.color + "22", border: `1px solid ${niv.color}44`, borderRadius: 7, padding: "7px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, color: niv.color, fontWeight: 800 } }, niv.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "#555" } }, niv.annees)), /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#aaa", lineHeight: 1.5 } }, niv.conseil)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 4 } }, niv.skills.map((sk, i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { background: niv.color + "15", color: niv.color, border: `1px solid ${niv.color}33`, borderRadius: 5, padding: "3px 8px", fontSize: 10 } }, sk)))), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", marginTop: 20, marginBottom: 4 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#333", letterSpacing: 1, fontWeight: 600 } }, "\u26A1 PS ULTRA \xB7 ", APP_VERSION))), tab === "Calcul" && /* @__PURE__ */ React.createElement("div", { className: "anim-up" }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 } }, "\u{1F4CA} Aujourd'hui \xB7 ", mealsDate), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8, marginBottom: 18 } }, [
     { lab: "Calories", v: totals.kcal, obj: calc.cal, c: "#00ff88", u: "kcal" },
     { lab: "Prot\xE9ines", v: Math.round(totals.prot), obj: calc.prot, c: "#a78bfa", u: "g" },
     { lab: "Glucides", v: Math.round(totals.glu), obj: calc.gluc, c: "#60a5fa", u: "g" },
@@ -1329,9 +1371,9 @@ function App() {
     const remain = s.obj - s.v;
     const over = remain < 0;
     return /* @__PURE__ */ React.createElement("div", { key: i, style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "14px 14px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#666", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 } }, s.lab), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 4, marginBottom: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: -0.5, lineHeight: 1 } }, s.v), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: "#444", fontWeight: 600 } }, "/ ", s.obj, " ", s.u)), /* @__PURE__ */ React.createElement("div", { style: { height: 5, background: "#14141e", borderRadius: 3, overflow: "hidden", marginBottom: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: pct + "%", background: over ? "#ef4444" : s.c, borderRadius: 3, transition: "width 0.3s" } })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: over ? "#ef4444" : pct >= 90 ? "#4ade80" : "#666", fontWeight: 700 } }, over ? `+${Math.abs(remain)} d\xE9pass\xE9` : `${remain} ${s.u} restant`));
-  })), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowAddMeal(!showAddMeal), style: {
+  })), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => setShowAddMeal(!showAddMeal), style: {
     width: "100%",
-    background: showAddMeal ? "#1a1a24" : "#00ff88",
+    background: showAddMeal ? "#1a1a24" : "#00cc66",
     border: "none",
     borderRadius: 14,
     padding: "15px",
@@ -1341,7 +1383,7 @@ function App() {
     cursor: "pointer",
     marginBottom: 18,
     letterSpacing: 0.3,
-    transition: "all 0.2s"
+    boxShadow: showAddMeal ? "none" : "0 4px 16px rgba(0,204,102,0.35)"
   } }, showAddMeal ? "\u2715 Fermer" : "+ Ajouter un aliment"), showAddMeal && /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1.5px solid #1a1a24", borderRadius: 16, padding: "16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, background: "#06060c", border: "1px solid #14141e", borderRadius: 24, padding: 3, marginBottom: 14 } }, [{ k: "lib", l: "\u{1F4DA} Biblioth\xE8que" }, { k: "custom", l: "\u270F\uFE0F Manuel" }].map((m) => /* @__PURE__ */ React.createElement("button", { key: m.k, onClick: () => {
     setAliMode(m.k);
     setSelectedAli(null);
@@ -1376,9 +1418,9 @@ function App() {
     fontSize: 11,
     color: mealQty === q ? "#00ff88" : "#666",
     fontWeight: 700
-  } }, q, "g")))), /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", border: "1px solid #14141e", borderRadius: 11, padding: "11px 13px", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#555", textTransform: "uppercase", fontWeight: 700, marginBottom: 7 } }, "Apport pour ", mealQty, "g"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 12 } }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#00ff88" } }, Math.round(selectedAli.k * mealQty / 100)), " ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "kcal")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#a78bfa" } }, Math.round(selectedAli.p * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "P")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#60a5fa" } }, Math.round(selectedAli.g * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "G")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#f59e0b" } }, Math.round(selectedAli.l * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "L")))), /* @__PURE__ */ React.createElement("button", { onClick: () => addMealFromAli(selectedAli, mealQty), style: {
+  } }, q, "g")))), /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", border: "1px solid #14141e", borderRadius: 11, padding: "11px 13px", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#555", textTransform: "uppercase", fontWeight: 700, marginBottom: 7 } }, "Apport pour ", mealQty, "g"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 12 } }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#00ff88" } }, Math.round(selectedAli.k * mealQty / 100)), " ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "kcal")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#a78bfa" } }, Math.round(selectedAli.p * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "P")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#60a5fa" } }, Math.round(selectedAli.g * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "G")), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", { style: { color: "#f59e0b" } }, Math.round(selectedAli.l * mealQty / 100 * 10) / 10), "g ", /* @__PURE__ */ React.createElement("span", { style: { color: "#666" } }, "L")))), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => addMealFromAli(selectedAli, mealQty), style: {
     width: "100%",
-    background: "#00ff88",
+    background: "#00cc66",
     border: "none",
     borderRadius: 12,
     padding: "14px",
@@ -1386,7 +1428,8 @@ function App() {
     fontWeight: 800,
     color: "#000",
     cursor: "pointer",
-    letterSpacing: 0.3
+    letterSpacing: 0.3,
+    boxShadow: "0 4px 16px rgba(0,204,102,0.3)"
   } }, "\u2713 Ajouter \xE0 mon jour")) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(
     "input",
     {
@@ -1552,7 +1595,7 @@ function App() {
     fontSize: 11,
     fontWeight: 700,
     letterSpacing: 0.5
-  } }, "\u{1F5D1} Reset du jour"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#444", marginTop: 13, lineHeight: 1.6, textAlign: "center" } }, "\u{1F4A1} Les donn\xE9es se remettent \xE0 z\xE9ro automatiquement \xE0 chaque nouveau jour.")), tab === "Courses" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #1e3a5f", borderRadius: 14, padding: "14px 16px", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888" } }, "2 semaines \xB7 ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#a78bfa" } }, poids, "kg \xB7 ", calc.prot, "g prot/j \xB7 ", calc.cal, " kcal"))), COURSES.map((c, ri) => /* @__PURE__ */ React.createElement("div", { key: ri, style: { background: "#0a0a12", borderRadius: 11, overflow: "hidden", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "11px 14px", background: "#14141e", borderBottom: "1px solid #1e1e2a", fontSize: 12, fontWeight: 800, color: "#fff" } }, c.r), c.items.map((item, ii) => {
+  } }, "\u{1F5D1} Reset du jour"), /* @__PURE__ */ React.createElement(MealSuggestions, { remainKcal: Math.max(0, calc.cal - totals.kcal), RECETTES: RECETTES }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#444", marginTop: 13, lineHeight: 1.6, textAlign: "center" } }, "\u{1F4A1} Les donn\xE9es se remettent \xE0 z\xE9ro automatiquement \xE0 chaque nouveau jour.")), tab === "Courses" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #1e3a5f", borderRadius: 14, padding: "14px 16px", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("p", { style: { margin: 0, fontSize: 11, color: "#888" } }, "2 semaines \xB7 ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#a78bfa" } }, poids, "kg \xB7 ", calc.prot, "g prot/j \xB7 ", calc.cal, " kcal"))), COURSES.map((c, ri) => /* @__PURE__ */ React.createElement("div", { key: ri, style: { background: "#0a0a12", borderRadius: 11, overflow: "hidden", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "11px 14px", background: "#14141e", borderBottom: "1px solid #1e1e2a", fontSize: 12, fontWeight: 800, color: "#fff" } }, c.r), c.items.map((item, ii) => {
     const itemKey = `${ri}-${ii}`;
     const isOpen = openCourseItem === itemKey;
     return /* @__PURE__ */ React.createElement("div", { key: ii, style: { borderBottom: ii < c.items.length - 1 ? "1px solid #1a1a24" : "none" } }, /* @__PURE__ */ React.createElement("div", { onClick: () => setOpenCourseItem(isOpen ? null : itemKey), style: { padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 18, height: 18, border: "1.5px solid #2a2a3a", borderRadius: 4, flexShrink: 0 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "#ccc", flex: 1 } }, item.n), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: isOpen ? "#a78bfa" : "#444", fontWeight: 700 } }, isOpen ? "\u25B2" : "\u2139\uFE0F")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { background: "#06060c", padding: "11px 14px 13px", borderTop: "1px solid #1a1a24" } }, item.macro && item.macro !== "-" && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#666", textTransform: "uppercase", marginBottom: 4 } }, "Macros pour 100g"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#fff", fontWeight: 700 } }, item.macro)), /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#4ade80", textTransform: "uppercase", marginBottom: 4, fontWeight: 700 } }, "\u{1F331} Nutriments cl\xE9s"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#ccc", lineHeight: 1.5 } }, item.nutri)), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a1a0a", border: "1px solid #1a3a1a", borderRadius: 7, padding: "9px 11px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, letterSpacing: 2, color: "#a78bfa", textTransform: "uppercase", marginBottom: 4, fontWeight: 700 } }, "\u{1F4A1} Pourquoi cet aliment"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#ddd", lineHeight: 1.5 } }, item.why))));
@@ -1564,10 +1607,10 @@ function App() {
     zIndex: 99,
     maxWidth: 652,
     margin: "0 auto",
-    background: "rgba(0,255,136,0.12)",
+    background: "rgba(0,204,102,0.12)",
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
-    border: "1.5px solid #00ff88",
+    border: "1.5px solid #00cc66",
     borderRadius: 16,
     padding: "14px 18px",
     display: "flex",
@@ -1629,10 +1672,10 @@ function App() {
     left: 0,
     right: 0,
     zIndex: 100,
-    background: "rgba(0,0,0,0.85)",
+    background: "var(--nav-bg)",
     backdropFilter: "blur(24px)",
     WebkitBackdropFilter: "blur(24px)",
-    borderTop: "1px solid #14141e",
+    borderTop: "1px solid var(--border)",
     paddingBottom: "env(safe-area-inset-bottom)"
   } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 680, margin: "0 auto", display: "flex", justifyContent: "space-around", padding: "8px 4px 6px" } }, tabs.map((t) => {
     const active = tab === t.key;
@@ -1650,7 +1693,7 @@ function App() {
       gap: 3,
       padding: "8px 4px 10px",
       minWidth: 56,
-      color: active ? "#00ff88" : "#555",
+      color: active ? "#00cc66" : "#555",
       transition: "all 0.2s",
       touchAction: "manipulation",
       WebkitTapHighlightColor: "transparent"
@@ -1662,15 +1705,15 @@ function App() {
       fontSize: 9.5,
       letterSpacing: 0.3,
       fontWeight: active ? 700 : 600,
-      color: active ? "#00ff88" : "#555"
+      color: active ? "#00cc66" : "#555"
     } }, t.key), active && /* @__PURE__ */ React.createElement("div", { style: {
       position: "absolute",
       bottom: 2,
       width: 24,
       height: 3,
       borderRadius: 2,
-      background: "#00ff88",
-      boxShadow: "0 0 10px #00ff88"
+      background: "#00cc66",
+      boxShadow: "0 0 10px #00cc66"
     } }));
   }))));
 }
