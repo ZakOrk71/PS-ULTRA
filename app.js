@@ -37,7 +37,20 @@ const saveData = (data) => {
   } catch (e) {
   }
 };
+const loadActiveWorkout = () => {
+  try {
+    if (typeof window === "undefined" || !window.localStorage) return null;
+    const raw = window.localStorage.getItem("ps_ultra_active_wkt");
+    if (!raw) return null;
+    const aw = JSON.parse(raw);
+    if (!aw || !aw.startTime || Date.now() - aw.startTime > 12 * 60 * 60 * 1000) return null;
+    return aw;
+  } catch (e) {
+    return null;
+  }
+};
 const SAVED = loadSaved();
+const RESTORED_AW = loadActiveWorkout();
 const STORAGE_OK = (() => {
   try {
     if (typeof window === "undefined" || !window.localStorage) return false;
@@ -482,12 +495,13 @@ function App() {
   const [openExoInfo, setOpenExoInfo] = useState(null);
   const [openCourseItem, setOpenCourseItem] = useState(null);
   const [seanceFilter, setSeanceFilter] = useState("all");
-  const [activeWorkout, setActiveWorkout] = useState(null);
+  const [activeWorkout, setActiveWorkout] = useState(RESTORED_AW);
   const [workoutHistory, setWorkoutHistory] = useState((_v = SAVED.workoutHistory) != null ? _v : []);
   const [restTimer, setRestTimer] = useState(null);
   const [nowTick, setNowTick] = useState(Date.now());
   const [restDoneFlash, setRestDoneFlash] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showRestoredBanner, setShowRestoredBanner] = useState(!!RESTORED_AW);
   const restRemaining = restTimer ? Math.max(0, Math.ceil((restTimer.endTime - nowTick) / 1e3)) : 0;
   useEffect(() => {
     try {
@@ -499,6 +513,33 @@ function App() {
     } catch (e) {
     }
   }, [workoutHistory]);
+  useEffect(() => {
+    try {
+      if (typeof window === "undefined" || !window.localStorage) return;
+      if (activeWorkout) {
+        window.localStorage.setItem("ps_ultra_active_wkt", JSON.stringify(activeWorkout));
+      } else {
+        window.localStorage.removeItem("ps_ultra_active_wkt");
+      }
+    } catch (e) {}
+  }, [activeWorkout]);
+  useEffect(() => {
+    const saveOnClose = () => {
+      if (!activeWorkout) return;
+      try { window.localStorage.setItem("ps_ultra_active_wkt", JSON.stringify(activeWorkout)); } catch (e) {}
+    };
+    window.addEventListener("pagehide", saveOnClose);
+    window.addEventListener("beforeunload", saveOnClose);
+    return () => {
+      window.removeEventListener("pagehide", saveOnClose);
+      window.removeEventListener("beforeunload", saveOnClose);
+    };
+  }, [activeWorkout]);
+  useEffect(() => {
+    if (!showRestoredBanner) return;
+    const t = setTimeout(() => setShowRestoredBanner(false), 5000);
+    return () => clearTimeout(t);
+  }, []);
   useEffect(() => {
     if (!restTimer) return;
     const id = setInterval(() => setNowTick(Date.now()), 250);
@@ -726,6 +767,56 @@ function App() {
       setRestTimer(null);
     }
   };
+  const autoSaveWorkout = (aw) => {
+    if (!aw) return;
+    const doneSets = Object.entries(aw.sets).filter(([k, v]) => v.done);
+    if (doneSets.length === 0) {
+      setActiveWorkout(null);
+      setRestTimer(null);
+      try { if (typeof window !== "undefined") window.localStorage.removeItem("ps_ultra_active_wkt"); } catch (e) {}
+      return;
+    }
+    const seance = getSeance(aw.seanceId);
+    const entry = {
+      id: Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+      date: new Date().toISOString(),
+      seanceId: aw.seanceId,
+      label: seance ? seance.label : aw.seanceId,
+      emoji: seance ? seance.emoji : "\u{1F4AA}",
+      color: seance ? seance.color : "#00cc66",
+      durationMin: Math.max(1, Math.round((Date.now() - aw.startTime) / 6e4)),
+      setsCount: doneSets.length,
+      partial: true,
+      details: doneSets.map(([k, v]) => {
+        var _a2;
+        const [ei] = k.split("-");
+        const exo = (_a2 = seance == null ? void 0 : seance.exos) == null ? void 0 : _a2[parseInt(ei)];
+        return { exo: exo ? exo.nom : "?", reps: v.reps || "", charge: v.charge || "" };
+      })
+    };
+    setWorkoutHistory((prev) => [entry, ...prev]);
+    setActiveWorkout(null);
+    setRestTimer(null);
+    try { if (typeof window !== "undefined") window.localStorage.removeItem("ps_ultra_active_wkt"); } catch (e) {}
+  };
+  useEffect(() => {
+    if (!activeWorkout) return;
+    let inactivityTimer;
+    const reset = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => autoSaveWorkout(activeWorkout), 35 * 60 * 1000);
+    };
+    reset();
+    window.addEventListener("touchstart", reset);
+    window.addEventListener("click", reset);
+    window.addEventListener("keydown", reset);
+    return () => {
+      clearTimeout(inactivityTimer);
+      window.removeEventListener("touchstart", reset);
+      window.removeEventListener("click", reset);
+      window.removeEventListener("keydown", reset);
+    };
+  }, [activeWorkout]);
   const toggleSet = (exoIdx, setIdx, restStr) => {
     setActiveWorkout((aw) => {
       var _a2, _b2, _c2;
@@ -772,7 +863,7 @@ function App() {
         return { exo: exo ? exo.nom : "?", reps: v.reps || "", charge: v.charge || "" };
       })
     };
-    setWorkoutHistory([entry, ...workoutHistory].slice(0, 200));
+    setWorkoutHistory([entry, ...workoutHistory]);
     setActiveWorkout(null);
     setRestTimer(null);
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
@@ -786,6 +877,18 @@ function App() {
     const total = workoutHistory.length;
     let streak = 0;
     return { thisMonth, total };
+  }, [workoutHistory]);
+  const groupedHistory = useMemo(() => {
+    if (workoutHistory.length === 0) return [];
+    const months = {};
+    workoutHistory.forEach((w) => {
+      const d = new Date(w.date);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const label = d.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+      if (!months[key]) months[key] = { key, label, workouts: [] };
+      months[key].workouts.push(w);
+    });
+    return Object.values(months).sort((a, b) => b.key.localeCompare(a.key));
   }, [workoutHistory]);
   const lastWorkoutFor = (seanceId) => workoutHistory.find((w) => w.seanceId === seanceId);
   const filteredRecettes = recetteFilter === "all" ? RECETTES : RECETTES.filter((r) => r.slots.includes(recetteFilter));
@@ -990,7 +1093,7 @@ function App() {
     const pct = totalSets > 0 ? Math.round(doneCount / totalSets * 100) : 0;
     const elapsedMin = Math.round((Date.now() - activeWorkout.startTime) / 6e4);
     const activeKey = modes[modeIdx].key;
-    return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { background: `linear-gradient(135deg, ${s.color}22, ${s.color}08)`, border: `1px solid ${s.color}44`, borderRadius: 16, padding: "18px", marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 11 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 28 } }, s.emoji), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: s.color, fontWeight: 800, letterSpacing: 2, textTransform: "uppercase" } }, "En cours"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 17, fontWeight: 800, color: "#fff" } }, s.label))), /* @__PURE__ */ React.createElement("button", { onClick: cancelWorkout, style: { background: "#1a1a24", border: "none", color: "#888", borderRadius: 10, padding: "8px 12px", cursor: "pointer", fontSize: 11, fontWeight: 700 } }, "Abandonner")), /* @__PURE__ */ React.createElement("div", { style: { height: 8, background: "#06060c", borderRadius: 4, overflow: "hidden", marginBottom: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: pct + "%", background: s.color, borderRadius: 4, transition: "width 0.3s", boxShadow: `0 0 10px ${s.color}` } })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 11, color: "#888", fontWeight: 600 } }, /* @__PURE__ */ React.createElement("span", null, doneCount, "/", totalSets, " s\xE9ries"), /* @__PURE__ */ React.createElement("span", null, "\u23F1 ", elapsedMin, " min"))), s.exos.map((ex, ei) => {
+    return /* @__PURE__ */ React.createElement("div", null, showRestoredBanner && /* @__PURE__ */ React.createElement("div", { style: { background: "#0a1a0f", border: "1px solid #1a4a2a", borderRadius: 12, padding: "11px 14px", marginBottom: 12, display: "flex", alignItems: "center", gap: 9 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16 } }, "\u{1F4BE}"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: "#4ade80" } }, "S\xE9ance retrouv\xE9e"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#888", marginTop: 1 } }, "Reprends o\xF9 tu t\'\xE9tais arr\xEAt\xE9(e)")), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowRestoredBanner(false), style: { background: "none", border: "none", color: "#555", cursor: "pointer", fontSize: 16, padding: 4 } }, "\xD7")), /* @__PURE__ */ React.createElement("div", { style: { background: `linear-gradient(135deg, ${s.color}22, ${s.color}08)`, border: `1px solid ${s.color}44`, borderRadius: 16, padding: "18px", marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 11 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 28 } }, s.emoji), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: s.color, fontWeight: 800, letterSpacing: 2, textTransform: "uppercase" } }, "En cours"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 17, fontWeight: 800, color: "#fff" } }, s.label))), /* @__PURE__ */ React.createElement("button", { onClick: cancelWorkout, style: { background: "#1a1a24", border: "none", color: "#888", borderRadius: 10, padding: "8px 12px", cursor: "pointer", fontSize: 11, fontWeight: 700 } }, "Abandonner")), /* @__PURE__ */ React.createElement("div", { style: { height: 8, background: "#06060c", borderRadius: 4, overflow: "hidden", marginBottom: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: pct + "%", background: s.color, borderRadius: 4, transition: "width 0.3s", boxShadow: `0 0 10px ${s.color}` } })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 11, color: "#888", fontWeight: 600 } }, /* @__PURE__ */ React.createElement("span", null, doneCount, "/", totalSets, " s\xE9ries"), /* @__PURE__ */ React.createElement("span", null, "\u23F1 ", elapsedMin, " min"))), s.exos.map((ex, ei) => {
       const nSets = parseSets(ex.s);
       const exoName = activeKey === "leste" ? getLesteText(ex) : ex[activeKey];
       const exoDone = Array.from({ length: nSets }).every((_, si) => {
@@ -1052,13 +1155,13 @@ function App() {
       letterSpacing: 0.3,
       boxShadow: "0 6px 20px rgba(0,204,102,0.4)"
     } }, "\u2713 Terminer & enregistrer (", doneCount, " s\xE9ries)"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#444", textAlign: "center", lineHeight: 1.6 } }, "Le minuteur de repos d\xE9marre automatiquement quand tu valides une s\xE9rie."));
-  })(), tab === "S\xE9ances" && !activeWorkout && showHistory && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShowHistory(false), style: { background: "#0a0a12", border: "1px solid #14141e", color: "#888", borderRadius: 10, padding: "10px 14px", cursor: "pointer", fontSize: 12, fontWeight: 700, marginBottom: 16 } }, "\u2039 Retour aux s\xE9ances"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "16px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 28, fontWeight: 800, color: "#00ff88", lineHeight: 1 } }, workoutStats.thisMonth), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", marginTop: 6, fontWeight: 600 } }, "Ce mois-ci")), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "16px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 28, fontWeight: 800, color: "#fff", lineHeight: 1 } }, workoutStats.total), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", marginTop: 6, fontWeight: 600 } }, "Total s\xE9ances"))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 } }, "\u{1F4CA} Historique"), workoutHistory.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1.5px dashed #1a1a24", borderRadius: 14, padding: "34px 18px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 32, marginBottom: 8, opacity: 0.4 } }, "\u{1F4CA}"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#555", lineHeight: 1.6 } }, "Aucune s\xE9ance enregistr\xE9e.", /* @__PURE__ */ React.createElement("br", null), "Lance une s\xE9ance et termine-la pour la voir ici.")) : workoutHistory.map((w) => {
+  })(), tab === "S\xE9ances" && !activeWorkout && showHistory && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShowHistory(false), style: { background: "#0a0a12", border: "1px solid #14141e", color: "#888", borderRadius: 10, padding: "10px 14px", cursor: "pointer", fontSize: 12, fontWeight: 700, marginBottom: 16 } }, "\u2039 Retour aux s\xE9ances"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "16px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 28, fontWeight: 800, color: "#00ff88", lineHeight: 1 } }, workoutStats.thisMonth), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", marginTop: 6, fontWeight: 600 } }, "Ce mois-ci")), /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "16px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 28, fontWeight: 800, color: "#fff", lineHeight: 1 } }, workoutStats.total), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 1.5, color: "#555", textTransform: "uppercase", marginTop: 6, fontWeight: 600 } }, "Total s\xE9ances"))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2.5, color: "#555", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 } }, "\u{1F4CA} Historique"), workoutHistory.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { background: "#0a0a12", border: "1.5px dashed #1a1a24", borderRadius: 14, padding: "34px 18px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 32, marginBottom: 8, opacity: 0.4 } }, "\u{1F4CA}"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#555", lineHeight: 1.6 } }, "Aucune s\xE9ance enregistr\xE9e.", /* @__PURE__ */ React.createElement("br", null), "Lance une s\xE9ance et termine-la pour la voir ici.")) : groupedHistory.map((group) => /* @__PURE__ */ React.createElement("div", { key: group.key }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, color: "var(--text3)", textTransform: "capitalize", fontWeight: 700, marginBottom: 8, marginTop: 16, display: "flex", alignItems: "center", justifyContent: "space-between" } }, /* @__PURE__ */ React.createElement("span", null, group.label), /* @__PURE__ */ React.createElement("span", { style: { color: "var(--text4)", fontSize: 9, letterSpacing: 1 } }, group.workouts.length, " s\xE9ance", group.workouts.length > 1 ? "s" : "")), group.workouts.map((w) => {
     var _a2;
     const d = new Date(w.date);
     const dateStr = d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
     const timeStr = d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-    return /* @__PURE__ */ React.createElement("div", { key: w.id, style: { background: "#0a0a12", border: "1px solid #14141e", borderRadius: 14, padding: "15px 16px", marginBottom: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 11, marginBottom: ((_a2 = w.details) == null ? void 0 : _a2.length) ? 10 : 0 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 22 } }, w.emoji), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: "#fff" } }, w.label), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666", marginTop: 2 } }, dateStr, " \xB7 ", timeStr)), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "right" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: w.color } }, w.setsCount, " s\xE9ries"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "#666" } }, w.durationMin, " min"))), w.details && w.details.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { borderTop: "1px solid #14141e", paddingTop: 9, display: "flex", flexWrap: "wrap", gap: 5 } }, w.details.filter((dd) => dd.reps || dd.charge).slice(0, 12).map((dd, di) => /* @__PURE__ */ React.createElement("span", { key: di, style: { fontSize: 10, color: "#888", background: "#06060c", borderRadius: 6, padding: "4px 8px" } }, dd.exo, ": ", /* @__PURE__ */ React.createElement("strong", { style: { color: "#aaa" } }, dd.reps || "?", dd.charge ? ` \xB7 ${dd.charge}kg` : "")))));
-  })), tab === "S\xE9ances" && !activeWorkout && !showHistory && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShowHistory(true), style: {
+    return /* @__PURE__ */ React.createElement("div", { key: w.id, style: { background: "var(--card)", border: `1px solid ${w.partial ? "#7f4a1e" : "var(--border)"}`, borderRadius: 14, padding: "15px 16px", marginBottom: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 11, marginBottom: ((_a2 = w.details) == null ? void 0 : _a2.length) ? 10 : 0 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 22 } }, w.emoji), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: "var(--text)", display: "flex", alignItems: "center", gap: 6 } }, w.label, w.partial && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, background: "#7f1d1d", color: "#fca5a5", borderRadius: 4, padding: "2px 5px", fontWeight: 700, letterSpacing: 0.5 } }, "PARTIELLE")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "var(--text3)", marginTop: 2 } }, dateStr, " \xB7 ", timeStr)), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "right" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: w.color } }, w.setsCount, " s\xE9ries"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "var(--text3)" } }, w.durationMin, " min"))), w.details && w.details.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { borderTop: "1px solid var(--border)", paddingTop: 9, display: "flex", flexWrap: "wrap", gap: 5 } }, w.details.filter((dd) => dd.reps || dd.charge).slice(0, 12).map((dd, di) => /* @__PURE__ */ React.createElement("span", { key: di, style: { fontSize: 10, color: "var(--text3)", background: "var(--bg3)", borderRadius: 6, padding: "4px 8px" } }, dd.exo, ": ", /* @__PURE__ */ React.createElement("strong", { style: { color: "var(--text2)" } }, dd.reps || "?", dd.charge ? ` \xB7 ${dd.charge}kg` : "")))));
+  })))), tab === "S\xE9ances" && !activeWorkout && !showHistory && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShowHistory(true), style: {
     width: "100%",
     background: "#0a0a12",
     border: "1px solid #14141e",
